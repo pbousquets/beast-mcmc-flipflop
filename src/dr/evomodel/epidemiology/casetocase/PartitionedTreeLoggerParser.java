@@ -1,10 +1,15 @@
 package dr.evomodel.epidemiology.casetocase;
 
+import dr.evolution.tree.TreeAttributeProvider;
+import dr.evolution.tree.TreeTraitProvider;
 import dr.evomodelxml.tree.TreeLoggerParser;
 import dr.xml.ElementRule;
 import dr.xml.XMLObject;
 import dr.xml.XMLParseException;
 import dr.xml.XMLSyntaxRule;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -36,8 +41,16 @@ public class PartitionedTreeLoggerParser extends TreeLoggerParser {
     }
 
     public Object parseXMLObject(XMLObject xo) throws XMLParseException {
-        parseXMLParameters(xo);
+        List<TreeAttributeProvider> taps = new ArrayList<TreeAttributeProvider>();
+        List<TreeTraitProvider> ttps = new ArrayList<TreeTraitProvider>();
+                      /*
+        parseXMLParameters(xo, taps, ttps);
         CaseToCaseTreeLikelihood c2cTL = (CaseToCaseTreeLikelihood)xo.getChild(CaseToCaseTreeLikelihood.class);
+
+        TreeAttributeProvider[] treeAttributeProviders = new TreeAttributeProvider[taps.size()];
+        taps.toArray(treeAttributeProviders);
+        TreeTraitProvider[] treeTraitProviders = new TreeTraitProvider[ttps.size()];
+        ttps.toArray(treeTraitProviders);
 
         PartitionedTreeLogger logger = new PartitionedTreeLogger(c2cTL, tree, branchRates,
                 treeAttributeProviders, treeTraitProviders,
@@ -47,7 +60,8 @@ public class PartitionedTreeLoggerParser extends TreeLoggerParser {
             logger.setTitle(title);
         }
 
-        return logger;
+        return logger;  */
+        return null;
     }
 }
 

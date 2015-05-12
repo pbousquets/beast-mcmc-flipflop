@@ -27,6 +27,8 @@ package dr.inference.mcmc;
 
 import dr.inference.markovchain.MarkovChain;
 
+import java.io.Serializable;
+
 /**
  * A class that brings together the auxillary information associated
  * with an MCMC analysis.
@@ -35,7 +37,7 @@ import dr.inference.markovchain.MarkovChain;
  * @author Andrew Rambaut
  * @version $Id: MCMCOptions.java,v 1.7 2005/05/24 20:25:59 rambaut Exp $
  */
-public class MCMCOptions {
+public class MCMCOptions implements Serializable {
 
     private final long chainLength;
     private final long fullEvaluationCount;

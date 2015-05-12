@@ -273,7 +273,7 @@ public class MCLogger implements Logger {
         this.formatters = formatters;
     }
 
-    protected List<LogFormatter> formatters = new ArrayList<LogFormatter>();
+    protected transient List<LogFormatter> formatters = new ArrayList<LogFormatter>();
 
     private boolean performanceReportStarted = false;
     private long startTime;

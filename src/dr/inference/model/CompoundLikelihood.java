@@ -29,6 +29,7 @@ import dr.app.beagle.evomodel.branchmodel.lineagespecific.BeagleBranchLikelihood
 import dr.util.NumberFormatter;
 import dr.xml.Reportable;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -65,15 +66,6 @@ public class CompoundLikelihood implements Likelihood, Reportable {
         } else {
             // no thread pool requested or only one likelihood
             threadCount = 0;
-        }
-
-        if (threadCount > 0) {
-            pool = Executors.newFixedThreadPool(threadCount);
-//        } else if (threads < 0) {
-//            // create a cached thread pool which should create one thread per likelihood...
-//            pool = Executors.newCachedThreadPool();
-        } else {
-            pool = null;
         }
 
         if (EVALUATION_TIMERS) {
@@ -192,10 +184,15 @@ public class CompoundLikelihood implements Likelihood, Reportable {
             return Double.NEGATIVE_INFINITY;
         }
 
-        if (pool == null) {
+        if (threadCount == 0) {
             // Single threaded
             logLikelihood += evaluateLikelihoods(lateLikelihoods);
         } else {
+
+            if (pool == null) {
+                pool = Executors.newFixedThreadPool(threadCount);
+//            pool = Executors.newCachedThreadPool();
+            }
 
             try {
                 List<Future<Double>> results = pool.invokeAll(likelihoodCallers);
@@ -471,7 +468,7 @@ public class CompoundLikelihood implements Likelihood, Reportable {
 
     private final int threadCount;
 
-    private final ExecutorService pool;
+    private transient ExecutorService pool = null;
 
     private final ArrayList<Likelihood> likelihoods = new ArrayList<Likelihood>();
     private final CompoundModel compoundModel = new CompoundModel("compoundModel");
@@ -481,7 +478,7 @@ public class CompoundLikelihood implements Likelihood, Reportable {
 
     private final List<Callable<Double>> likelihoodCallers = new ArrayList<Callable<Double>>();
 
-    class LikelihoodCaller implements Callable<Double> {
+    class LikelihoodCaller implements Callable<Double>, Serializable {
 
         public LikelihoodCaller(Likelihood likelihood, int index) {
             this.likelihood = likelihood;

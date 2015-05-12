@@ -1,5 +1,6 @@
 package dr.evolution.tree;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.Map;
  * @author Andrew Rambaut
  * @version $Id$
  */
-public interface TreeTraitProvider {
+public interface TreeTraitProvider extends Serializable {
 
     /**
      * Returns an array of all the available traits

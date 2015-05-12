@@ -27,6 +27,8 @@ package dr.math.distributions;
 
 import dr.math.UnivariateFunction;
 
+import java.io.Serializable;
+
 /**
  * an interface for a distribution.
  *
@@ -34,7 +36,7 @@ import dr.math.UnivariateFunction;
  * @author Andrew Rambaut
  * @version $Id: Distribution.java,v 1.7 2005/05/24 20:26:00 rambaut Exp $
  */
-public interface Distribution {
+public interface Distribution extends Serializable {
     /**
      * probability density function of the distribution
      *

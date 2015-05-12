@@ -25,7 +25,9 @@
 
 package dr.util;
 
-public class Timer {
+import java.io.Serializable;
+
+public class Timer implements Serializable {
 
 	private long start = 0, stop = 0;
 

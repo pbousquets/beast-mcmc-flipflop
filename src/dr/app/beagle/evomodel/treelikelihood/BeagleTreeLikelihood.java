@@ -1223,7 +1223,7 @@ public class BeagleTreeLikelihood extends AbstractSinglePartitionTreeLikelihood 
     /**
      * the BEAGLE library instance
      */
-    protected Beagle beagle;
+    protected transient Beagle beagle;
 
     /**
      * Flag to specify that the substitution model has changed

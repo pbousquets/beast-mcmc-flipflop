@@ -1,5 +1,7 @@
 package dr.evomodelxml.tree;
 
+import dr.evolution.tree.TreeAttributeProvider;
+import dr.evolution.tree.TreeTraitProvider;
 import dr.evomodel.tree.HiddenLinkageModel;
 import dr.evomodel.tree.HiddenLinkageTreeLogger;
 import dr.evomodel.tree.TreeLogger;
@@ -7,6 +9,9 @@ import dr.xml.ElementRule;
 import dr.xml.XMLObject;
 import dr.xml.XMLParseException;
 import dr.xml.XMLSyntaxRule;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Aaron Darling (koadman)
@@ -37,18 +42,27 @@ public class HiddenLinkageTreeLoggerParser extends TreeLoggerParser {
     }
     
     public Object parseXMLObject(XMLObject xo) throws XMLParseException {
-    	parseXMLParameters(xo);
+        List<TreeAttributeProvider> taps = new ArrayList<TreeAttributeProvider>();
+        List<TreeTraitProvider> ttps = new ArrayList<TreeTraitProvider>();
+        /*
+        parseXMLParameters(xo, taps, ttps);
     	HiddenLinkageModel hlm = (HiddenLinkageModel)xo.getChild(HiddenLinkageModel.class);
 
-    	HiddenLinkageTreeLogger logger = new HiddenLinkageTreeLogger(hlm, tree, branchRates,
+        TreeAttributeProvider[] treeAttributeProviders = new TreeAttributeProvider[taps.size()];
+        taps.toArray(treeAttributeProviders);
+        TreeTraitProvider[] treeTraitProviders = new TreeTraitProvider[ttps.size()];
+        ttps.toArray(treeTraitProviders);
+
+        HiddenLinkageTreeLogger logger = new HiddenLinkageTreeLogger(hlm, tree, branchRates,
                 treeAttributeProviders, treeTraitProviders,
                 formatter, logEvery, nexusFormat, sortTranslationTable, mapNames, format, condition/*,
-                normaliseMeanRateTo*/);
+                normaliseMeanRateTo);
 
         if (title != null) {
             logger.setTitle(title);
         }
 
-        return logger;
+        return logger;*/
+        return null;
     }
 }

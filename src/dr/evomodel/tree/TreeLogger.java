@@ -30,6 +30,7 @@ import dr.evolution.tree.*;
 import dr.inference.loggers.LogFormatter;
 import dr.inference.loggers.MCLogger;
 
+import java.io.Serializable;
 import java.text.NumberFormat;
 import java.util.*;
 
@@ -64,7 +65,7 @@ public class TreeLogger extends MCLogger {
     /**
      * Interface to indicate when to log a tree
      */
-    public interface LogUpon {
+    public interface LogUpon extends Serializable {
         /**
          *
          * @param state

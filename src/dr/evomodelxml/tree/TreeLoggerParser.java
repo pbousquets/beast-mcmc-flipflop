@@ -1,19 +1,16 @@
 package dr.evomodelxml.tree;
 
-import dr.evolution.colouring.TreeColouringProvider;
 import dr.evolution.tree.*;
 import dr.evomodel.tree.TreeLogger;
-import dr.inference.loggers.LogFormatter;
 import dr.inference.loggers.Loggable;
 import dr.inference.loggers.TabDelimitedFormatter;
 import dr.inference.model.Likelihood;
 import dr.inference.model.Model;
-import dr.inference.model.Parameter;
 import dr.inferencexml.loggers.LoggerParser;
-import dr.util.Identifiable;
 import dr.xml.*;
 
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +20,7 @@ import java.util.Locale;
  * @author Alexei Drummond
  * @author Andrew Rambaut
  */
-public class TreeLoggerParser extends LoggerParser {
+public class TreeLoggerParser extends LoggerParser implements Serializable {
 
     public static final String LOG_TREE = "logTree";
     public static final String NEXUS_FORMAT = "nexusFormat";
@@ -45,18 +42,20 @@ public class TreeLoggerParser extends LoggerParser {
         return LOG_TREE;
     }
 
-    protected void parseXMLParameters(XMLObject xo) throws XMLParseException
-    {
+    /**
+     * @return an object based on the XML element it was passed.
+     */
+    public Object parseXMLObject(XMLObject xo) throws XMLParseException {
         // reset this every time...
-        branchRates = null;
+        BranchRates branchRates = null;
 
-        tree = (Tree) xo.getChild(Tree.class);
+        Tree tree = (Tree) xo.getChild(Tree.class);
 
-        title = xo.getAttribute(TITLE, "");
+        String title = xo.getAttribute(TITLE, "");
 
-        nexusFormat = xo.getAttribute(NEXUS_FORMAT, false);
+        boolean nexusFormat = xo.getAttribute(NEXUS_FORMAT, false);
 
-        sortTranslationTable = xo.getAttribute(SORT_TRANSLATION_TABLE, true);
+        boolean sortTranslationTable = xo.getAttribute(SORT_TRANSLATION_TABLE, true);
 
         boolean substitutions = xo.getAttribute(BRANCH_LENGTHS, "").equals(SUBSTITUTIONS);
 
@@ -287,12 +286,13 @@ public class TreeLoggerParser extends LoggerParser {
         }
 
         // logEvery of zero only displays at the end
-        logEvery = xo.getAttribute(LOG_EVERY, 0);
+        int logEvery = xo.getAttribute(LOG_EVERY, 0);
 
 //        double normaliseMeanRateTo = xo.getAttribute(NORMALISE_MEAN_RATE_TO, Double.NaN);
 
         // decimal places
         final int dp = xo.getAttribute(DECIMAL_PLACES, -1);
+        NumberFormat format = null;
         if (dp != -1) {
             format = NumberFormat.getNumberInstance(Locale.ENGLISH);
             format.setMaximumFractionDigits(dp);
@@ -300,26 +300,19 @@ public class TreeLoggerParser extends LoggerParser {
 
         final PrintWriter pw = getLogFile(xo, getParserName());
 
-        formatter = new TabDelimitedFormatter(pw);
-
-        treeAttributeProviders = new TreeAttributeProvider[taps.size()];
-        taps.toArray(treeAttributeProviders);
-        treeTraitProviders = new TreeTraitProvider[ttps.size()];
-        ttps.toArray(treeTraitProviders);
+        TabDelimitedFormatter formatter = new TabDelimitedFormatter(pw);
 
         // I think the default should be to have names rather than numbers, thus the false default - AJD
         // I think the default should be numbers - using names results in larger files and end user never
         // sees the numbers anyway as any software loading the nexus files does the translation - JH
-        mapNames = xo.getAttribute(MAP_NAMES, true);
+        boolean mapNames = xo.getAttribute(MAP_NAMES, true);
 
-        condition = logEvery == 0 ? (TreeLogger.LogUpon) xo.getChild(TreeLogger.LogUpon.class) : null;
-    }
+        TreeLogger.LogUpon condition = logEvery == 0 ? (TreeLogger.LogUpon) xo.getChild(TreeLogger.LogUpon.class) : null;
 
-    /**
-     * @return an object based on the XML element it was passed.
-     */
-    public Object parseXMLObject(XMLObject xo) throws XMLParseException {
-        parseXMLParameters(xo);
+        TreeAttributeProvider[] treeAttributeProviders = new TreeAttributeProvider[taps.size()];
+        taps.toArray(treeAttributeProviders);
+        TreeTraitProvider[] treeTraitProviders = new TreeTraitProvider[ttps.size()];
+        ttps.toArray(treeTraitProviders);
 
         TreeLogger logger = new TreeLogger(tree, branchRates,
                 treeAttributeProviders, treeTraitProviders,
@@ -332,19 +325,6 @@ public class TreeLoggerParser extends LoggerParser {
 
         return logger;
     }
-
-    protected Tree tree;
-    protected String title;
-    protected boolean nexusFormat;
-    protected boolean sortTranslationTable;
-    protected BranchRates branchRates;
-    protected NumberFormat format = null;
-    protected TreeLogger.LogUpon condition;
-    protected boolean mapNames;
-    protected LogFormatter formatter;
-    protected TreeAttributeProvider[] treeAttributeProviders;
-    protected TreeTraitProvider[] treeTraitProviders;
-    protected int logEvery;
 
     //************************************************************************
     // AbstractXMLObjectParser implementation

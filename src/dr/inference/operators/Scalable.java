@@ -28,6 +28,8 @@ package dr.inference.operators;
 import dr.inference.model.Bounds;
 import dr.inference.model.Parameter;
 
+import java.io.Serializable;
+
 /**
  * A generic interface for objects capable of scaling.
  * <p/>
@@ -38,7 +40,7 @@ import dr.inference.model.Parameter;
  * @version $Id: UpDownOperator.java,v 1.25 2005/06/14 10:40:34 rambaut Exp $
  */
 
-public interface Scalable {
+public interface Scalable extends Serializable {
     /**
      * @param factor scaling factor
      * @param nDims

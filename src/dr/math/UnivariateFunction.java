@@ -26,12 +26,14 @@
 package dr.math;
 
 
+import java.io.Serializable;
+
 /**
  * Interface for a function of one variable.
  *
  * @author Korbinian Strimmer
  */
-public interface UnivariateFunction
+public interface UnivariateFunction extends Serializable
 {
 	/**
 	 * compute function value

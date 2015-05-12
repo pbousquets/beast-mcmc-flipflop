@@ -25,6 +25,8 @@
 
 package dr.inference.loggers;
 
+import java.io.Serializable;
+
 /**
  * An interface for a logger.
  *
@@ -33,7 +35,7 @@ package dr.inference.loggers;
  * @author Andrew Rambaut
  * @author Alexei Drummond
  */
-public interface Logger {
+public interface Logger extends Serializable {
 
 	void startLogging();
 

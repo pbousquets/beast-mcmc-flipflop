@@ -25,9 +25,10 @@
 
 package dr.xml;
 
+import java.io.Serializable;
 import java.util.Set;
 
-public interface XMLSyntaxRule {
+public interface XMLSyntaxRule extends Serializable {
 
 	/**
 	 * Returns true if the rule is satisfied for the given XML object.

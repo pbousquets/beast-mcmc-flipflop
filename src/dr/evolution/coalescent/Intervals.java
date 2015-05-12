@@ -27,6 +27,7 @@ package dr.evolution.coalescent;
 
 import dr.evolution.util.Units;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
@@ -197,7 +198,7 @@ public class Intervals implements IntervalList {
         this.units = units;
     }
 
-    private class Event implements Comparable {
+    private class Event implements Comparable, Serializable {
 
         public int compareTo(Object o) {
             double t = ((Event) o).time;
