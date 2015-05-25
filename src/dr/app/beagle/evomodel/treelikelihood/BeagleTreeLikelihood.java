@@ -56,6 +56,8 @@ import dr.inference.model.Parameter;
 import dr.inference.model.ThreadAwareLikelihood;
 import dr.math.MathUtils;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -69,7 +71,8 @@ import java.util.logging.Logger;
  */
 
 @SuppressWarnings("serial")
-public class BeagleTreeLikelihood extends AbstractSinglePartitionTreeLikelihood implements ThreadAwareLikelihood {
+public class BeagleTreeLikelihood extends AbstractSinglePartitionTreeLikelihood implements ThreadAwareLikelihood,
+        Serializable {
 
     // This property is a comma-delimited list of resource numbers (0 == CPU) to
     // allocate each BEAGLE instance to. If less than the number of instances then
@@ -1362,6 +1365,18 @@ public class BeagleTreeLikelihood extends AbstractSinglePartitionTreeLikelihood 
         double[] siteLogLikelihoods = new double[patternCount];
         beagle.getSiteLogLikelihoods(siteLogLikelihoods);
         return siteLogLikelihoods;
+    }
+
+//    private void writeObject(java.io.ObjectOutputStream out)
+//        throws IOException {
+//        System.err.println("Doing BTL writeObject");
+//        super.writeObject(out);
+//    }
+
+    private BeagleTreeLikelihood readObject(java.io.ObjectInputStream in)
+        throws IOException, ClassNotFoundException {
+        System.err.println("Doing no readObject");
+        return null;
     }
 
 }//END: class
