@@ -67,10 +67,10 @@ public class SliceOperator extends SimpleMetropolizedGibbsOperator {
         return variable;
     }
 
-    public double doOperation(Prior prior, Likelihood likelihood) throws OperatorFailedException {
-        double logPosterior = evaluate(likelihood, prior, 1.0);
+    public double doOperation(Likelihood jointDensity) throws OperatorFailedException {
+        double logPosterior = evaluate(jointDensity, 1.0);
         double cutoffDensity = logPosterior + MathUtils.randomLogDouble();
-        sliceInterval.drawFromInterval(prior, likelihood, cutoffDensity, width);
+        sliceInterval.drawFromInterval(jointDensity, cutoffDensity, width);
         // No need to set variable, as SliceInterval has already done this (and recomputed posterior)
         return 0;
     }
@@ -101,7 +101,7 @@ public class SliceOperator extends SimpleMetropolizedGibbsOperator {
         List<Likelihood> list = new ArrayList<Likelihood>();
         list.add(likelihood);
         list.add(prior);
-        CompoundLikelihood posterior = new CompoundLikelihood(0, list);
+        CompoundLikelihood jointDensity = new CompoundLikelihood(0, list);
         SliceOperator sliceSampler = new SliceOperator(meanParameter);
 
         final int length = 10000;
@@ -110,7 +110,7 @@ public class SliceOperator extends SimpleMetropolizedGibbsOperator {
 
         for(int i = 0; i < length; i++) {
             try {
-                sliceSampler.doOperation(null, posterior);
+                sliceSampler.doOperation(jointDensity);
             } catch (OperatorFailedException e) {
                 System.err.println(e.getMessage());
             }

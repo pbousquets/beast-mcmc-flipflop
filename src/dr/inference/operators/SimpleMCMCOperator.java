@@ -176,11 +176,11 @@ public abstract class SimpleMCMCOperator implements MCMCOperator {
         }
     }
 
-    public final double operate(Prior prior, Likelihood likelihood)
+    public final double operate(Likelihood jointDensity)
             throws OperatorFailedException {
         if( operateAllowed ) {
             operateAllowed = false;
-            return doOperation(prior, likelihood);
+            return doOperation(jointDensity);
         } else {
             throw new RuntimeException(
                     "Operate called twice without accept/reject in between!");
@@ -197,7 +197,7 @@ public abstract class SimpleMCMCOperator implements MCMCOperator {
      * @return the hastings ratio
      * @throws OperatorFailedException if operator fails and should be rejected
      */
-    public double doOperation(Prior prior, Likelihood likelihood)
+    public double doOperation(Likelihood jointDensity)
             throws OperatorFailedException {
         return 0.0;
     }

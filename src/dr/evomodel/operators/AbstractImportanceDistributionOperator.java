@@ -120,7 +120,7 @@ public abstract class AbstractImportanceDistributionOperator extends
       *
       * @see dr.inference.operators.AbstractImportanceSampler#doOperation()
       */
-    public double doOperation(Prior prior, Likelihood likelihood)
+    public double doOperation(Likelihood jointDensity)
             throws OperatorFailedException {
         if (!burnin) {
             if (sampleCount < samples * sampleEvery) {
@@ -135,7 +135,7 @@ public abstract class AbstractImportanceDistributionOperator extends
                 return doUnguidedOperation();
 
             } else {
-                return doImportanceDistributionOperation(prior, likelihood);
+                return doImportanceDistributionOperation(jointDensity);
             }
         } else {
 
@@ -144,8 +144,7 @@ public abstract class AbstractImportanceDistributionOperator extends
         }
     }
 
-    protected double doImportanceDistributionOperation(Prior prior,
-                                                       Likelihood likelihood) throws OperatorFailedException {
+    protected double doImportanceDistributionOperation(Likelihood jointDensity) throws OperatorFailedException {
         final NodeRef root = tree.getRoot();
         BitSet all = new BitSet();
         all.set(0, (tree.getNodeCount() + 1) / 2);

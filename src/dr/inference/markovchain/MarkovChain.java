@@ -57,8 +57,7 @@ public final class MarkovChain implements Serializable {
 
     private final OperatorSchedule schedule;
     private final Acceptor acceptor;
-    private final Prior prior;
-    private final Likelihood likelihood;
+    private final Likelihood jointDensity;
 
     private boolean pleaseStop = false;
     private boolean isStopped = false;
@@ -73,14 +72,16 @@ public final class MarkovChain implements Serializable {
     private double evaluationTestThreshold = EVALUATION_TEST_THRESHOLD;
 
 
-    public MarkovChain(Prior prior, Likelihood likelihood,
-                       OperatorSchedule schedule, Acceptor acceptor,
-                       long fullEvaluationCount, int minOperatorCountForFullEvaluation, double evaluationTestThreshold,
+    public MarkovChain(Likelihood jointDensity,
+                       OperatorSchedule schedule,
+                       Acceptor acceptor,
+                       long fullEvaluationCount,
+                       int minOperatorCountForFullEvaluation,
+                       double evaluationTestThreshold,
                        boolean useCoercion) {
 
         currentLength = 0;
-        this.prior = prior;
-        this.likelihood = likelihood;
+        this.jointDensity = jointDensity;
         this.schedule = schedule;
         this.acceptor = acceptor;
         this.useCoercion = useCoercion;
@@ -89,8 +90,8 @@ public final class MarkovChain implements Serializable {
         this.minOperatorCountForFullEvaluation = minOperatorCountForFullEvaluation;
         this.evaluationTestThreshold = evaluationTestThreshold;
 
-        Likelihood.CONNECTED_LIKELIHOOD_SET.add(likelihood);
-        Likelihood.CONNECTED_LIKELIHOOD_SET.addAll(likelihood.getLikelihoodSet());
+        Likelihood.CONNECTED_LIKELIHOOD_SET.add(this.jointDensity);
+        Likelihood.CONNECTED_LIKELIHOOD_SET.addAll(this.jointDensity.getLikelihoodSet());
 
         for (Likelihood l : Likelihood.FULL_LIKELIHOOD_SET) {
             if (!Likelihood.CONNECTED_LIKELIHOOD_SET.contains(l)) {
@@ -98,7 +99,7 @@ public final class MarkovChain implements Serializable {
             }
         }
 
-        currentScore = evaluate(likelihood, prior);
+        currentScore = evaluate(this.jointDensity);
     }
 
     /**
@@ -120,12 +121,12 @@ public final class MarkovChain implements Serializable {
      */
     public long runChain(long length, boolean disableCoerce) {
 
-        likelihood.makeDirty();
-        currentScore = evaluate(likelihood, prior);
+        jointDensity.makeDirty();
+        currentScore = evaluate(jointDensity);
 
         long currentState = currentLength;
 
-        final Model currentModel = likelihood.getModel();
+        final Model currentModel = jointDensity.getModel();
 
         if (currentState == 0) {
             initialScore = currentScore;
@@ -136,29 +137,20 @@ public final class MarkovChain implements Serializable {
         if (currentScore == Double.NEGATIVE_INFINITY) {
 
             // identify which component of the score is zero...
-            if (prior != null) {
-                double logPrior = prior.getLogPrior(likelihood.getModel());
-
-                if (logPrior == Double.NEGATIVE_INFINITY) {
-                    throw new IllegalArgumentException(
-                            "The initial model is invalid because one of the priors has zero probability.");
-                }
-            }
-
             String message = "The initial likelihood is zero";
-            if (likelihood instanceof CompoundLikelihood) {
-                message += ": " + ((CompoundLikelihood) likelihood).getDiagnosis();
-            } else if (likelihood instanceof PathLikelihood) {
-                message += ": " + ((CompoundLikelihood)((PathLikelihood) likelihood).getSourceLikelihood()).getDiagnosis();
-                message += ": " + ((CompoundLikelihood)((PathLikelihood) likelihood).getDestinationLikelihood()).getDiagnosis();
+            if (jointDensity instanceof CompoundLikelihood) {
+                message += ": " + ((CompoundLikelihood) jointDensity).getDiagnosis();
+            } else if (jointDensity instanceof PathLikelihood) {
+                message += ": " + ((CompoundLikelihood)((PathLikelihood) jointDensity).getSourceLikelihood()).getDiagnosis();
+                message += ": " + ((CompoundLikelihood)((PathLikelihood) jointDensity).getDestinationLikelihood()).getDiagnosis();
             } else {
                 message += ".";
             }
             throw new IllegalArgumentException(message);
         } else if (currentScore == Double.POSITIVE_INFINITY || Double.isNaN(currentScore)) {
             String message = "A likelihood returned with a numerical error";
-            if (likelihood instanceof CompoundLikelihood) {
-                message += ": " + ((CompoundLikelihood) likelihood).getDiagnosis();
+            if (jointDensity instanceof CompoundLikelihood) {
+                message += ": " + ((CompoundLikelihood) jointDensity).getDiagnosis();
             } else {
                 message += ".";
             }
@@ -196,8 +188,8 @@ public final class MarkovChain implements Serializable {
 
             double oldScore = currentScore;
             if (usingFullEvaluation) {
-                diagnosticStart = likelihood instanceof CompoundLikelihood ?
-                        ((CompoundLikelihood) likelihood).getDiagnosis() : "";
+                diagnosticStart = jointDensity instanceof CompoundLikelihood ?
+                        ((CompoundLikelihood) jointDensity).getDiagnosis() : "";
             }
 
             // assert Profiler.startProfile("Store");
@@ -224,7 +216,7 @@ public final class MarkovChain implements Serializable {
                 }
 
                 if (mcmcOperator instanceof GeneralOperator) {
-                    hastingsRatio = ((GeneralOperator) mcmcOperator).operate(prior, likelihood);
+                    hastingsRatio = ((GeneralOperator) mcmcOperator).operate(jointDensity);
                 } else {
                     hastingsRatio = mcmcOperator.operate();
                 }
@@ -253,7 +245,7 @@ public final class MarkovChain implements Serializable {
                 }
 
                 // The new model is evaluated
-                score = evaluate(likelihood, prior);
+                score = evaluate(jointDensity);
 
                 if (PROFILE) {
                     long duration = System.currentTimeMillis() - elapsedTime;
@@ -265,8 +257,8 @@ public final class MarkovChain implements Serializable {
 
                 String diagnosticOperator = "";
                 if (usingFullEvaluation) {
-                    diagnosticOperator = likelihood instanceof CompoundLikelihood ?
-                            ((CompoundLikelihood) likelihood).getDiagnosis() : "";
+                    diagnosticOperator = jointDensity instanceof CompoundLikelihood ?
+                            ((CompoundLikelihood) jointDensity).getDiagnosis() : "";
                 }
 
                 if (score == Double.NEGATIVE_INFINITY && mcmcOperator instanceof GibbsOperator) {
@@ -277,9 +269,9 @@ public final class MarkovChain implements Serializable {
 
                 if (score == Double.POSITIVE_INFINITY ||
                         Double.isNaN(score) ) {
-                    if (likelihood instanceof CompoundLikelihood) {
+                    if (jointDensity instanceof CompoundLikelihood) {
                         Logger.getLogger("error").severe("State "+currentState+": A likelihood returned with a numerical error:\n" +
-                                ((CompoundLikelihood)likelihood).getDiagnosis());
+                                ((CompoundLikelihood) jointDensity).getDiagnosis());
                     } else {
                         Logger.getLogger("error").severe("State "+currentState+": A likelihood returned with a numerical error.");
                     }
@@ -297,11 +289,11 @@ public final class MarkovChain implements Serializable {
                     // again and compared to the first result. This checks that the
                     // BEAST is aware of all changes that the operator induced.
 
-                    likelihood.makeDirty();
-                    final double testScore = evaluate(likelihood, prior);
+                    jointDensity.makeDirty();
+                    final double testScore = evaluate(jointDensity);
 
-                    final String d2 = likelihood instanceof CompoundLikelihood ?
-                            ((CompoundLikelihood) likelihood).getDiagnosis() : "";
+                    final String d2 = jointDensity instanceof CompoundLikelihood ?
+                            ((CompoundLikelihood) jointDensity).getDiagnosis() : "";
 
                     if (Math.abs(testScore - score) > evaluationTestThreshold) {
                         Logger.getLogger("error").severe(
@@ -354,11 +346,11 @@ public final class MarkovChain implements Serializable {
                     // restored state is fully evaluated and the likelihood compared with
                     // that before the operation was made.
 
-                    likelihood.makeDirty();
-                    final double testScore = evaluate(likelihood, prior);
+                    jointDensity.makeDirty();
+                    final double testScore = evaluate(jointDensity);
 
-                    final String d2 = likelihood instanceof CompoundLikelihood ?
-                            ((CompoundLikelihood) likelihood).getDiagnosis() : "";
+                    final String d2 = jointDensity instanceof CompoundLikelihood ?
+                            ((CompoundLikelihood) jointDensity).getDiagnosis() : "";
 
                     if (Math.abs(testScore - oldScore) > evaluationTestThreshold) {
 
@@ -416,16 +408,8 @@ public final class MarkovChain implements Serializable {
         // Profiler.report();
     }
 
-    public Prior getPrior() {
-        return prior;
-    }
-
-    public Likelihood getLikelihood() {
-        return likelihood;
-    }
-
     public Model getModel() {
-        return likelihood.getModel();
+        return jointDensity.getModel();
     }
 
     public OperatorSchedule getSchedule() {
@@ -465,33 +449,18 @@ public final class MarkovChain implements Serializable {
     }
 
     public double evaluate() {
-        return evaluate(likelihood, prior);
+        return evaluate(jointDensity);
     }
 
-    protected double evaluate(Likelihood likelihood, Prior prior) {
+    protected double evaluate(Likelihood jointDensity) {
 
-        double logPosterior = 0.0;
+        final double logP = jointDensity.getLogLikelihood();
 
-        if (prior != null) {
-            final double logPrior = prior.getLogPrior(likelihood.getModel());
-
-            if (logPrior == Double.NEGATIVE_INFINITY) {
-                return Double.NEGATIVE_INFINITY;
-            }
-
-            logPosterior += logPrior;
-        }
-
-        final double logLikelihood = likelihood.getLogLikelihood();
-
-        if (Double.isNaN(logLikelihood)) {
+        if (Double.isNaN(logP)) {
             return Double.NEGATIVE_INFINITY;
         }
-        // System.err.println("** " + logPosterior + " + " + logLikelihood +
-        // " = " + (logPosterior + logLikelihood));
-        logPosterior += logLikelihood;
 
-        return logPosterior;
+        return logP;
     }
 
     /**

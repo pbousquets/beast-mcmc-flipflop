@@ -433,20 +433,6 @@ public class MCMCMC implements Runnable {
     }
 
     /**
-     * @return the prior of this MCMC analysis.
-     */
-    public Prior getPrior() {
-        return chains[coldChain].getPrior();
-    }
-
-    /**
-     * @return the likelihood function.
-     */
-    public Likelihood getLikelihood() {
-        return chains[coldChain].getLikelihood();
-    }
-
-    /**
      * @return the timer.
      */
     public dr.util.Timer getTimer() {

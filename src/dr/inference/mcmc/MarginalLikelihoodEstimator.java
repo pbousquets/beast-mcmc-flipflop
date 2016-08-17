@@ -80,7 +80,7 @@ public class MarginalLikelihoodEstimator implements Runnable, Identifiable, Cita
         this.pathLikelihood = pathLikelihood;
         pathLikelihood.setPathParameter(pathParameter);
 
-        mc = new MarkovChain(Prior.UNIFORM_PRIOR, pathLikelihood, schedule, criterion, 0, 0, 0.0, true);
+        mc = new MarkovChain(pathLikelihood, schedule, criterion, 0, 0, 0.0, true);
 
         this.loggers = loggers;
     }

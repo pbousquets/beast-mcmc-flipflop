@@ -76,16 +76,16 @@ public class GibbsPruneAndRegraft extends SimpleMetropolizedGibbsOperator {
 	 * .Prior, dr.inference.model.Likelihood)
 	 */
 	@Override
-	public double doOperation(Prior prior, Likelihood likelihood)
+	public double doOperation(Likelihood likelihood)
 			throws OperatorFailedException {
 		if (pruned) {
-			return prunedGibbsProposal(prior, likelihood);
+			return prunedGibbsProposal(likelihood);
 		} else {
-			return GibbsProposal(prior, likelihood);
+			return gibbsProposal(likelihood);
 		}
 	}
 
-	private double GibbsProposal(Prior prior, Likelihood likelihood)
+	private double gibbsProposal(Likelihood likelihood)
 			throws OperatorFailedException {
 
 		final int nodeCount = tree.getNodeCount();
@@ -104,8 +104,7 @@ public class GibbsPruneAndRegraft extends SimpleMetropolizedGibbsOperator {
 		final NodeRef iP = tree.getParent(i);
 		final double heightIP = tree.getNodeHeight(iP);
 		double sum = 0.0;
-		double backwardLikelihood = calculateTreeLikelihood(prior, likelihood,
-				tree);
+		double backwardLikelihood = calculateTreeLikelihood(likelihood, tree);
 		int offset = (int) -backwardLikelihood;
 		double backward = Math.exp(backwardLikelihood + offset);
 		final NodeRef oldBrother = getOtherChild(tree, iP, i);
@@ -120,7 +119,7 @@ public class GibbsPruneAndRegraft extends SimpleMetropolizedGibbsOperator {
 					secondNodeIndices.add(n);
 
 					pruneAndRegraft(tree, i, iP, j, jP);
-					double prob = Math.exp(calculateTreeLikelihood(prior,
+					double prob = Math.exp(calculateTreeLikelihood(
 							likelihood, tree)
 							+ offset);
 					probabilities.add(prob);
@@ -161,7 +160,7 @@ public class GibbsPruneAndRegraft extends SimpleMetropolizedGibbsOperator {
 		return hastingsRatio;
 	}
 
-	private double prunedGibbsProposal(Prior prior, Likelihood likelihood)
+	private double prunedGibbsProposal(Likelihood likelihood)
 			throws OperatorFailedException {
 		final int nodeCount = tree.getNodeCount();
 		final NodeRef root = tree.getRoot();
@@ -183,8 +182,7 @@ public class GibbsPruneAndRegraft extends SimpleMetropolizedGibbsOperator {
 		final NodeRef iP = tree.getParent(i);
 		final double heightIP = tree.getNodeHeight(iP);
 		double sum = 0.0;
-		double backwardLikelihood = calculateTreeLikelihood(prior, likelihood,
-				tree);
+		double backwardLikelihood = calculateTreeLikelihood(likelihood, tree);
 		int offset = (int) -backwardLikelihood;
 		double backward = Math.exp(backwardLikelihood + offset);
 		final NodeRef oldBrother = getOtherChild(tree, iP, i);
@@ -200,9 +198,7 @@ public class GibbsPruneAndRegraft extends SimpleMetropolizedGibbsOperator {
 					secondNodeIndices.add(n);
 
 					pruneAndRegraft(tree, i, iP, j, jP);
-					double prob = Math.exp(calculateTreeLikelihood(prior,
-							likelihood, tree)
-							+ offset);
+					double prob = Math.exp(calculateTreeLikelihood(likelihood, tree) + offset);
 					probabilities.add(prob);
 					scores[n] = prob;
 					sum += prob;
@@ -250,13 +246,11 @@ public class GibbsPruneAndRegraft extends SimpleMetropolizedGibbsOperator {
 						sumBackward += scores[n];
 					} else {
 						pruneAndRegraft(tree, i, iP, j, jP);
-						double prob = Math.exp(calculateTreeLikelihood(prior,
-								likelihood, tree)
-								+ offset);
+						double prob = Math.exp(calculateTreeLikelihood(likelihood, tree) + offset);
 						sumBackward += prob;
 
 						pruneAndRegraft(tree, i, iP, newBrother, newGrandfather);
-						evaluate(likelihood, prior, 1.0);
+						evaluate(likelihood, 1.0);
 					}
 				}
 			}
@@ -296,9 +290,9 @@ public class GibbsPruneAndRegraft extends SimpleMetropolizedGibbsOperator {
 		}
 	}
 
-	private double calculateTreeLikelihood(Prior prior, Likelihood likelihood,
+	private double calculateTreeLikelihood(Likelihood likelihood,
 			TreeModel tree) {
-		return evaluate(likelihood, prior, 1.0);
+		return evaluate(likelihood, 1.0);
 	}
 
 	private void pruneAndRegraft(TreeModel tree, NodeRef i, NodeRef iP,

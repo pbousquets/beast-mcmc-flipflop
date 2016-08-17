@@ -46,7 +46,7 @@ public abstract class SimpleMetropolizedGibbsOperator extends SimpleOperator imp
         // Do nothing
     }
 
-    public abstract double doOperation(Prior prior, Likelihood likelihood)
+    public abstract double doOperation(Likelihood jointDensity)
             throws OperatorFailedException;
 
     /*
@@ -65,14 +65,14 @@ public abstract class SimpleMetropolizedGibbsOperator extends SimpleOperator imp
     public abstract String getOperatorName();
 
     public final double operate() throws OperatorFailedException {
-        return operate(null, null);
+        return operate(null);
     }
 
-    public final double operate(Prior prior, Likelihood likelihood)
+    public final double operate(Likelihood likelihood)
             throws OperatorFailedException {
         if (operateAllowed) {
             operateAllowed = false;
-            return doOperation(prior, likelihood);
+            return doOperation(likelihood);
         } else
             throw new RuntimeException(
                     "Operate called twice without accept/reject in between!");
@@ -132,21 +132,11 @@ public abstract class SimpleMetropolizedGibbsOperator extends SimpleOperator imp
         return 1.0;
     }
 
-    protected double evaluate(Likelihood likelihood, Prior prior, double pathParameter) {
+    protected double evaluate(Likelihood jointDensity, double pathParameter) {
 
         double logPosterior = 0.0;
 
-        if (prior != null) {
-            final double logPrior = prior.getLogPrior(likelihood.getModel()) * pathParameter;
-
-            if (logPrior == Double.NEGATIVE_INFINITY) {
-                return Double.NEGATIVE_INFINITY;
-            }
-
-            logPosterior += logPrior;
-        }
-
-        final double logLikelihood = likelihood.getLogLikelihood() * pathParameter;
+        final double logLikelihood = jointDensity.getLogLikelihood() * pathParameter;
 
         if (Double.isNaN(logLikelihood)) {
             return Double.NEGATIVE_INFINITY;
@@ -158,15 +148,15 @@ public abstract class SimpleMetropolizedGibbsOperator extends SimpleOperator imp
         return logPosterior;
     }
 
-    protected void restore(Prior prior, Likelihood likelihood,
+    protected void restore(Likelihood jointDensity,
                            Model currentModel, MCMCOperator mcmcOperator, double oldScore) {
         currentModel.restoreModelState();
 
         // This is a test that the state is correctly restored. The restored
         // state is fully evaluated and the likelihood compared with that before
         // the operation was made.
-        likelihood.makeDirty();
-        final double testScore = evaluate(likelihood, prior, 1.0);
+        jointDensity.makeDirty();
+        final double testScore = evaluate(jointDensity, 1.0);
 
         if (Math.abs(testScore - oldScore) > 1e-6) {
             Logger.getLogger("error").severe(

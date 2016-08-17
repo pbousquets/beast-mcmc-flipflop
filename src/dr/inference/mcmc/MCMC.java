@@ -70,16 +70,16 @@ public class MCMC implements Identifiable, Spawnable, Loggable {
      *
      * @param options    the options for this MCMC analysis
      * @param schedule   operator schedule to be used in chain.
-     * @param likelihood the likelihood for this MCMC
+     * @param jointDensity the joint density for this MCMC
      * @param loggers    an array of loggers to record output of this MCMC run
      */
     public void init(
             MCMCOptions options,
-            Likelihood likelihood,
+            Likelihood jointDensity,
             OperatorSchedule schedule,
             Logger[] loggers) {
 
-        init(options, likelihood, Prior.UNIFORM_PRIOR, schedule, loggers, new MarkovChainDelegate[0]);
+        init(options, jointDensity, schedule, loggers, new MarkovChainDelegate[0]);
     }
 
     /**
@@ -87,53 +87,13 @@ public class MCMC implements Identifiable, Spawnable, Loggable {
      *
      * @param options    the options for this MCMC analysis
      * @param schedule   operator schedule to be used in chain.
-     * @param likelihood the likelihood for this MCMC
+     * @param jointDensity the joint density for this MCMC
      * @param loggers    an array of loggers to record output of this MCMC run
      * @param delegates    an array of delegates to handle tasks related to the MCMC
      */
     public void init(
             MCMCOptions options,
-            Likelihood likelihood,
-            OperatorSchedule schedule,
-            Logger[] loggers,
-            MarkovChainDelegate[] delegates) {
-
-        init(options, likelihood, Prior.UNIFORM_PRIOR, schedule, loggers, delegates);
-    }
-
-    /**
-     * Must be called before calling chain.
-     *
-     * @param options    the options for this MCMC analysis
-     * @param prior      the prior disitrbution on the model parameters.
-     * @param schedule   operator schedule to be used in chain.
-     * @param likelihood the likelihood for this MCMC
-     * @param loggers    an array of loggers to record output of this MCMC run
-     */
-    public void init(
-            MCMCOptions options,
-            Likelihood likelihood,
-            Prior prior,
-            OperatorSchedule schedule,
-            Logger[] loggers) {
-
-        init(options, likelihood, prior, schedule, loggers, new MarkovChainDelegate[0]);
-    }
-
-    /**
-     * Must be called before calling chain.
-     *
-     * @param options    the options for this MCMC analysis
-     * @param prior      the prior disitrbution on the model parameters.
-     * @param schedule   operator schedule to be used in chain.
-     * @param likelihood the likelihood for this MCMC
-     * @param loggers    an array of loggers to record output of this MCMC run
-     * @param delegates    an array of delegates to handle tasks related to the MCMC
-     */
-    public void init(
-            MCMCOptions options,
-            Likelihood likelihood,
-            Prior prior,
+            Likelihood jointDensity,
             OperatorSchedule schedule,
             Logger[] loggers,
             MarkovChainDelegate[] delegates) {
@@ -141,7 +101,7 @@ public class MCMC implements Identifiable, Spawnable, Loggable {
         MCMCCriterion criterion = new MCMCCriterion();
         criterion.setTemperature(options.getTemperature());
 
-        mc = new MarkovChain(prior, likelihood, schedule, criterion,
+        mc = new MarkovChain(jointDensity, schedule, criterion,
                 options.getFullEvaluationCount(), options.minOperatorCountForFullEvaluation(),
                 options.getEvaluationTestThreshold(),
                 options.useCoercion());
@@ -189,7 +149,7 @@ public class MCMC implements Identifiable, Spawnable, Loggable {
         OperatorSchedule schedule = new SimpleOperatorSchedule();
         for (MCMCOperator operator : operators) schedule.addOperator(operator);
 
-        init(options, likelihood, Prior.UNIFORM_PRIOR, schedule, loggers);
+        init(options, likelihood, schedule, loggers);
     }
 
     public MarkovChain getMarkovChain() {
@@ -496,20 +456,6 @@ public class MCMC implements Identifiable, Spawnable, Loggable {
         }
 
         return performacsMsg;
-    }
-
-    /**
-     * @return the prior of this MCMC analysis.
-     */
-    public Prior getPrior() {
-        return mc.getPrior();
-    }
-
-    /**
-     * @return the likelihood function.
-     */
-    public Likelihood getLikelihood() {
-        return mc.getLikelihood();
     }
 
     /**

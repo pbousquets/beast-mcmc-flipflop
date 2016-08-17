@@ -78,7 +78,7 @@ public class GibbsSubtreeSwapTestProblem extends OperatorAssert{
             try {
                 TreeModel treeModel = new TreeModel("treeModel", tree5);
                 GibbsSubtreeSwap operator = new GibbsSubtreeSwap(treeModel, false, 1.0);
-                double hr = operator.operate(null, null);
+                double hr = operator.operate();
 
                 String tree = Tree.Utils.newickNoLengths(treeModel);
 
