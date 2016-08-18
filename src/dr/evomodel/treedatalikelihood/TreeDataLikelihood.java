@@ -209,12 +209,6 @@ public final class TreeDataLikelihood extends AbstractModelLikelihood implements
         likelihoodKnown = true;
     }
 
-    @Override
-    protected void acceptState() {
-    } // nothing to do
-
-
-
     /**
      * Calculate the log likelihood of the data for the current tree.
      *

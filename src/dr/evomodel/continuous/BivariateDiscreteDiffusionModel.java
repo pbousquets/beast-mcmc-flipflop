@@ -66,7 +66,7 @@ public class BivariateDiscreteDiffusionModel extends MultivariateDiffusionModel 
         this.eVec = eVec;
 //		probabilityCache = new HashMap<Integer,Double>();
 
-        addVariable(graphRate);
+        addParameter(graphRate);
 
         System.err.println("TEST00 = " + getCTMCProbability(0, 0, 0.0));
         System.err.println("TEST01 = " + getCTMCProbability(0, 1, 0.0));

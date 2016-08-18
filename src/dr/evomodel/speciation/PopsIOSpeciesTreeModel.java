@@ -287,7 +287,7 @@ public class PopsIOSpeciesTreeModel extends AbstractModel implements SlidableTre
         this.piosb = piosb;
 
         this.popPriorScale = popPriorScale;
-        addVariable(popPriorScale);
+        addParameter(popPriorScale);
         popPriorScale.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
         this.priorComponents = priorComponents;
@@ -702,12 +702,6 @@ public class PopsIOSpeciesTreeModel extends AbstractModel implements SlidableTre
         rootn = oldrootn;
         stree = makeSimpleTree();
     }
-
-    @Override
-    protected void acceptState() {
-    }
-
-
 
     /*******************************************************************************/
     // for SlidableTree.

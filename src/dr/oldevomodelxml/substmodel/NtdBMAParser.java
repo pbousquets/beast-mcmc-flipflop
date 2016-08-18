@@ -25,6 +25,7 @@
 
 package dr.oldevomodelxml.substmodel;
 
+import dr.inference.model.Parameter;
 import dr.xml.*;
 import dr.oldevomodel.substmodel.FrequencyModel;
 import dr.oldevomodel.substmodel.NtdBMA;
@@ -54,13 +55,13 @@ public class NtdBMAParser extends AbstractXMLObjectParser {
 
 
 
-        Variable kappa = (Variable) xo.getElementFirstChild(KAPPA);
-        Variable tn = (Variable) xo.getElementFirstChild(TN);
-        Variable ac = (Variable) xo.getElementFirstChild(AC);
-        Variable at = (Variable) xo.getElementFirstChild(AT);
-        Variable gc = (Variable) xo.getElementFirstChild(GC);
-        Variable gt  = (Variable) xo.getElementFirstChild(GT);
-        Variable modelChoose  = (Variable) xo.getElementFirstChild(MODEL_CHOOSE);
+        Parameter kappa = (Parameter) xo.getElementFirstChild(KAPPA);
+        Parameter tn = (Parameter) xo.getElementFirstChild(TN);
+        Parameter ac = (Parameter) xo.getElementFirstChild(AC);
+        Parameter at = (Parameter) xo.getElementFirstChild(AT);
+        Parameter gc = (Parameter) xo.getElementFirstChild(GC);
+        Parameter gt  = (Parameter) xo.getElementFirstChild(GT);
+        Parameter modelChoose  = (Parameter) xo.getElementFirstChild(MODEL_CHOOSE);
         XMLObject cxo = xo.getChild(FREQUENCIES);
         FrequencyModel freqModel = (FrequencyModel) cxo.getChild(FrequencyModel.class);
 
@@ -80,17 +81,17 @@ public class NtdBMAParser extends AbstractXMLObjectParser {
             new ElementRule(FREQUENCIES,
                     new XMLSyntaxRule[]{new ElementRule(FrequencyModel.class)}),
             new ElementRule(KAPPA,
-                    new XMLSyntaxRule[]{new ElementRule(Variable.class)}, true),
+                    new XMLSyntaxRule[]{new ElementRule(Parameter.class)}, true),
             new ElementRule(AC,
-                    new XMLSyntaxRule[]{new ElementRule(Variable.class)}, true),
+                    new XMLSyntaxRule[]{new ElementRule(Parameter.class)}, true),
             new ElementRule(AT,
-                    new XMLSyntaxRule[]{new ElementRule(Variable.class)}, true),
+                    new XMLSyntaxRule[]{new ElementRule(Parameter.class)}, true),
             new ElementRule(GC,
-                    new XMLSyntaxRule[]{new ElementRule(Variable.class)}, true),
+                    new XMLSyntaxRule[]{new ElementRule(Parameter.class)}, true),
             new ElementRule(GT,
-                    new XMLSyntaxRule[]{new ElementRule(Variable.class)}, true),
+                    new XMLSyntaxRule[]{new ElementRule(Parameter.class)}, true),
             new ElementRule(MODEL_CHOOSE,
-                    new XMLSyntaxRule[]{new ElementRule(Variable.class)}, true),
+                    new XMLSyntaxRule[]{new ElementRule(Parameter.class)}, true),
     };
         public String getParserDescription() {
         return "A model that allows model averaging over nucleotide substitution models.";

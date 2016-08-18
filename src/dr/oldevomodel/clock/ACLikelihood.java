@@ -55,7 +55,7 @@ public class ACLikelihood extends RateEvolutionLikelihood {
         this.variance = variance;
         this.distribution = distribution;
 
-        addVariable(variance);
+        addParameter(variance);
     }
 
     /**

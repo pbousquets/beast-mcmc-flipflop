@@ -107,7 +107,7 @@ public class SpeciesTreeModel extends AbstractModel implements
         this.nonConstRootPopulation = nonConstRootPopulation;
         this.constantPopulation = constantPopulation;
 
-        addVariable(sppSplitPopulations);
+        addParameter(sppSplitPopulations);
 
         addModel(species);
 
@@ -115,8 +115,8 @@ public class SpeciesTreeModel extends AbstractModel implements
             assert coalPointsIndicator != null;
             assert !constantPopulation;
 
-            addVariable(coalPointsPops);
-            addVariable(coalPointsIndicator);
+            addParameter(coalPointsPops);
+            addParameter(coalPointsIndicator);
 
             final double[][] pts = species.getPopTimesSingle();
 

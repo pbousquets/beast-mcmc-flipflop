@@ -102,7 +102,4 @@ public class HomogeneousBranchModel extends AbstractModel implements BranchModel
     protected void restoreState() {
     }
 
-    @Override
-    protected void acceptState() {
-    }
 }

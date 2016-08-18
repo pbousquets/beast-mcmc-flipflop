@@ -31,7 +31,6 @@ import dr.inference.model.*;
 import dr.inferencexml.distribution.DistributionLikelihoodParser;
 import dr.math.distributions.*;
 import dr.util.Attribute;
-import dr.util.Citable;
 import dr.util.Transform;
 import dr.xml.*;
 
@@ -129,8 +128,8 @@ public class MultivariateDistributionLikelihood extends AbstractDistributionLike
     public void addData(Attribute<double[]> data) {
         super.addData(data);
 
-        if (data instanceof Variable && getModel() instanceof DefaultModel) {
-            ((DefaultModel) getModel()).addVariable((Variable) data);
+        if (data instanceof Parameter && getModel() instanceof DefaultModel) {
+            ((DefaultModel) getModel()).addParameter((Parameter)data);
         }
     }
 

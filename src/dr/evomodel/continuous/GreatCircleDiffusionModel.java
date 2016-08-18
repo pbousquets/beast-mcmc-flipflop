@@ -44,10 +44,10 @@ public class GreatCircleDiffusionModel extends MultivariateDiffusionModel {
     public GreatCircleDiffusionModel(Parameter precision, Parameter coefficient) {
         super();
         this.precision = precision;
-        addVariable(precision);
+        addParameter(precision);
         this.coefficient = coefficient;
         if (coefficient != null)
-            addVariable(coefficient);
+            addParameter(coefficient);
     }
 
     public GreatCircleDiffusionModel(Parameter precision) {

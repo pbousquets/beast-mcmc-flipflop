@@ -27,7 +27,7 @@ package dr.evomodel.substmodel;
 
 import dr.inference.model.*;
 import dr.evolution.datatype.DataType;
-import dr.inference.operators.BayesianStochasticSearchVariableSelection;
+import dr.inference.model.BayesianStochasticSearchVariableSelection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +46,7 @@ public class SVSComplexSubstitutionModel extends ComplexSubstitutionModel implem
             this.indicatorsParameter = new Parameter.Default(ratesParameter.getDimension(), 1.0);
         } else {
             this.indicatorsParameter  = indicatorsParameter;
-            addVariable(indicatorsParameter);
+            addParameter(indicatorsParameter);
         }
 
         setupIndicatorDimensionNames(-1);

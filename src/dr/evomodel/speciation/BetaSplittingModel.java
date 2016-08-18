@@ -44,7 +44,7 @@ public class BetaSplittingModel extends BranchingModel {
         super(BetaSplittingModelParser.BETA_SPLITTING_MODEL);
 
         this.phiParameter = phiParameter;
-        addVariable(phiParameter);
+        addParameter(phiParameter);
         phiParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
         N = tree.getExternalNodeCount();
         logProbs = new double[N + 1][N + 1];

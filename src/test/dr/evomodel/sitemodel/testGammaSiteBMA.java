@@ -25,7 +25,7 @@ public class testGammaSiteBMA extends TestCase {
 
         int getCategoryCount();
 
-        Variable<Integer> getModelChoose();
+        Parameter getModelChoose();
 
         double[] getCategoryRates();
 
@@ -65,8 +65,8 @@ public class testGammaSiteBMA extends TestCase {
             return 4;
         }
 
-        public Variable<Integer> getModelChoose(){
-            return new Variable.I(new int[]{0, 0});
+        public Parameter getModelChoose(){
+            return new Parameter.Default(new double[]{0, 0});
         }
 
         public double[] getCategoryRates(){
@@ -112,8 +112,8 @@ public class testGammaSiteBMA extends TestCase {
             return 4;
         }
 
-        public Variable<Integer> getModelChoose(){
-            return new Variable.I(new int[]{0, 1});
+        public Parameter getModelChoose(){
+            return new Parameter.Default(new double[]{0, 0});
         }
 
         public double[] getCategoryRates(){
@@ -160,8 +160,8 @@ public class testGammaSiteBMA extends TestCase {
             return 4;
         }
 
-        public Variable<Integer> getModelChoose(){
-            return new Variable.I(new int[]{1, 1});
+        public Parameter getModelChoose(){
+            return new Parameter.Default(new double[]{0, 0});
         }
 
         public double[] getCategoryRates(){
@@ -207,8 +207,8 @@ public class testGammaSiteBMA extends TestCase {
             return 8;
         }
 
-        public Variable<Integer> getModelChoose(){
-            return new Variable.I(new int[]{1, 1});
+        public Parameter getModelChoose(){
+            return new Parameter.Default(new double[]{0, 0});
         }
 
         public double[] getCategoryRates(){
@@ -230,7 +230,7 @@ public class testGammaSiteBMA extends TestCase {
             Parameter logitInvar = new Parameter.Default(test.getLogitInvar());
             Parameter logShape = new Parameter.Default(test.getLogShape());
             int catCount = test.getCategoryCount();
-            Variable<Integer> modelChoose = test.getModelChoose();
+            Parameter modelChoose = test.getModelChoose();
             GammaSiteBMA gammaSiteBMA = new GammaSiteBMA(
                     substModel,
                     mu,

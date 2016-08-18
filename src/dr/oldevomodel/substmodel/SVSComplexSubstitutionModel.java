@@ -26,7 +26,7 @@
 package dr.oldevomodel.substmodel;
 
 import dr.evolution.datatype.DataType;
-import dr.inference.operators.BayesianStochasticSearchVariableSelection;
+import dr.inference.model.BayesianStochasticSearchVariableSelection;
 import dr.inference.model.Parameter;
 import dr.inference.model.Variable;
 import dr.math.matrixAlgebra.Vector;
@@ -41,7 +41,7 @@ public class SVSComplexSubstitutionModel extends ComplexSubstitutionModel implem
         super(name, dataType, rootFreqModel, rates);
         if (indicators != null) {
             this.indicators = indicators;
-            addVariable(indicators);
+            addParameter(indicators);
         } else {
             this.indicators = new Parameter.Default(rates.getDimension(), 1.0);
         }

@@ -62,7 +62,7 @@ public class MarkovModulatedFrequencyModel extends FrequencyModel {
         }
         totalFreqCount = freqCount;
         this.switchingRates = switchingRates;
-        addVariable(switchingRates);
+        addParameter(switchingRates);
 
 //        if (switchingRates.getDimension() > 2 ||  numBaseModel > 2) {
 //            throw new RuntimeException("MarkovModulatedFrequencyModel not yet implemented for more than 2 hidden classes");

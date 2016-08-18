@@ -49,7 +49,7 @@ public class PopSizeStatistic extends Statistic.Abstract {
     }
 
     public int getDimension() {
-        return 2 + model.getVariableCount();
+        return 2 + model.getParameterCount();
     }
 
     /**

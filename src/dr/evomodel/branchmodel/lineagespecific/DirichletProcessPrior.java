@@ -77,10 +77,10 @@ public class DirichletProcessPrior  extends AbstractModelLikelihood  {
 		cachedLogFactorials.add(0, 0.0);
 
 		// add all
-		this.addVariable(this.categoriesParameter);
-		this.addVariable(this.gamma);
+		this.addParameter(this.categoriesParameter);
+		this.addParameter(this.gamma);
 		
-		this.addVariable(this.uniquelyRealizedParameters);
+		this.addParameter(this.uniquelyRealizedParameters);
 		
 		if(baseModel != null) {
 		this.addModel(baseModel);
@@ -265,11 +265,6 @@ public class DirichletProcessPrior  extends AbstractModelLikelihood  {
 	@Override
 	protected void restoreState() {
 		likelihoodKnown = false;
-	}
-
-	@Override
-	protected void acceptState() {
-
 	}
 
 	public static void main(String args[]) {

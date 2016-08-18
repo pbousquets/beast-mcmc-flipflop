@@ -732,10 +732,6 @@ public class BeagleDataLikelihoodDelegate extends AbstractModel implements DataL
 
     }
 
-    @Override
-    protected void acceptState() {
-    }
-
     // **************************************************************
     // INSTANCE CITABLE
     // **************************************************************

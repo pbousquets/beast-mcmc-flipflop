@@ -91,7 +91,7 @@ public abstract class AbstractTreeParameterModel<T> extends AbstractModel implem
         }
 
         addModel(tree);
-        addVariable(parameter);
+        addParameter(parameter);
 
         rootNodeNumber = tree.getRoot().getNumber();
         storedRootNodeNumber = rootNodeNumber;

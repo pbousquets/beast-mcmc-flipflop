@@ -1980,10 +1980,10 @@ public class ARGModel extends AbstractModel implements MutableTree, Loggable {
 
         if (addedParameters != null) {
             if (addedParameters.length == 5) {
-                removeVariable(addedParameters[0]);
-                removeVariable(addedParameters[1]);
-                removeVariable(addedParameters[2]);
-                removeVariable(addedParameters[3]);
+                removeParameter(addedParameters[0]);
+                removeParameter(addedParameters[1]);
+                removeParameter(addedParameters[2]);
+                removeParameter(addedParameters[3]);
 
                 storedInternalNodeHeights.removeParameter(addedParameters[0]);
                 storedInternalNodeHeights.removeParameter(addedParameters[4]);
@@ -1996,35 +1996,35 @@ public class ARGModel extends AbstractModel implements MutableTree, Loggable {
                 storedInternalNodeHeights.removeParameter(addedParameters[0]);
                 storedInternalNodeHeights.removeParameter(addedParameters[1]);
 
-                removeVariable(addedParameters[0]);
-                removeVariable(addedParameters[1]);
+                removeParameter(addedParameters[0]);
+                removeParameter(addedParameters[1]);
 
                 storedInternalAndRootNodeHeights
                         .removeParameter(addedParameters[0]);
                 storedInternalAndRootNodeHeights
                         .removeParameter(addedParameters[1]);
 
-                removeVariable(addedParameters[2]);
-                removeVariable(addedParameters[3]);
+                removeParameter(addedParameters[2]);
+                removeParameter(addedParameters[3]);
                 storedNodeRates.removeParameter(addedParameters[2]);
 //                storedNodeRates.removeVariable(addedParameters[3]);
             }
         }
         if (addedPartitioningParameter != null) {
             partitioningParameters.removeParameter(addedPartitioningParameter);
-            removeVariable(addedPartitioningParameter);
+            removeParameter(addedPartitioningParameter);
         }
         if (removedParameters != null) {
             storedInternalNodeHeights.addParameter(removedParameters[0]);
             storedInternalNodeHeights.addParameter(removedParameters[1]);
-            addVariable(removedParameters[0]);
-            addVariable(removedParameters[1]);
+            addParameter(removedParameters[0]);
+            addParameter(removedParameters[1]);
 
             storedInternalAndRootNodeHeights.addParameter(removedParameters[0]);
             storedInternalAndRootNodeHeights.addParameter(removedParameters[1]);
 
-            addVariable(removedParameters[2]);
-            addVariable(removedParameters[3]);
+            addParameter(removedParameters[2]);
+            addParameter(removedParameters[3]);
             storedNodeRates.addParameter(removedParameters[2]);
 //            storedNodeRates.addVariable(removedParameters[3]);
 
@@ -2032,7 +2032,7 @@ public class ARGModel extends AbstractModel implements MutableTree, Loggable {
 
         if (removedPartitioningParameter != null) {
             partitioningParameters.addParameter(removedPartitioningParameter);
-            addVariable(removedPartitioningParameter);
+            addParameter(removedPartitioningParameter);
         }
 
 
@@ -2076,12 +2076,12 @@ public class ARGModel extends AbstractModel implements MutableTree, Loggable {
                           CompoundParameter internalAndRootNodeParameters,
                           CompoundParameter nodeRates) {
 
-        addVariable(newbie1.heightParameter);
-        addVariable(newbie2.heightParameter);
-        addVariable(newbie2.partitioning);
+        addParameter(newbie1.heightParameter);
+        addParameter(newbie2.heightParameter);
+        addParameter(newbie2.partitioning);
 
-        addVariable(newbie1.rateParameter);
-        addVariable(newbie2.rateParameter);
+        addParameter(newbie1.rateParameter);
+        addParameter(newbie2.rateParameter);
 
         addedParameters = new Parameter[4];
         addedParameters[0] = newbie1.heightParameter;
@@ -2118,14 +2118,14 @@ public class ARGModel extends AbstractModel implements MutableTree, Loggable {
                                          CompoundParameter nodeRates) {
         // System.err.println("attempting to expand");
 
-        addVariable(newbie1.heightParameter);
-        addVariable(newbie2.heightParameter);
-        addVariable(newbie2.partitioning);
+        addParameter(newbie1.heightParameter);
+        addParameter(newbie2.heightParameter);
+        addParameter(newbie2.partitioning);
 
         // System.err.println("expand 0");
 
-        addVariable(newbie1.rateParameter);
-        addVariable(newbie2.rateParameter);
+        addParameter(newbie1.rateParameter);
+        addParameter(newbie2.rateParameter);
 
         // System.err.println("expand 1");
 
@@ -2186,12 +2186,12 @@ public class ARGModel extends AbstractModel implements MutableTree, Loggable {
                                                   CompoundParameter internalNodeParameters,
                                                   CompoundParameter internalAndRootNodeParameters,
                                                   CompoundParameter nodeRates) {
-        removeVariable(oldie.heightParameter);
-        removeVariable(oldRoot.heightParameter);
-        removeVariable(oldie.partitioning);
+        removeParameter(oldie.heightParameter);
+        removeParameter(oldRoot.heightParameter);
+        removeParameter(oldie.partitioning);
 
-        removeVariable(oldie.rateParameter);
-        removeVariable(oldie.rateParameter);
+        removeParameter(oldie.rateParameter);
+        removeParameter(oldie.rateParameter);
 
         removedParameters = new Parameter[4];
         removedParameters[0] = oldie.heightParameter;
@@ -2231,13 +2231,13 @@ public class ARGModel extends AbstractModel implements MutableTree, Loggable {
                             CompoundParameter internalAndRootNodeParameters,
                             CompoundParameter nodeRates) {
 
-        removeVariable(oldie1.heightParameter);
-        removeVariable(oldie2.heightParameter);
-        removeVariable(oldie2.partitioning);
+        removeParameter(oldie1.heightParameter);
+        removeParameter(oldie2.heightParameter);
+        removeParameter(oldie2.partitioning);
 
 
-        removeVariable(oldie1.rateParameter);
-        removeVariable(oldie2.rateParameter);
+        removeParameter(oldie1.rateParameter);
+        removeParameter(oldie2.rateParameter);
 
 
         removedParameters = new Parameter[4];
@@ -2285,13 +2285,13 @@ public class ARGModel extends AbstractModel implements MutableTree, Loggable {
                                            CompoundParameter internalAndRootNodeParameters,
                                            CompoundParameter nodeRates) {
 
-        removeVariable(oldie1.heightParameter);
-        removeVariable(oldie2.heightParameter);
-        removeVariable(oldie2.partitioning);
+        removeParameter(oldie1.heightParameter);
+        removeParameter(oldie2.heightParameter);
+        removeParameter(oldie2.partitioning);
 
 
-        removeVariable(oldie1.rateParameter);
-        removeVariable(oldie2.rateParameter);
+        removeParameter(oldie1.rateParameter);
+        removeParameter(oldie2.rateParameter);
 
 
         removedParameters = new Parameter[4];
@@ -3385,7 +3385,7 @@ public class ARGModel extends AbstractModel implements MutableTree, Loggable {
             // rightPartition = null;
             partitioning = null;
             heightParameter = new Parameter.Default(tree.getNodeHeight(node));
-            addVariable(heightParameter);
+            addParameter(heightParameter);
 
             number = node.getNumber();
             taxon = tree.getNodeTaxon(node);
@@ -3552,7 +3552,7 @@ public class ARGModel extends AbstractModel implements MutableTree, Loggable {
                 }
                 rateParameter.addBounds(new Parameter.DefaultBounds(
                         Double.POSITIVE_INFINITY, 0, startingRateValues.length));
-                addVariable(rateParameter);
+                addParameter(rateParameter);
             }
         }
 
@@ -3569,7 +3569,7 @@ public class ARGModel extends AbstractModel implements MutableTree, Loggable {
                 rateParameter.addBounds(new Parameter.DefaultBounds(
                         Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
 
-                addVariable(traitParameter);
+                addParameter(traitParameter);
             }
         }
 

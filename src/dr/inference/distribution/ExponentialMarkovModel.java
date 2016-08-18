@@ -58,7 +58,7 @@ public class ExponentialMarkovModel extends AbstractModelLikelihood {
         this.reverse = reverse;
         this.shape = shape;
 
-        addVariable(chainParameter);
+        addParameter(chainParameter);
         chainParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, chainParameter.getDimension()));
     }
 

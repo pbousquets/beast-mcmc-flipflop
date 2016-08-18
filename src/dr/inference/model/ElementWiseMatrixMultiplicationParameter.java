@@ -1,5 +1,7 @@
 package dr.inference.model;
 
+import java.util.Map;
+
 /**
  * Created by max on 11/30/15.
  */
@@ -36,18 +38,33 @@ public class ElementWiseMatrixMultiplicationParameter extends MatrixParameter {
     }
 
 
+    @Override
     protected void storeValues() {
         for (Parameter p : paramList) {
-            p.storeParameterValues();
+            p.storeModelState();
         }
     }
 
+    @Override
     protected void restoreValues() {
         for (Parameter p : paramList) {
-            p.restoreParameterValues();
+            p.restoreModelState();
         }
     }
 
+    @Override
+    protected void saveValues(Map<String, Object> stateMap) {
+        for (Parameter parameter : paramList) {
+            parameter.saveModelState(stateMap);
+        }
+    }
+
+    @Override
+    protected void loadValues(Map<String, Object> stateMap) {
+        for (Parameter parameter : paramList) {
+            parameter.loadModelState(stateMap);
+        }
+    }
     @Override
     public void variableChangedEvent(Variable variable, int index, ChangeType type) {
         fireParameterChangedEvent(index, type);

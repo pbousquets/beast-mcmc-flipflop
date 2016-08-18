@@ -59,7 +59,7 @@ public class ARGRelaxedClock extends AbstractBranchRateModel {
         globalRateParameter = rate;
 
         addModel(arg);
-        addVariable(rate);
+        addParameter(rate);
     }
 
     protected void acceptState() {

@@ -52,11 +52,11 @@ public class TN93 extends BaseSubstitutionModel implements Citable {
         super("TN93", Nucleotides.INSTANCE, freqModel);
 
         this.kappaParameter1 = kappaParameter1;
-        addVariable(kappaParameter1);
+        addParameter(kappaParameter1);
         kappaParameter1.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
         this.kappaParameter2 = kappaParameter2;
-        addVariable(kappaParameter2);
+        addParameter(kappaParameter2);
         kappaParameter2.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
     }
 

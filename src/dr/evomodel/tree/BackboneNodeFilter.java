@@ -154,10 +154,6 @@ public class BackboneNodeFilter extends AbstractModel implements TreeNodeFilter 
     protected void restoreState() {
     }
 
-    @Override
-    protected void acceptState() {
-    }
-
     private boolean backboneSetKnown;
     private final Set<NodeRef> backboneSet;
     private BitSet tipSet;

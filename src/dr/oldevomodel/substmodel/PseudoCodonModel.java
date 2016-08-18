@@ -88,15 +88,15 @@ public class PseudoCodonModel extends AbstractModel {
 
         this.muParameter = muParameter;
         muParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
-        addVariable(muParameter);
+        addParameter(muParameter);
 
         this.omegaParameter = omegaParameter;
         omegaParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
-        addVariable(omegaParameter);
+        addParameter(omegaParameter);
 
         this.kappaParameter = kappaParameter;
         kappaParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
-        addVariable(kappaParameter);
+        addParameter(kappaParameter);
 
         excludeStopCodons = true;
 

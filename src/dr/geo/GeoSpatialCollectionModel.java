@@ -57,7 +57,7 @@ public class GeoSpatialCollectionModel extends AbstractModelLikelihood {
         storedValidPointLogLikelihood = new boolean[dim];
         likelihoodKnown = false;
 
-        addVariable(points);
+        addParameter(points);
 
         this.isIntersection = isIntersection;
     }

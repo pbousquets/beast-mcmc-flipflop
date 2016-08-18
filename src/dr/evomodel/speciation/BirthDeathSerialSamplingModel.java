@@ -46,26 +46,26 @@ import java.util.Set;
 public class BirthDeathSerialSamplingModel extends MaskableSpeciationModel implements Citable {
 
     // R0
-    Variable<Double> R0;
+    Parameter R0;
 
     // recovery rate
-    Variable<Double> recoveryRate;
+    Parameter recoveryRate;
 
     // sampling probability
-    Variable<Double> samplingProbability;
+    Parameter samplingProbability;
 
 
     // birth rate
-    Variable<Double> lambda;
+    Parameter lambda;
 
     // death rate
-    Variable<Double> mu;
+    Parameter mu;
 
     // serial sampling rate
-    Variable<Double> psi;
+    Parameter psi;
 
     // extant sampling proportion
-    Variable<Double> p;
+    Parameter p;
 
     //boolean death rate is relative?
     boolean relativeDeath = false;
@@ -76,24 +76,24 @@ public class BirthDeathSerialSamplingModel extends MaskableSpeciationModel imple
     //    the additional parameter 0 <= r <= 1 has to be estimated.
     //    for r=1, this is sampledRemainInfectiousProb=0
     //    for r=0, this is sampledRemainInfectiousProb=1
-    Variable<Double> r;
+    Parameter r;
 
-    //Variable<Double> finalTimeInterval;
+    //Parameter finalTimeInterval;
 
     boolean hasFinalSample = false;
 
     // the origin of the infection, x0 > tree.getRoot();
-    Variable<Double> origin;
+    Parameter origin;
 
     public BirthDeathSerialSamplingModel(
-            Variable<Double> lambda,
-            Variable<Double> mu,
-            Variable<Double> psi,
-            Variable<Double> p,
+            Parameter lambda,
+            Parameter mu,
+            Parameter psi,
+            Parameter p,
             boolean relativeDeath,
-            Variable<Double> r,
+            Parameter r,
             boolean hasFinalSample,
-            Variable<Double> origin,
+            Parameter origin,
             Type units) {
 
         this("birthDeathSerialSamplingModel", lambda, mu, psi, p, relativeDeath, r, hasFinalSample, origin, units);
@@ -101,14 +101,14 @@ public class BirthDeathSerialSamplingModel extends MaskableSpeciationModel imple
 
     public BirthDeathSerialSamplingModel(
             String modelName,
-            Variable<Double> lambda,
-            Variable<Double> mu,
-            Variable<Double> psi,
-            Variable<Double> p,
+            Parameter lambda,
+            Parameter mu,
+            Parameter psi,
+            Parameter p,
             boolean relativeDeath,
-            Variable<Double> r,
+            Parameter r,
             boolean hasFinalSample,
-            Variable<Double> origin,
+            Parameter origin,
             Type units) {
 
         super(modelName, units);
@@ -116,40 +116,40 @@ public class BirthDeathSerialSamplingModel extends MaskableSpeciationModel imple
         this.relativeDeath = relativeDeath;
 
         this.lambda = lambda;
-        addVariable(lambda);
+        addParameter(lambda);
         lambda.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
         this.mu = mu;
-        addVariable(mu);
+        addParameter(mu);
         mu.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
         this.psi = psi;
-        addVariable(psi);
+        addParameter(psi);
         psi.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
         this.p = p;
-        addVariable(p);
+        addParameter(p);
         p.addBounds(new Parameter.DefaultBounds(1.0, 0.0, 1));
 
         this.hasFinalSample = hasFinalSample;
 
         this.r = r;
-        addVariable(r);
+        addParameter(r);
         r.addBounds(new Parameter.DefaultBounds(1.0, 0.0, 1));
 
         this.origin = origin;
         if (origin != null) {
-            addVariable(origin);
+            addParameter(origin);
             origin.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
         }
     }
 
     public BirthDeathSerialSamplingModel(
             String modelName,
-            Variable<Double> R0,
-            Variable<Double> recoveryRate,
-            Variable<Double> samplingProbability,
-            Variable<Double> origin,
+            Parameter R0,
+            Parameter recoveryRate,
+            Parameter samplingProbability,
+            Parameter origin,
             Type units) {
 
         super(modelName, units);
@@ -158,20 +158,20 @@ public class BirthDeathSerialSamplingModel extends MaskableSpeciationModel imple
         this.hasFinalSample = false;
 
         this.R0 = R0;
-        addVariable(R0);
+        addParameter(R0);
         R0.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
         this.recoveryRate = recoveryRate;
-        addVariable(recoveryRate);
+        addParameter(recoveryRate);
         recoveryRate.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
         this.samplingProbability = samplingProbability;
-        addVariable(samplingProbability);
+        addParameter(samplingProbability);
         samplingProbability.addBounds(new Parameter.DefaultBounds(1.0, 0.0, 1));
 
         this.origin = origin;
         if (origin != null) {
-            addVariable(origin);
+            addParameter(origin);
             origin.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
         }
     }

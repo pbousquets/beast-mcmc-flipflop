@@ -27,7 +27,6 @@ package dr.inference.operators;
 
 import dr.inference.model.Likelihood;
 import dr.inference.model.Variable;
-import dr.inference.prior.Prior;
 import dr.math.MathUtils;
 
 /**

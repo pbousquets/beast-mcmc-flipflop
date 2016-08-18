@@ -83,23 +83,23 @@ public class ExponentialLogisticModel extends DemographicModel implements Citabl
         exponentialLogistic = new ExponentialLogistic(units);
 
         this.N0Parameter = N0Parameter;
-        addVariable(N0Parameter);
+        addParameter(N0Parameter);
         N0Parameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
         this.logisticGrowthParameter = logisticGrowthParameter;
-        addVariable(logisticGrowthParameter);
+        addParameter(logisticGrowthParameter);
         logisticGrowthParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
         this.logisticShapeParameter = logisticShapeParameter;
-        addVariable(logisticShapeParameter);
+        addParameter(logisticShapeParameter);
         logisticShapeParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
         this.exponentialGrowthParameter = exponentialGrowthParameter;
-        addVariable(exponentialGrowthParameter);
+        addParameter(exponentialGrowthParameter);
         exponentialGrowthParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
         this.transistionTimeParameter = transistionTimeParameter;
-        addVariable(transistionTimeParameter);
+        addParameter(transistionTimeParameter);
         transistionTimeParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
         this.alpha = alpha;

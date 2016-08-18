@@ -37,9 +37,7 @@ import dr.util.CommonCitations;
 import dr.xml.*;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 
@@ -61,7 +59,7 @@ public class BinaryLatentLiabilityLikelihood extends AbstractModelLikelihood imp
         this.patternList = patternList;
         this.tipTraitParameter = tipTraitParameter;
 
-        addVariable(tipTraitParameter);
+        addParameter(tipTraitParameter);
 
         setTipDataValuesForAllNodes();
 
@@ -119,11 +117,6 @@ public class BinaryLatentLiabilityLikelihood extends AbstractModelLikelihood imp
     protected void restoreState() {
         logLikelihood = storedLogLikelihood;
         likelihoodKnown = true;
-    }
-
-    @Override
-    protected void acceptState() {
-        // do nothing
     }
 
     public void makeDirty() {

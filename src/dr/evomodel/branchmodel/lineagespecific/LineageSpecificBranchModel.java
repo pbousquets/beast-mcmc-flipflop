@@ -108,7 +108,7 @@ public class LineageSpecificBranchModel extends AbstractModel implements BranchM
 		addModel(this.treeModel);
 		addModel(this.rootFrequencyModel);
 		addModel((Model) this.categoriesProvider);
-		addVariable(this.categoriesParameter);
+		addParameter(this.categoriesParameter);
 
 	}// END: Constructor
 	
@@ -194,11 +194,6 @@ public class LineageSpecificBranchModel extends AbstractModel implements BranchM
 	protected void restoreState() {
 		setupMapping = true;
 	}// END: restoreState
-
-	@Override
-	protected void acceptState() {
-		//
-	}// END: acceptState
 
     public static void main(String[] args) {
 

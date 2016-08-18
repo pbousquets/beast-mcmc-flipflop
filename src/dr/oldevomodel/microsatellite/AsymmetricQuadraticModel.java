@@ -44,12 +44,12 @@ public class AsymmetricQuadraticModel extends OnePhaseModel {
     /*
      *Parameters for setting up the infinitesimal rate matrix.
      */
-    private Variable<Double> expanConst;
-    private Variable<Double> expanLin;
-    private Variable<Double> expanQuad;
-    private Variable<Double> contractConst;
-    private Variable<Double> contractLin;
-    private Variable<Double> contractQuad;
+    private Parameter expanConst;
+    private Parameter expanLin;
+    private Parameter expanQuad;
+    private Parameter contractConst;
+    private Parameter contractLin;
+    private Parameter contractQuad;
 
 
     /**
@@ -95,12 +95,12 @@ public class AsymmetricQuadraticModel extends OnePhaseModel {
     public AsymmetricQuadraticModel(
             Microsatellite microsatellite,
             FrequencyModel freqModel,
-            Variable<Double> expanConst,
-            Variable<Double> expanLin,
-            Variable<Double> expanQuad,
-            Variable<Double> contractConst,
-            Variable<Double> contractLin,
-            Variable<Double> contractQuad,
+            Parameter expanConst,
+            Parameter expanLin,
+            Parameter expanQuad,
+            Parameter contractConst,
+            Parameter contractLin,
+            Parameter contractQuad,
             boolean isNested){
 
         super(ASYMQUAD_MODEL, microsatellite, freqModel,null);
@@ -151,7 +151,7 @@ public class AsymmetricQuadraticModel extends OnePhaseModel {
     /*
      *  This method will override the default value of the parameter using the value specified by the user.
      */
-    private Variable<Double> overrideDefault(Variable<Double> defaultParam, Variable<Double> providedParam){
+    private Parameter overrideDefault(Parameter defaultParam, Parameter providedParam){
         if(providedParam != null && providedParam != defaultParam)
             return providedParam;
         return defaultParam;

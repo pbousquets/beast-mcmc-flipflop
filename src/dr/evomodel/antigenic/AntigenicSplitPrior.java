@@ -26,7 +26,6 @@
 package dr.evomodel.antigenic;
 
 import dr.inference.model.*;
-import dr.util.Author;
 import dr.util.Citable;
 import dr.util.Citation;
 import dr.util.CommonCitations;
@@ -60,10 +59,10 @@ public class AntigenicSplitPrior extends AbstractModelLikelihood implements Cita
         super(ANTIGENIC_SPLIT_PRIOR);
 
         this.locationsParameter = locationsParameter;
-        addVariable(this.locationsParameter);
+        addParameter(this.locationsParameter);
 
         this.datesParameter = datesParameter;
-        addVariable(this.datesParameter);
+        addParameter(this.datesParameter);
 
         dimension = locationsParameter.getParameter(0).getDimension();
         count = locationsParameter.getParameterCount();
@@ -82,23 +81,23 @@ public class AntigenicSplitPrior extends AbstractModelLikelihood implements Cita
         double timeSpan = latestDate - earliestDate;
 
         this.regressionSlopeParameter = regressionSlopeParameter;
-        addVariable(regressionSlopeParameter);
+        addParameter(regressionSlopeParameter);
         regressionSlopeParameter.addBounds(new Parameter.DefaultBounds(Double.MAX_VALUE, 0.0, 1));
 
         this.regressionPrecisionParameter = regressionPrecisionParameter;
-        addVariable(regressionPrecisionParameter);
+        addParameter(regressionPrecisionParameter);
         regressionPrecisionParameter.addBounds(new Parameter.DefaultBounds(Double.MAX_VALUE, 0.0, 1));
 
         this.splitTimeParameter = splitTimeParameter;
-        addVariable(splitTimeParameter);
+        addParameter(splitTimeParameter);
         splitTimeParameter.addBounds(new Parameter.DefaultBounds(50.0, 20.0, 1));
 
         this.splitAngleParameter = splitAngleParameter;
-        addVariable(splitAngleParameter);
+        addParameter(splitAngleParameter);
         splitAngleParameter.addBounds(new Parameter.DefaultBounds(0.5*Math.PI, 0.01, 1));
 
         this.splitAssignmentParameter = splitAssignmentParameter;
-        addVariable(splitAssignmentParameter);
+        addParameter(splitAssignmentParameter);
         splitAssignmentParameter.addBounds(new Parameter.DefaultBounds(1.0, 0.0, 1));
 
         String[] labelArray = new String[count];
@@ -162,10 +161,6 @@ public class AntigenicSplitPrior extends AbstractModelLikelihood implements Cita
     protected void restoreState() {
         logLikelihood = storedLogLikelihood;
         likelihoodKnown = false;
-    }
-
-    @Override
-    protected void acceptState() {
     }
 
     @Override

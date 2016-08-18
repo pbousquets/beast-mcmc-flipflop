@@ -53,9 +53,9 @@ public class BinomialLikelihood extends AbstractModelLikelihood {
         this.trialsParameter = trialsParameter;
         this.proportionParameter = proportionParameter;
         this.countsParameter = countsParameter;
-        addVariable(trialsParameter);
-        addVariable(proportionParameter);
-        addVariable(countsParameter);
+        addParameter(trialsParameter);
+        addParameter(proportionParameter);
+        addParameter(countsParameter);
 
         this.onLogitScale = onLogitScale;
 

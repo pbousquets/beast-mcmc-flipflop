@@ -43,7 +43,7 @@ public class HierarchicalPartitionLikelihood extends ARGPartitionLikelihood {
 
         this.probabilities = probs;
 
-        addVariable(probs);
+        addParameter(probs);
         addModel(arg);
     }
 

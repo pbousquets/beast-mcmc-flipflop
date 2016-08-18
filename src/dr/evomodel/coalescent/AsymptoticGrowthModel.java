@@ -59,12 +59,12 @@ public class AsymptoticGrowthModel extends DemographicModel {
         flexibleGrowth = new FlexibleGrowth(units);
 
         this.asyptoteValue = asymptoteValueParameter;
-        addVariable(asymptoteValueParameter);
+        addParameter(asymptoteValueParameter);
         asymptoteValueParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
 
         this.shapeParameter = shapeParameter;
-        addVariable(shapeParameter);
+        addParameter(shapeParameter);
         shapeParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0, 1));
 
 

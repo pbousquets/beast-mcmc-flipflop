@@ -31,7 +31,6 @@ import dr.inference.model.Likelihood;
 import dr.inference.model.Model;
 import dr.inference.model.PathLikelihood;
 import dr.inference.operators.*;
-import dr.inference.prior.Prior;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -326,7 +325,7 @@ public final class MarkovChain implements Serializable {
                 }
 
                 mcmcOperator.accept(deviation);
-                currentModel.acceptModelState();
+
                 currentScore = score;
 
             } else {

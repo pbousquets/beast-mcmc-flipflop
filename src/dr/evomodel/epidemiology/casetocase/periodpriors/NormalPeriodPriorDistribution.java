@@ -70,9 +70,9 @@ public class NormalPeriodPriorDistribution extends AbstractPeriodPriorDistributi
         posteriorBeta = new Parameter.Default(1);
         posteriorMean = new Parameter.Default(1);
         posteriorExpectedPrecision = new Parameter.Default(1);
-        addVariable(posteriorBeta);
-        addVariable(posteriorMean);
-        addVariable(posteriorExpectedPrecision);
+        addParameter(posteriorBeta);
+        addParameter(posteriorMean);
+        addParameter(posteriorExpectedPrecision);
     }
 
     public NormalPeriodPriorDistribution(String name, boolean log, double mu_0, double lambda_0,

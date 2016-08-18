@@ -55,7 +55,7 @@ public class DiffusionModel extends AbstractModel {
         super(DIFFUSION_PROCESS);
 
         this.diffusionRateParameter = diffusionRateParameter;
-        addVariable(diffusionRateParameter);
+        addParameter(diffusionRateParameter);
         diffusionRateParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
     }
 
@@ -68,8 +68,8 @@ public class DiffusionModel extends AbstractModel {
 
         this.diffusionRateParameter = diffusionRateParameter;
         this.biasParameter = biasParameter;
-        addVariable(diffusionRateParameter);
-        addVariable(biasParameter);
+        addParameter(diffusionRateParameter);
+        addParameter(biasParameter);
         diffusionRateParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
     }
 

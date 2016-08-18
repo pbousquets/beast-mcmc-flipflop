@@ -196,8 +196,4 @@ public class RandomBranchModel extends AbstractModel implements BranchModel {
 	protected void restoreState() {
 	}
 
-	@Override
-	protected void acceptState() {
-	}
-
 }// END: class

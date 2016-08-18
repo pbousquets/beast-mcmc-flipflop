@@ -106,10 +106,6 @@ public class ExternalInternalBranchModel extends AbstractModel implements Branch
     protected void restoreState() {
     }
 
-    @Override
-    protected void acceptState() {
-    }
-
     private final TreeModel tree;
     private final SubstitutionModel externalSubstModel;
     private final SubstitutionModel internalSubstModel;

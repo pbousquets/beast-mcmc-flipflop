@@ -153,18 +153,18 @@ public class GaussianProcessSkytrackLikelihood extends OldAbstractCoalescentLike
 
 
 //                addVariable(GPvalues);
-                addVariable(precisionParameter);
-                addVariable(popSizeParameter);
-                addVariable(changePoints);
-                addVariable(numPoints);
+                addParameter(precisionParameter);
+                addParameter(popSizeParameter);
+                addParameter(changePoints);
+                addParameter(numPoints);
 //                addVariable(popValue);
-                addVariable(GPcounts);
+                addParameter(GPcounts);
 //                addVariable(GPcoalfactor);
-                addVariable(GPtype);
+                addParameter(GPtype);
 
-                addVariable(coalfactor);
-                addVariable(lambda_boundParameter);
-                addVariable(CoalCounts);
+                addParameter(coalfactor);
+                addParameter(lambda_boundParameter);
+                addParameter(CoalCounts);
 
 
 

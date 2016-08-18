@@ -27,7 +27,7 @@ package dr.evomodel.substmodel;
 
 import dr.evolution.datatype.DataType;
 import dr.inference.distribution.LogLinearModel;
-import dr.inference.operators.BayesianStochasticSearchVariableSelection;
+import dr.inference.model.BayesianStochasticSearchVariableSelection;
 import dr.inference.model.Model;
 import dr.util.Citation;
 import dr.util.CommonCitations;

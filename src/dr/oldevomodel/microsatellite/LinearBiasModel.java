@@ -28,7 +28,6 @@ package dr.oldevomodel.microsatellite;
 import dr.evolution.datatype.Microsatellite;
 import dr.inference.model.Parameter;
 import dr.inference.model.Variable;
-import dr.oldevomodel.microsatellite.OnePhaseModel;
 import dr.oldevomodel.substmodel.FrequencyModel;
 
 import java.util.ArrayList;
@@ -87,7 +86,7 @@ public class LinearBiasModel extends OnePhaseModel {
             for(int i = 0; i < subModel.getNestedParameterCount(); i++){
 
                 if(isNested){
-                    addVariable(subModel.getNestedParameter(i));
+                    addParameter(subModel.getNestedParameter(i));
                 }
 
                 addParam(subModel.getNestedParameter(i));

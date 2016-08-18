@@ -97,11 +97,11 @@ public class TreeParameterModel extends AbstractModel implements TreeTrait<Doubl
         }
 
         addModel(tree);
-        addVariable(parameter);
+        addParameter(parameter);
 
         rootNodeNumber = new Parameter.Default(parameter.getId() + ".rootNodeNumber");
         rootNodeNumber.setParameterValue(0, tree.getRoot().getNumber());
-        addVariable(rootNodeNumber);
+        addParameter(rootNodeNumber);
     }
 
     public int getParameterSize() {

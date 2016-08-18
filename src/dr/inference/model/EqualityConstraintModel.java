@@ -38,11 +38,11 @@ public class EqualityConstraintModel extends AbstractModel {
 
     public static final String EQUALITY_CONSTRAINT = "equalityConstraint";
 
-    public EqualityConstraintModel(String name, List<Variable> parameterList) {
+    public EqualityConstraintModel(String name, List<Parameter> parameterList) {
         super(name);
         this.parameterList = parameterList;
-        for (Variable p : parameterList) {
-            addVariable(p);
+        for (Parameter p : parameterList) {
+            addParameter(p);
         }
     }
 
@@ -135,7 +135,7 @@ public class EqualityConstraintModel extends AbstractModel {
 
             int dim = -1;
             double[] firstValues = null;
-            List<Variable> parameterList = new ArrayList<Variable>();
+            List<Parameter> parameterList = new ArrayList<Parameter>();
 
             for (int i = 0; i < xo.getChildCount(); ++i) {
                 Parameter param = (Parameter) xo.getChild(i);
@@ -176,6 +176,6 @@ public class EqualityConstraintModel extends AbstractModel {
         }
     };
 
-    final private List<Variable> parameterList;
+    final private List<Parameter> parameterList;
     private boolean noReentry = false;
 }

@@ -77,9 +77,8 @@ public class StrictClockTest extends TraceCorrelationAssert {
         HKY hky = new HKY(kappa, f);
 
         //siteModel
-        GammaSiteModel siteModel = new GammaSiteModel(hky);
         Parameter mu = new Parameter.Default(GammaSiteModelParser.MUTATION_RATE, 1.0, 0, Double.POSITIVE_INFINITY);
-        siteModel.setMutationRateParameter(mu);
+        GammaSiteModel siteModel = new GammaSiteModel(hky, mu, null, 0, null);
 
         //treeLikelihood
         SitePatterns patterns = new SitePatterns(alignment, null, 0, -1, 1, true);

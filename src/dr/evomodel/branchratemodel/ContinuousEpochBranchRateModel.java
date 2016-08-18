@@ -42,7 +42,7 @@ public class ContinuousEpochBranchRateModel extends RateEpochBranchRateModel {
     public ContinuousEpochBranchRateModel(Parameter[] timeParameters, Parameter[] rateParameters, Parameter rootHeight) {
         super(timeParameters, rateParameters);
         this.rootHeight = rootHeight;
-        addVariable(rootHeight);
+        addParameter(rootHeight);
         normalizationKnown = false;
     }
 

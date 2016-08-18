@@ -36,9 +36,7 @@ import dr.util.CommonCitations;
 import dr.xml.*;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 public class MultinomialLatentLiabilityLikelihood extends AbstractModelLikelihood implements LatentTruncation, Citable, SoftThresholdLikelihood {
@@ -53,7 +51,7 @@ public class MultinomialLatentLiabilityLikelihood extends AbstractModelLikelihoo
         this.numClasses = numClasses;
 
 
-        addVariable(tipTraitParameter);
+        addParameter(tipTraitParameter);
 
 
         setTipDataValuesForAllNodes();
@@ -118,11 +116,6 @@ public class MultinomialLatentLiabilityLikelihood extends AbstractModelLikelihoo
     protected void restoreState() {
         logLikelihood = storedLogLikelihood;
         likelihoodKnown = true;
-    }
-
-    @Override
-    protected void acceptState() {
-        // do nothing
     }
 
     public void makeDirty() {

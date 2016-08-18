@@ -26,7 +26,6 @@
 package dr.evomodel.coalescent;
 
 import dr.evolution.coalescent.DemographicFunction;
-import dr.evolution.coalescent.ExponentialExponential;
 import dr.evolution.coalescent.MultiEpochExponential;
 import dr.inference.model.Parameter;
 
@@ -55,16 +54,16 @@ public class MultiEpochExponentialModel extends DemographicModel {
         multiEpochExponential = new MultiEpochExponential(units, numEpoch);
 
         this.N0Parameter = N0Parameter;
-        addVariable(N0Parameter);
+        addParameter(N0Parameter);
         N0Parameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
         this.growthRateParameter = growthRateParameter;
-        addVariable(growthRateParameter);
+        addParameter(growthRateParameter);
         growthRateParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY,
                 growthRateParameter.getDimension()));
 
         this.transitionTimeParameter = transitionTimeParameter;
-        addVariable(transitionTimeParameter);
+        addParameter(transitionTimeParameter);
         transitionTimeParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY,
                 0.0, transitionTimeParameter.getDimension()));
 

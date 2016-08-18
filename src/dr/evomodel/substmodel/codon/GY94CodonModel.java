@@ -78,7 +78,7 @@ public class GY94CodonModel extends AbstractCodonModel implements Citable {
         	throw new RuntimeException("Negative Omega parameter value " + value);
         }//END: negative check
         
-        addVariable(omegaParameter);
+        addParameter(omegaParameter);
         omegaParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0,
                 omegaParameter.getDimension()));
 
@@ -90,7 +90,7 @@ public class GY94CodonModel extends AbstractCodonModel implements Citable {
         	throw new RuntimeException("Negative kappa parameter value value " + value);
         }//END: negative check
         
-        addVariable(kappaParameter);
+        addParameter(kappaParameter);
         kappaParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0,
                 kappaParameter.getDimension()));
 

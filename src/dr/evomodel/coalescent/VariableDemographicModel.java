@@ -129,8 +129,8 @@ public class VariableDemographicModel extends DemographicModel implements MultiL
             addModel(t);
         }
 
-        addVariable(indicatorParameter);
-        addVariable(popSizeParameter);
+        addParameter(indicatorParameter);
+        addParameter(popSizeParameter);
     }
 
     public int nLoci() {

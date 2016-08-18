@@ -77,20 +77,20 @@ public class BirthDeathCollapseModel extends SpeciationModel implements Citable 
         this.collapseHeight = collH;
 
         this.birthDiffRate = birthDiffRate;
-        addVariable(birthDiffRate);
+        addParameter(birthDiffRate);
         birthDiffRate.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
         this.relativeDeathRate = relativeDeathRate;
-        addVariable(relativeDeathRate);
+        addParameter(relativeDeathRate);
         relativeDeathRate.addBounds(new Parameter.DefaultBounds(1.0, 0.0, 1));
 
         this.originHeight = originHeight;
         originHeight.setParameterValue(0, 1.05 * tree.getNodeHeight(tree.getRoot()));
-        addVariable(originHeight);
+        addParameter(originHeight);
         originHeight.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
         this.collapseWeight = collapseWeight;
-        addVariable(collapseWeight);
+        addParameter(collapseWeight);
         collapseWeight.addBounds(new Parameter.DefaultBounds(1.0, 0.0, 1));
 
         Logger.getLogger("dr.evomodel.speciation").info("\tConstructing a birth-death-collapse model, please cite:\n"

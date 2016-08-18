@@ -49,7 +49,7 @@ public class DefaultModelParser extends AbstractXMLObjectParser {
 
         for (int i = 0; i < xo.getChildCount(); i++) {
             Parameter parameter = (Parameter) xo.getChild(i);
-            likelihood.addVariable(parameter);
+            likelihood.addParameter(parameter);
         }
 
         return likelihood;

@@ -67,24 +67,24 @@ public class CataclysmicDemographicModel extends DemographicModel implements Cit
         cataclysm = new CataclysmicDemographic(units);
 
         this.N0Parameter = N0Parameter;
-        addVariable(N0Parameter);
+        addParameter(N0Parameter);
         N0Parameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
         if (useSpike) {
             this.N1Parameter = secondParam;
             N1Parameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
-            addVariable(N1Parameter);
+            addParameter(N1Parameter);
         } else {
             this.declineRateParameter = secondParam;
-            addVariable(declineRateParameter);
+            addParameter(declineRateParameter);
         }
 
         this.growthRateParameter = growthRateParameter;
-        addVariable(growthRateParameter);
+        addParameter(growthRateParameter);
         growthRateParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.MIN_VALUE, 1));
 
         this.timeParameter = timeParameter;
-        addVariable(timeParameter);
+        addParameter(timeParameter);
         timeParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.MIN_VALUE, 1));
 
 

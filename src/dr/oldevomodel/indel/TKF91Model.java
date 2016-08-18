@@ -47,10 +47,10 @@ public class TKF91Model extends IndelModel {
         super(TKF91ModelParser.TKF91_MODEL);
 
         this.lengthDistParameter = lengthDistParameter;
-        addVariable(lengthDistParameter);
+        addParameter(lengthDistParameter);
 
         this.deathRateParameter = deathRateParameter;
-        addVariable(deathRateParameter);
+        addParameter(deathRateParameter);
 
         setUnits(units);
     }

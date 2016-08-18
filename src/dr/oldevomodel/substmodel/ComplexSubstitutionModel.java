@@ -35,7 +35,7 @@ import dr.evolution.datatype.DataType;
 import dr.inference.loggers.LogColumn;
 import dr.inference.loggers.NumberColumn;
 import dr.inference.model.*;
-import dr.inference.operators.BayesianStochasticSearchVariableSelection;
+import dr.inference.model.BayesianStochasticSearchVariableSelection;
 import dr.math.matrixAlgebra.Matrix;
 import dr.math.matrixAlgebra.RobustEigenDecomposition;
 import dr.math.matrixAlgebra.RobustSingularValueDecomposition;
@@ -67,7 +67,7 @@ public class ComplexSubstitutionModel extends AbstractSubstitutionModel implemen
                 throw new RuntimeException("Dimension of '" + infinitesimalRates.getId() + "' ("
                         + infinitesimalRates.getDimension() + ") must equal " + rateCount);
             }
-            addVariable(infinitesimalRates);
+            addParameter(infinitesimalRates);
         }
 
 

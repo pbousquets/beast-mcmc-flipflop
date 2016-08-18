@@ -95,7 +95,7 @@ public class MultivariateOUModel extends GeneralizedLinearModel implements Stati
         Logger.getLogger("dr.inference.distribution").info(sb.toString());
 
         setupTimes();
-        addVariable(gamma);
+        addParameter(gamma);
         addModel(substitutionModel);
 
     }

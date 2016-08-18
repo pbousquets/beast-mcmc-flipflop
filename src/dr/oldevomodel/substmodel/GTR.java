@@ -46,12 +46,12 @@ import java.util.List;
  */
 public class GTR extends AbstractNucleotideModel implements Citable {
 
-    private Variable<Double> rateACValue = null;
-    private Variable<Double> rateAGValue = null;
-    private Variable<Double> rateATValue = null;
-    private Variable<Double> rateCGValue = null;
-    private Variable<Double> rateCTValue = null;
-    private Variable<Double> rateGTValue = null;
+    private Parameter rateACValue = null;
+    private Parameter rateAGValue = null;
+    private Parameter rateATValue = null;
+    private Parameter rateCGValue = null;
+    private Parameter rateCTValue = null;
+    private Parameter rateGTValue = null;
 
     /**
      * @param rateACValue rate of A<->C substitutions
@@ -63,48 +63,48 @@ public class GTR extends AbstractNucleotideModel implements Citable {
      * @param freqModel       frequencies
      */
     public GTR(
-            Variable rateACValue,
-            Variable rateAGValue,
-            Variable rateATValue,
-            Variable rateCGValue,
-            Variable rateCTValue,
-            Variable rateGTValue,
+            Parameter rateACValue,
+            Parameter rateAGValue,
+            Parameter rateATValue,
+            Parameter rateCGValue,
+            Parameter rateCTValue,
+            Parameter rateGTValue,
             FrequencyModel freqModel) {
 
         super(GTRParser.GTR_MODEL, freqModel);
 
         if (rateACValue != null) {
-            addVariable(rateACValue);
+            addParameter(rateACValue);
             rateACValue.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
             this.rateACValue = rateACValue;
         }
 
         if (rateAGValue != null) {
-            addVariable(rateAGValue);
+            addParameter(rateAGValue);
             rateAGValue.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
             this.rateAGValue = rateAGValue;
         }
 
         if (rateATValue != null) {
-            addVariable(rateATValue);
+            addParameter(rateATValue);
             rateATValue.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
             this.rateATValue = rateATValue;
         }
 
         if (rateCGValue != null) {
-            addVariable(rateCGValue);
+            addParameter(rateCGValue);
             rateCGValue.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
             this.rateCGValue = rateCGValue;
         }
 
         if (rateCTValue != null) {
-            addVariable(rateCTValue);
+            addParameter(rateCTValue);
             rateCTValue.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
             this.rateCTValue = rateCTValue;
         }
 
         if (rateGTValue != null) {
-            addVariable(rateGTValue);
+            addParameter(rateGTValue);
             rateGTValue.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
             this.rateGTValue = rateGTValue;
         }

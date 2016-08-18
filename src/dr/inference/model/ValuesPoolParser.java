@@ -38,8 +38,8 @@ public class ValuesPoolParser extends dr.xml.AbstractXMLObjectParser {
     private static final String DEFAULT_VALUE = "default";
 
     public Object parseXMLObject(XMLObject xo) throws XMLParseException {
-        final Variable<Double> pool = (Variable<Double>)xo.getElementFirstChild(VALUES);
-        final Variable<Double> selector = (Variable<Double>)xo.getElementFirstChild(SELECTOR);
+        final Parameter pool = (Parameter)xo.getElementFirstChild(VALUES);
+        final Parameter selector = (Parameter)xo.getElementFirstChild(SELECTOR);
         final double d = xo.getDoubleAttribute(DEFAULT_VALUE);
 
         if( pool.getSize() != selector.getSize() ) {
@@ -52,9 +52,9 @@ public class ValuesPoolParser extends dr.xml.AbstractXMLObjectParser {
         return new XMLSyntaxRule[] {
                 AttributeRule.newDoubleRule(DEFAULT_VALUE),
                 new ElementRule(VALUES, new XMLSyntaxRule[]{
-                        new ElementRule(Variable.class,1,1) }),
+                        new ElementRule(Parameter.class,1,1) }),
                 new ElementRule(SELECTOR, new XMLSyntaxRule[]{
-                        new ElementRule(Variable.class,1,1) })
+                        new ElementRule(Parameter.class,1,1) })
           };
       }
 

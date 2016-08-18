@@ -66,7 +66,7 @@ public class MetaPopulationModel extends AbstractModel implements MetaPopulation
         if (populationProportions != null) {
 
             // Single demographic, each with a different weight
-            addVariable(populationProportions);
+            addParameter(populationProportions);
             populationProportions.addBounds(new Parameter.DefaultBounds(1.0, 0.0, populationProportions.getDimension()));
             populationCount = populationProportions.getDimension() + 1;
             // Add copies of the demographicModel to the array

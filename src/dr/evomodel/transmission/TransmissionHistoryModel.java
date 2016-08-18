@@ -91,7 +91,7 @@ public class TransmissionHistoryModel extends AbstractModel implements TreeColou
         }
 
         if (parameter != null) {
-            addVariable(parameter);
+            addParameter(parameter);
         }
 
         TransmissionEvent transmissionEvent = new TransmissionEvent(donor, recipient, parameter);

@@ -40,9 +40,9 @@ public class GammaSiteBMA  extends AbstractModel implements SiteModel {
 
     private SubstitutionModel substitutionModel = null;
     private Parameter muParameter =null;
-    private Variable<Integer> modelChoose = null;
-    private Variable<Double> logShape = null;
-    private Variable<Double> logitInvar = null;
+    private Parameter modelChoose = null;
+    private Parameter logShape = null;
+    private Parameter logitInvar = null;
     private int categoryCount = -1;
     private double[] categoryRates;
     private double[] categoryProportions;
@@ -54,24 +54,24 @@ public class GammaSiteBMA  extends AbstractModel implements SiteModel {
 
     public GammaSiteBMA(SubstitutionModel substitutionModel,
                         Parameter muParameter,
-                        Variable<Double> logitInvar,
-                        Variable<Double> logShape,
+                        Parameter logitInvar,
+                        Parameter logShape,
                         int categoryCount,
-                        Variable<Integer> modelChoose){
+                        Parameter modelChoose){
         super("GammaSiteBMA");
 
         this.substitutionModel = substitutionModel;
         addModel(substitutionModel);
 
-        addVariable(muParameter);
+        addParameter(muParameter);
         muParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
         this.muParameter = muParameter;
 
-        addVariable(logShape);
+        addParameter(logShape);
         logShape.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
         this.logShape = logShape;
 
-        addVariable(logitInvar);
+        addParameter(logitInvar);
         logitInvar.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
         this.logitInvar = logitInvar;
 
@@ -79,8 +79,8 @@ public class GammaSiteBMA  extends AbstractModel implements SiteModel {
 
         //the modelChoose integer variable is of length = 2,
         //where indices 0 and 1 indicates the presence or absence of alpha and pInvar repectively.
-        addVariable(modelChoose);
-        modelChoose.addBounds(new Bounds.Int(modelChoose,0,1));
+        addParameter(modelChoose);
+        modelChoose.addBounds(new Parameter.DefaultBounds(1.0, 0.0, 1));
         this.modelChoose = modelChoose;
         this.categoryCount = categoryCount +1;
 

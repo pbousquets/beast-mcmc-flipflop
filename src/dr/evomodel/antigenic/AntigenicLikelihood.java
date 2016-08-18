@@ -183,21 +183,21 @@ public class AntigenicLikelihood extends AbstractModelLikelihood implements Cita
         this.mdsDimension = mdsDimension;
 
         this.mdsPrecisionParameter = mdsPrecisionParameter;
-        addVariable(mdsPrecisionParameter);
+        addParameter(mdsPrecisionParameter);
 
         this.locationDriftParameter = locationDriftParameter;
         if (this.locationDriftParameter != null) {
-            addVariable(locationDriftParameter);
+            addParameter(locationDriftParameter);
         }
 
         this.virusDriftParameter = virusDriftParameter;
         if (this.virusDriftParameter != null) {
-            addVariable(virusDriftParameter);
+            addParameter(virusDriftParameter);
         }
 
         this.serumDriftParameter = serumDriftParameter;
         if (this.serumDriftParameter != null) {
-            addVariable(serumDriftParameter);
+            addParameter(serumDriftParameter);
         }
 
         this.virusLocationsParameter = virusLocationsParameter;
@@ -259,7 +259,7 @@ public class AntigenicLikelihood extends AbstractModelLikelihood implements Cita
         if (virusAviditiesParameter != null) {
             virusAviditiesParameter.addBounds(new Parameter.DefaultBounds(Double.MAX_VALUE, Double.MIN_VALUE, 1));
             virusAviditiesParameter.setDimension(virusNames.size());
-            addVariable(virusAviditiesParameter);
+            addParameter(virusAviditiesParameter);
             String[] labelArray = new String[virusNames.size()];
             virusNames.toArray(labelArray);
             virusAviditiesParameter.setDimensionNames(labelArray);
@@ -276,7 +276,7 @@ public class AntigenicLikelihood extends AbstractModelLikelihood implements Cita
             serumPotenciesParameter = new Parameter.Default("serumPotencies");
         } else {
             serumPotenciesParameter.addBounds(new Parameter.DefaultBounds(Double.MAX_VALUE, 0.0, 1));
-            addVariable(serumPotenciesParameter);
+            addParameter(serumPotenciesParameter);
         }
 
         serumPotenciesParameter.setDimension(serumNames.size());
@@ -295,7 +295,7 @@ public class AntigenicLikelihood extends AbstractModelLikelihood implements Cita
         if (serumBreadthsParameter != null) {
             serumBreadthsParameter.addBounds(new Parameter.DefaultBounds(Double.MAX_VALUE, 0.0, 1));
             serumBreadthsParameter.setDimension(serumNames.size());
-            addVariable(serumBreadthsParameter);
+            addParameter(serumBreadthsParameter);
             String[] labelArray = new String[serumNames.size()];
             serumNames.toArray(labelArray);
             serumBreadthsParameter.setDimensionNames(labelArray);
@@ -312,7 +312,7 @@ public class AntigenicLikelihood extends AbstractModelLikelihood implements Cita
         for (int i = 0; i < strains.size(); i++) {
             locationsParameter.getParameter(i).setId(strains.get(i));
         }
-        addVariable(locationsParameter);
+        addParameter(locationsParameter);
     }
 
     private void setupOffsetsParameter(Parameter offsetsParameter, List<String> strainNames, List<Double> strainDates, double earliest) {
@@ -327,7 +327,7 @@ public class AntigenicLikelihood extends AbstractModelLikelihood implements Cita
             }
             offsetsParameter.setParameterValue(i, offset);
         }
-        addVariable(offsetsParameter);
+        addParameter(offsetsParameter);
     }
 
 
@@ -458,10 +458,6 @@ public class AntigenicLikelihood extends AbstractModelLikelihood implements Cita
         storedLogLikelihoods = tmp;
 
         likelihoodKnown = false;
-    }
-
-    @Override
-    protected void acceptState() {
     }
 
     public Model getModel() {

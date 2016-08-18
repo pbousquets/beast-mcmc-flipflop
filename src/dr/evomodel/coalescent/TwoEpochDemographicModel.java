@@ -60,18 +60,18 @@ public class TwoEpochDemographicModel extends DemographicModel {
 
         this.demo1 = demo1;
         addModel(demo1);
-        for (int i = 0; i < demo1.getVariableCount(); i++) {
-            addVariable((Parameter) demo1.getVariable(i));
+        for (int i = 0; i < demo1.getParameterCount(); i++) {
+            addParameter((Parameter) demo1.getVariable(i));
         }
 
         this.demo2 = demo2;
         addModel(demo2);
-        for (int i = 0; i < demo2.getVariableCount(); i++) {
-            addVariable((Parameter) demo2.getVariable(i));
+        for (int i = 0; i < demo2.getParameterCount(); i++) {
+            addParameter((Parameter) demo2.getVariable(i));
         }
 
         this.transitionTimeParameter = transitionTimeParameter;
-        addVariable(transitionTimeParameter);
+        addParameter(transitionTimeParameter);
 
         setUnits(units);
     }

@@ -34,7 +34,7 @@ public class ValuesPool extends DefaultModel {
     private final Variable<Double> selector;
     private final double defaultValue;
 
-    ValuesPool(Variable<Double> pool, Variable<Double> selector, Double defaultValue) {
+    ValuesPool(Parameter pool, Parameter selector, Double defaultValue) {
         this.pool = pool;
         this.selector = selector;
         this.defaultValue = defaultValue;
@@ -44,8 +44,8 @@ public class ValuesPool extends DefaultModel {
         //pool.addVariableListener(this);
        // selector.addVariableListener(this);
 
-        addVariable(pool);
-        addVariable(selector);
+        addParameter(pool);
+        addParameter(selector);
         
         addStatistic(numberOfParams);
     }

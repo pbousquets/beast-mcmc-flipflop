@@ -50,7 +50,7 @@ public class RandomWalkModel extends AbstractModelLikelihood {
         if (logScale)
             lower = 0.0;
 
-        addVariable(data);
+        addParameter(data);
         if (data instanceof CompoundParameter) {
             CompoundParameter cp = (CompoundParameter) data;
             for (int i = 0; i < cp.getParameterCount(); i++) {

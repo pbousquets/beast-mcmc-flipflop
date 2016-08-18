@@ -63,7 +63,7 @@ public class GeneralSubstitutionModel extends AbstractSubstitutionModel implemen
 
         ratesParameter = parameter;
         if (ratesParameter != null) {
-            addVariable(ratesParameter);
+            addParameter(ratesParameter);
             if (!(ratesParameter instanceof DuplicatedParameter))
                 ratesParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, ratesParameter.getDimension()));
         }

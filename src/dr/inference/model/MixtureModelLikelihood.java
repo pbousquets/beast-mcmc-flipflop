@@ -59,7 +59,7 @@ public class MixtureModelLikelihood extends AbstractModelLikelihood implements C
                 addModel(model.getModel());
             }
         }
-        addVariable(mixtureWeights);
+        addParameter(mixtureWeights);
 
         StringBuilder sb = new StringBuilder();
         sb.append("Constructing a finite mixture model\n");

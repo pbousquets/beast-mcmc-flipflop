@@ -47,7 +47,7 @@ public class StrictClockBranchRates extends AbstractBranchRateModel {
 
         this.rateParameter = rateParameter;
 
-        addVariable(rateParameter);
+        addParameter(rateParameter);
     }
 
     public void handleModelChangedEvent(Model model, Object object, int index) {

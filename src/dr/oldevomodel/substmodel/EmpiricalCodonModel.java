@@ -74,19 +74,19 @@ public class EmpiricalCodonModel extends AbstractCodonModel {
 		
 		// setup parameters
 		this.omegaParameter = omegaParam;
-		addVariable(omegaParameter);
+		addParameter(omegaParameter);
 		omegaParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0,
 				omegaParameter.getDimension()));
 		
 		if(kappaParam != null) {
 			this.kappaParameter = kappaParam;
-			addVariable(kappaParameter);
+			addParameter(kappaParameter);
 			kappaParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0,
 				kappaParameter.getDimension()));
 		}
 		if(mntParam != null) {
 			this.multintParameter = mntParam;
-			addVariable(multintParameter);
+			addParameter(multintParameter);
 			multintParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0,
 				multintParameter.getDimension()));
 		}

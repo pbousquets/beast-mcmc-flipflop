@@ -40,8 +40,6 @@ public class TinyTest extends TraceCorrelationAssert {
         double alpha = 0.5;
         GammaSiteRateModel siteRateModel = new GammaSiteRateModel("gammaModel", alpha, 4);
         siteRateModel.setSubstitutionModel(hky);
-        Parameter mu = new Parameter.Default(GammaSiteModelParser.MUTATION_RATE, 1.0, 0, Double.POSITIVE_INFINITY);
-        siteRateModel.setMutationRateParameter(mu);
 
         // @todo update to use latest beagle
         //treeLikelihood

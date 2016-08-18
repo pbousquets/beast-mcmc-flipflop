@@ -26,6 +26,7 @@
 package dr.inference.model;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * A parameter which controls the values of a set of other parameters
@@ -125,19 +126,27 @@ public class JointParameter extends Parameter.Abstract implements VariableListen
 
     protected void storeValues() {
         for (Parameter parameter : parameters) {
-            parameter.storeParameterValues();
+            parameter.storeModelState();
         }
     }
 
     protected void restoreValues() {
         for (Parameter parameter : parameters) {
-            parameter.restoreParameterValues();
+            parameter.restoreModelState();
         }
     }
 
-    protected final void acceptValues() {
+    @Override
+    protected void saveValues(Map<String, Object> stateMap) {
         for (Parameter parameter : parameters) {
-            parameter.acceptParameterValues();
+            parameter.saveModelState(stateMap);
+        }
+    }
+
+    @Override
+    protected void loadValues(Map<String, Object> stateMap) {
+        for (Parameter parameter : parameters) {
+            parameter.loadModelState(stateMap);
         }
     }
 

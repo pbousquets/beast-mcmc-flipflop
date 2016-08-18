@@ -26,6 +26,7 @@
 package dr.inference.model;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Marc Suchard
@@ -43,21 +44,31 @@ public class SumParameter extends Parameter.Abstract implements VariableListener
         return paramList.get(0).getDimension();
     }
 
+    @Override
     protected void storeValues() {
         for (Parameter p : paramList) {
-            p.storeParameterValues();
+            p.storeModelState();
         }
     }
 
+    @Override
     protected void restoreValues() {
         for (Parameter p : paramList) {
-            p.restoreParameterValues();
+            p.restoreModelState();
         }
     }
 
-    protected void acceptValues() {
+    @Override
+    protected void saveValues(Map<String, Object> stateMap) {
         for (Parameter p : paramList) {
-            p.acceptParameterValues();
+            p.saveModelState(stateMap);
+        }
+    }
+
+    @Override
+    protected void loadValues(Map<String, Object> stateMap) {
+        for (Parameter p : paramList) {
+            p.loadModelState(stateMap);
         }
     }
 

@@ -26,6 +26,7 @@
 package dr.inference.model;
 
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * @author Marc A. Suchard
@@ -92,16 +93,16 @@ public class MaskedParameter extends Parameter.Abstract implements VariableListe
     }
 
     protected void storeValues() {
-        parameter.storeParameterValues();
-        maskParameter.storeParameterValues();
+        parameter.storeModelState();
+        maskParameter.storeModelState();
 
         System.arraycopy(map, 0, storedMap, 0, map.length);
         System.arraycopy(inverseMap, 0, storedInverseMap, 0, inverseMap.length);
     }
 
     protected void restoreValues() {
-        parameter.restoreParameterValues();
-        maskParameter.restoreParameterValues();
+        parameter.storeModelState();
+        maskParameter.storeModelState();
 
         int[] tmp = storedMap;
         storedMap = map;
@@ -112,13 +113,16 @@ public class MaskedParameter extends Parameter.Abstract implements VariableListe
         inverseMap = tmp;
     }
 
-//    public void fireParameterChangedEvent() {
-//        parameter.fireParameterChangedEvent(); // TODO This could be wrong
-//    }
+    @Override
+    protected void saveValues(Map<String, Object> stateMap) {
+        parameter.saveModelState(stateMap);
+        maskParameter.saveModelState(stateMap);
+    }
 
-    protected void acceptValues() {
-        parameter.acceptParameterValues();
-        maskParameter.acceptParameterValues();
+    @Override
+    protected void loadValues(Map<String, Object> stateMap) {
+        parameter.loadModelState(stateMap);
+        maskParameter.loadModelState(stateMap);
     }
 
     protected void adoptValues(Parameter source) { throw new IllegalArgumentException("Not yet implemented"); }

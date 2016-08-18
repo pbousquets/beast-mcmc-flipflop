@@ -80,7 +80,7 @@ public class DirichletSiteModel extends AbstractModel implements SiteModel {
 
         // Add the rate parameters to the model
         this.ratesParameter = ratesParameter;
-        addVariable(this.ratesParameter);
+        addParameter(this.ratesParameter);
         this.ratesParameter.addBounds(new Parameter.DefaultBounds(1.0, 0.0, ratesParameter.getDimension()));
     }
 

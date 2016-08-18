@@ -42,7 +42,6 @@ import no.uib.cipr.matrix.SymmTridiagMatrix;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -107,7 +106,7 @@ public class GMRFMultilocusSkyrideLikelihood extends GMRFSkyrideLikelihood
         this.betaParameter = beta;
         this.dMatrix = dMatrix;
         if (dMatrix != null) {
-            addVariable(dMatrix);
+            addParameter(dMatrix);
         }
         this.timeAwareSmoothing = timeAwareSmoothing;
 
@@ -118,19 +117,19 @@ public class GMRFMultilocusSkyrideLikelihood extends GMRFSkyrideLikelihood
 
         setupGridPoints();
 
-        addVariable(popSizeParameter);
-        addVariable(precisionParameter);
-        addVariable(lambdaParameter);
+        addParameter(popSizeParameter);
+        addParameter(precisionParameter);
+        addParameter(lambdaParameter);
         if (betaParameter != null) {
-            addVariable(betaParameter);
+            addParameter(betaParameter);
             skygridHelper = new SkygridCovariateHelper();
         } else {
             skygridHelper = new SkygridHelper();
         }
         if (phiParameter != null) {
-            addVariable(phiParameter);
+            addParameter(phiParameter);
         }
-        addVariable(ploidyFactors);
+        addParameter(ploidyFactors);
 
 
         setTree(treeList);
@@ -222,7 +221,7 @@ public class GMRFMultilocusSkyrideLikelihood extends GMRFSkyrideLikelihood
 
         this.betaParameter = betaParameter;
         if (betaParameter != null) {
-            addVariable(betaParameter);
+            addParameter(betaParameter);
         }
 
         this.popSizeParameter = popParameter;
@@ -232,28 +231,28 @@ public class GMRFMultilocusSkyrideLikelihood extends GMRFSkyrideLikelihood
         this.beta = betaList;
         this.dMatrix = dMatrix;
         if (dMatrix != null) {
-            addVariable(dMatrix);
+            addParameter(dMatrix);
         }
         this.timeAwareSmoothing = timeAwareSmoothing;
         this.ploidyFactors = ploidyFactorsParameter;
         this.covariates = covariates;
         if (covariates != null) {
             for (MatrixParameter cov : covariates) {
-                addVariable(cov);
+                addParameter(cov);
             }
         }
         this.covPrecParameters = covPrecParameters;
         if (covPrecParameters != null) {
             for (Parameter covPrec : covPrecParameters) {
-                addVariable(covPrec);
+                addParameter(covPrec);
             }
         }
 
-        addVariable(popSizeParameter);
-        addVariable(precisionParameter);
-        addVariable(lambdaParameter);
+        addParameter(popSizeParameter);
+        addParameter(precisionParameter);
+        addParameter(lambdaParameter);
 
-        addVariable(ploidyFactors);
+        addParameter(ploidyFactors);
 
         setTree(treeList);
 
@@ -280,7 +279,7 @@ public class GMRFMultilocusSkyrideLikelihood extends GMRFSkyrideLikelihood
         if (betaList != null || betaParameter != null) {
             if (betaList != null) {
                 for (Parameter betaParam : betaList) {
-                    addVariable(betaParam);
+                    addParameter(betaParam);
                 }
             }
             if (lastObservedIndexParameter != null) {

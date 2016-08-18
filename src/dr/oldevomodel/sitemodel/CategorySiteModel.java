@@ -57,11 +57,11 @@ public class CategorySiteModel extends AbstractModel implements SiteModel {
         addModel(substitutionModel);
 
         this.muParameter = muParameter;
-        addVariable(muParameter);
+        addParameter(muParameter);
         muParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
         this.rateParameter = rateParameter;
-        addVariable(rateParameter);
+        addParameter(rateParameter);
         rateParameter.addBounds(new Parameter.DefaultBounds(Double.MAX_VALUE, Double.MIN_VALUE, rateParameter.getDimension()));
 
         states = stateString;

@@ -77,32 +77,32 @@ public class MsatBMA extends MicrosatelliteModel {
         super("MsatAveragingModel",msat, null, null);
 
         for(int i = 0; i < propRates.size(); i++){
-            addVariable(propRates.get(i));
+            addParameter(propRates.get(i));
         }
 
         for(int i = 0; i < quadRates.size(); i++){
-            addVariable(quadRates.get(i));
+            addParameter(quadRates.get(i));
         }
 
         for(int i = 0; i < biasConsts.size(); i++){
-            addVariable(biasConsts.get(i));
+            addParameter(biasConsts.get(i));
 
         }
 
         for(int i = 0; i < biasLins.size(); i++){
-            addVariable(biasLins.get(i));
+            addParameter(biasLins.get(i));
         }
 
         for(int i = 0; i < geos.size(); i++){
-            addVariable(geos.get(i));
+            addParameter(geos.get(i));
         }
 
         for(int i = 0; i < phaseProb.size();i++){
-            addVariable(phaseProb.get(i));
+            addParameter(phaseProb.get(i));
         }
 
-        addVariable(modelChoose);
-        addVariable(modelIndicator);
+        addParameter(modelChoose);
+        addParameter(modelIndicator);
         this.propRates = propRates;
         this.biasConsts = biasConsts;
         this.biasLins = biasLins;

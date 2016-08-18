@@ -332,7 +332,7 @@ public class DiscreteAntigenicTraitLikelihood extends AntigenicTraitLikelihood i
 
         updateClusterSizes();
 
-        addVariable(clusterIndexParameter);
+        addParameter(clusterIndexParameter);
         addStatistic(new ClusterMask());
         addStatistic(new ClusterIndices());
         addStatistic(new ClusterCount());

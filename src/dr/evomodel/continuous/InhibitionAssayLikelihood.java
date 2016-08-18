@@ -72,8 +72,8 @@ Parameter precision) {
 
         addModel(treeModel);
 
-        addVariable(dataParameter);
-        addVariable(precision);
+        addParameter(dataParameter);
+        addParameter(precision);
 
         N = treeModel.getExternalNodeCount();
 

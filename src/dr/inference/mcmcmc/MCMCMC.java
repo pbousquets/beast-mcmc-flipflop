@@ -39,7 +39,6 @@ import dr.inference.operators.CoercableMCMCOperator;
 import dr.inference.operators.CoercionMode;
 import dr.inference.operators.MCMCOperator;
 import dr.inference.operators.OperatorSchedule;
-import dr.inference.prior.Prior;
 import dr.math.MathUtils;
 import dr.util.NumberFormatter;
 

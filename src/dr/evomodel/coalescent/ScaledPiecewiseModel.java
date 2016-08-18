@@ -64,7 +64,7 @@ public class ScaledPiecewiseModel extends DemographicModel {
 
         this.N0Parameter = N0Parameter;
         this.treeModel = treeModel;
-        addVariable(N0Parameter);
+        addParameter(N0Parameter);
         N0Parameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, N0Parameter.getDimension()));
 
         setUnits(units);

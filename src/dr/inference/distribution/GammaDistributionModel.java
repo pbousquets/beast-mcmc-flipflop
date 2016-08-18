@@ -59,14 +59,14 @@ public class GammaDistributionModel extends AbstractModel implements ParametricD
     /**
      * Construct a gamma distribution model with a default shape scale parameterization.
      */
-    public GammaDistributionModel(Variable<Double> shape, Variable<Double> scale) {
+    public GammaDistributionModel(Parameter shape, Parameter scale) {
         this(GammaParameterizationType.ShapeScale, shape, scale, 0.0);
     }
 
     /**
      * Construct a one parameter gamma distribution model.
      */
-    public GammaDistributionModel(Variable<Double> shape) {
+    public GammaDistributionModel(Parameter shape) {
         this(GammaParameterizationType.OneParameter, shape, null, 0.0);
     }
 
@@ -74,7 +74,7 @@ public class GammaDistributionModel extends AbstractModel implements ParametricD
     /**
      * Construct a gamma distribution model.
      */
-    public GammaDistributionModel(GammaParameterizationType parameterization, Variable<Double> shape, Variable<Double> parameter2, double offset) {
+    public GammaDistributionModel(GammaParameterizationType parameterization, Parameter shape, Parameter parameter2, double offset) {
 
         super(GAMMA_DISTRIBUTION_MODEL);
 
@@ -82,27 +82,27 @@ public class GammaDistributionModel extends AbstractModel implements ParametricD
 
         this.parameterization = parameterization;
         this.shape = shape;
-        addVariable(shape);
+        addParameter(shape);
         shape.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
         switch (parameterization) {
             case ShapeScale:
                 this.scale = parameter2;
-                addVariable(scale);
+                addParameter(scale);
                 scale.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
                 rate = null;
                 mean = null;
                 break;
             case ShapeRate:
                 this.rate = parameter2;
-                addVariable(rate);
+                addParameter(rate);
                 rate.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
                 scale = null;
                 mean = null;
                 break;
             case ShapeMean:
                 this.mean = parameter2;
-                addVariable(mean);
+                addParameter(mean);
                 mean.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
                 scale = null;
                 rate = null;
@@ -224,10 +224,10 @@ public class GammaDistributionModel extends AbstractModel implements ParametricD
 
     private final GammaParameterizationType parameterization;
 
-    private final Variable<Double> shape;
-    private final Variable<Double> scale;
-    private final Variable<Double> rate;
-    private final Variable<Double> mean;
+    private final Parameter shape;
+    private final Parameter scale;
+    private final Parameter rate;
+    private final Parameter mean;
 
     private final double offset;
 

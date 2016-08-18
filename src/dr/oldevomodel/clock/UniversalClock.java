@@ -67,9 +67,9 @@ public class UniversalClock extends AbstractBranchRateModel {
 
         // don't add rate parameter, cause that is what you are changing!
         // you don't care if it changes
-        addVariable(massParameter);
-        addVariable(temperatureParameter);
-        addVariable(scaleParameter);
+        addParameter(massParameter);
+        addParameter(temperatureParameter);
+        addParameter(scaleParameter);
 
     }
 

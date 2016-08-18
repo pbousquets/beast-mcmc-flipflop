@@ -164,7 +164,7 @@ public class TreeClusteringVirusesPrior extends AbstractModelLikelihood {
          for (int i = 0; i < numdata; i++) {      	
             clusterLabels.setParameterValue(i, 0);
         }
-         addVariable(clusterLabels);
+         addParameter(clusterLabels);
          
          //initialize excision points
           indicators.setDimension(treeModel.getNodeCount());
@@ -202,7 +202,7 @@ public class TreeClusteringVirusesPrior extends AbstractModelLikelihood {
  				
  		}
           
-         addVariable(indicators);
+         addParameter(indicators);
          
          //genotype to phenotype
  		if(probSites_in != null){
@@ -220,7 +220,7 @@ public class TreeClusteringVirusesPrior extends AbstractModelLikelihood {
  		        	 probSites.setParameterValue(k, initial_probSiteValue );
  		         }  
  			}
-	         addVariable(probSites);
+	         addParameter(probSites);
 	    
 	    
 	         //MAYBE ONLY INITIALIZE IT IF IT USES THE SHRINKAGE OR correlated PRIOR?
@@ -228,12 +228,12 @@ public class TreeClusteringVirusesPrior extends AbstractModelLikelihood {
 	         for(int k=0; k < numSites; k++){
 	        	 siteIndicators.setParameterValue(k, 1);
 	         }
-	         addVariable(siteIndicators);
+	         addParameter(siteIndicators);
  		}
          
           
           clusterLabelsTreeNode.setDimension(treeModel.getNodeCount());
-          addVariable(clusterLabelsTreeNode);
+          addParameter(clusterLabelsTreeNode);
           
          //initialize mu
          mu.setColumnDimension(2);
@@ -248,17 +248,17 @@ public class TreeClusteringVirusesPrior extends AbstractModelLikelihood {
          //adding the pre-clustering step.
         // preClustering();
 
-		 addVariable(virusLocations);
+		 addParameter(virusLocations);
 		 
 		 virusLocationsTreeNode.setColumnDimension(2);  //mds dimension is 2
 		 virusLocationsTreeNode.setRowDimension(numNodes);
-		 addVariable(virusLocationsTreeNode);
+		 addParameter(virusLocationsTreeNode);
 		 
 		 addModel(treeModel);
-		 addVariable(mu);
+		 addParameter(mu);
 		 
-		 addVariable(muPrecision);
-		 addVariable(p_on);
+		 addParameter(muPrecision);
+		 addParameter(p_on);
 	
 		  numdata = virusLocations.getColumnDimension();
 	 

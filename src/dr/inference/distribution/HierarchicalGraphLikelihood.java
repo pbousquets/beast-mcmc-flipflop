@@ -51,9 +51,9 @@ public class HierarchicalGraphLikelihood extends AbstractModelLikelihood {
         this.hierarchicalIndicator = hierarchicalIndicator;
         this.strataIndicatorMatrix = strataIndicatorMatrix;
         this.prob = prob;
-        addVariable(hierarchicalIndicator);
-        addVariable(strataIndicatorMatrix);
-        addVariable(prob);
+        addParameter(hierarchicalIndicator);
+        addParameter(strataIndicatorMatrix);
+        addParameter(prob);
         
     }
 

@@ -25,6 +25,8 @@
 
 package dr.inference.model;
 
+import java.util.Map;
+
 /**
  * @author Marc Suchard
  */
@@ -48,18 +50,25 @@ public class MatrixVectorProductParameter extends Parameter.Abstract implements 
     }
 
     protected void storeValues() {
-        matrix.storeParameterValues();
-        vector.storeParameterValues();
+        matrix.storeModelState();
+        vector.storeModelState();
     }
 
     protected void restoreValues() {
-        matrix.restoreParameterValues();
-        vector.restoreVariableValues();
+        matrix.restoreModelState();
+        vector.restoreModelState();
     }
 
-    protected void acceptValues() {
-        matrix.acceptParameterValues();
-        vector.acceptParameterValues();
+    @Override
+    protected void saveValues(Map<String, Object> stateMap) {
+        matrix.saveModelState(stateMap);
+        vector.saveModelState(stateMap);
+    }
+
+    @Override
+    protected void loadValues(Map<String, Object> stateMap) {
+        matrix.loadModelState(stateMap);
+        vector.loadModelState(stateMap);
     }
 
     protected void adoptValues(Parameter source) {

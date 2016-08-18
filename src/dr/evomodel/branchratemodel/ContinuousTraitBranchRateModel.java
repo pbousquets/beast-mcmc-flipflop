@@ -69,11 +69,11 @@ public class ContinuousTraitBranchRateModel extends AbstractBranchRateModel {
         this.ratioParameter = ratioParameter;
 
         if (rateParameter != null) {
-            addVariable(rateParameter);
+            addParameter(rateParameter);
         }
 
         if (ratioParameter != null) {
-            addVariable(ratioParameter);
+            addParameter(ratioParameter);
         }
     }
 

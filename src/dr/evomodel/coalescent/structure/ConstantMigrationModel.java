@@ -62,7 +62,7 @@ public class ConstantMigrationModel extends MigrationModel {
 
         this.demeCount = demeCount;
         this.migrationParameter = migrationParameter;
-        addVariable(migrationParameter);
+        addParameter(migrationParameter);
         migrationParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, migrationParameter.getDimension()));
     }
 

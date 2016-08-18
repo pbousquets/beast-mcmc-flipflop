@@ -27,6 +27,7 @@ package dr.inference.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A multidimensional parameter constructed from its component parameters.
@@ -227,21 +228,31 @@ public class CompoundParameter extends Parameter.Abstract implements VariableLis
 //        getParameter(column).setParameterValueNotifyChangedAll(row, val);
 //    }
 
+    @Override
     protected void storeValues() {
         for (Parameter parameter : uniqueParameters) {
-            parameter.storeParameterValues();
+            parameter.storeModelState();
         }
     }
 
+    @Override
     protected void restoreValues() {
         for (Parameter parameter : uniqueParameters) {
-            parameter.restoreParameterValues();
+            parameter.restoreModelState();
         }
     }
 
-    protected final void acceptValues() {
+    @Override
+    protected void saveValues(Map<String, Object> stateMap) {
         for (Parameter parameter : uniqueParameters) {
-            parameter.acceptParameterValues();
+            parameter.saveModelState(stateMap);
+        }
+    }
+
+    @Override
+    protected void loadValues(Map<String, Object> stateMap) {
+        for (Parameter parameter : uniqueParameters) {
+            parameter.loadModelState(stateMap);
         }
     }
 

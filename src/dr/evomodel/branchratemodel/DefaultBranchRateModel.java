@@ -30,6 +30,8 @@ import dr.inference.model.Model;
 import dr.inference.model.ModelListener;
 import dr.inference.model.Variable;
 
+import java.util.Map;
+
 /**
  * @author Andrew Rambaut
  * @version $Id: DefaultBranchRateModel.java,v 1.4 2005/05/24 20:25:57 rambaut Exp $
@@ -39,24 +41,39 @@ public final class DefaultBranchRateModel implements BranchRateModel {
         return 1.0;
     }
 
+    @Override
     public void addModelListener(ModelListener listener) {
         // nothing to do
     }
 
+    @Override
     public void removeModelListener(ModelListener listener) {
         // nothing to do
     }
 
+    @Override
     public void storeModelState() {
         // nothing to do
     }
 
+    @Override
     public void restoreModelState() {
         // nothing to do
     }
 
+    @Override
     public void acceptModelState() {
         // nothing to do
+    }
+
+    @Override
+    public void saveModelState(Map<String, Object> stateMap) {
+        throw new UnsupportedOperationException("saveModelState not implemented");
+    }
+
+    @Override
+    public void loadModelState(Map<String, Object> stateMap) {
+        throw new UnsupportedOperationException("loadModelState not implemented");
     }
 
     public boolean isValidState() {
@@ -71,7 +88,7 @@ public final class DefaultBranchRateModel implements BranchRateModel {
         return null;
     }
 
-    public int getVariableCount() {
+    public int getParameterCount() {
         return 0;
     }
 

@@ -25,7 +25,6 @@
 
 package dr.evomodel.coalescent;
 
-import dr.evolution.coalescent.IntervalType;
 import dr.evolution.tree.NodeRef;
 import dr.evolution.tree.Tree;
 import dr.evomodel.tree.TreeModel;
@@ -38,8 +37,6 @@ import dr.util.Author;
 import dr.util.Citable;
 import dr.util.Citation;
 import no.uib.cipr.matrix.DenseVector;
-import no.uib.cipr.matrix.NotConvergedException;
-import no.uib.cipr.matrix.SymmTridiagEVD;
 import no.uib.cipr.matrix.SymmTridiagMatrix;
 
 import java.util.ArrayList;
@@ -123,11 +120,11 @@ public class GMRFSkyrideLikelihood extends OldAbstractCoalescentLikelihood imple
         this.timeAwareSmoothing = timeAwareSmoothing;
         this.rescaleByRootHeight = rescaleByRootHeight;
 
-        addVariable(popSizeParameter);
-        addVariable(precisionParameter);
-        addVariable(lambdaParameter);
+        addParameter(popSizeParameter);
+        addParameter(precisionParameter);
+        addParameter(lambdaParameter);
         if (betaParameter != null) {
-            addVariable(betaParameter);
+            addParameter(betaParameter);
         }
 
         setTree(treeList);

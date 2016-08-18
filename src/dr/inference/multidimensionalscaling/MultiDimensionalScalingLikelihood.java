@@ -27,7 +27,6 @@ package dr.inference.multidimensionalscaling;
 
 import dr.evomodel.antigenic.MultidimensionalScalingLikelihood;
 import dr.inference.model.*;
-import dr.inference.parallel.ServiceRequest;
 import dr.util.DataTable;
 import dr.xml.*;
 
@@ -35,7 +34,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -204,7 +202,7 @@ public class MultiDimensionalScalingLikelihood extends AbstractModelLikelihood i
             core = new MassivelyParallelMDSImpl();
             flags = computeMode;
         } else {
-            core = new MultiDimensionalScalingCoreImpl2();
+            core = new MultiDimensionalScalingCoreImpl();
         }
 //        switch (computeMode) {
 //            case 1:
@@ -243,10 +241,10 @@ public class MultiDimensionalScalingLikelihood extends AbstractModelLikelihood i
 
         this.locationsParameter = locationsParameter;
         setupLocationsParameter(this.locationsParameter);
-        addVariable(locationsParameter);
+        addParameter(locationsParameter);
 
         this.mdsPrecisionParameter = mdsPrecision;
-        addVariable(mdsPrecision);
+        addParameter(mdsPrecision);
 
         mdsCore.setParameters(mdsPrecisionParameter.getParameterValues());
         mdsCore.setPairwiseData(observations);
@@ -336,12 +334,6 @@ public class MultiDimensionalScalingLikelihood extends AbstractModelLikelihood i
         logLikelihood = storedLogLikelihood;
         likelihoodKnown = true;
         mdsCore.restoreState();
-    }
-
-    @Override
-    protected void acceptState() {
-        mdsCore.acceptState();
-        // do nothing
     }
 
     public void makeDirty() {

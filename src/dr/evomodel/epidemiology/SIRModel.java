@@ -82,19 +82,19 @@ public class SIRModel extends DemographicModel implements Likelihood {
         super(name);
 
         this.reproductiveNumberParameter = reproductiveNumberParameter;
-        addVariable(reproductiveNumberParameter);
+        addParameter(reproductiveNumberParameter);
         reproductiveNumberParameter.addBounds(new Parameter.DefaultBounds(Double.MAX_VALUE, 1.0, 1));
 
         this.recoveryRateParameter = recoveryRateParameter;
-        addVariable(recoveryRateParameter);
+        addParameter(recoveryRateParameter);
         recoveryRateParameter.addBounds(new Parameter.DefaultBounds(Double.MAX_VALUE, 0.0, 1));
 
         this.hostPopulationSizeParameter = hostPopulationSizeParameter;
-        addVariable(hostPopulationSizeParameter);
+        addParameter(hostPopulationSizeParameter);
         hostPopulationSizeParameter.addBounds(new Parameter.DefaultBounds(Double.MAX_VALUE, 0.0, 1));
 
         this.proportionsParameter = proportionsParameter;
-        addVariable(proportionsParameter);
+        addParameter(proportionsParameter);
 
         demographicFunction = new SIRDemographicFunction(units);
         setUnits(units);

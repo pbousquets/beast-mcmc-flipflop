@@ -1203,7 +1203,7 @@ public class TreeModel extends AbstractModel implements MultivariateTraitTree, C
             leftChild = rightChild = null;
 
             heightParameter = new Parameter.Default(tree.getNodeHeight(node));
-            addVariable(heightParameter);
+            addParameter(heightParameter);
 
             number = node.getNumber();
             taxon = tree.getNodeTaxon(node);
@@ -1232,7 +1232,7 @@ public class TreeModel extends AbstractModel implements MultivariateTraitTree, C
                     rateParameter.setId("node" + getNumber() + ".rate");
                 }
                 rateParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
-                addVariable(rateParameter);
+                addParameter(rateParameter);
             }
         }
 
@@ -1267,7 +1267,7 @@ public class TreeModel extends AbstractModel implements MultivariateTraitTree, C
                 traitParameters.put(name, trait);
 
                 if (firesTreeEvents) {
-                    addVariable(trait);
+                    addParameter(trait);
                 }
             }
         }

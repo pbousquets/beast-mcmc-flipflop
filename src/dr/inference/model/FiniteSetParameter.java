@@ -25,30 +25,39 @@
 
 package dr.inference.model;
 
+import java.util.Map;
+
 /**
  * @author Marc A. Suchard
  */
 
 public class FiniteSetParameter extends Parameter.Abstract implements VariableListener {
 
-    public void variableChangedEvent(Variable variable, int index, ChangeType type) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
     protected void storeValues() {
-        indicator.storeParameterValues();
+        indicator.storeModelState();
     }
 
     protected void restoreValues() {
-        indicator.restoreParameterValues();
+        indicator.restoreModelState();
     }
 
-    protected void acceptValues() {
-        //To change body of implemented methods use File | Settings | File Templates.
+    @Override
+    public void loadValues(Map<String, Object> stateMap) {
+        indicator.loadModelState(stateMap);
+    }
+
+    @Override
+    public void saveValues(Map<String, Object> stateMap) {
+        indicator.saveModelState(stateMap);
     }
 
     protected void adoptValues(Parameter source) {
         //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void variableChangedEvent(Variable variable, int index, ChangeType type) {
+        // do nothing
     }
 
     /**

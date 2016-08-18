@@ -44,7 +44,7 @@ public class BetaDistributionModel extends AbstractModel implements ParametricDi
 
     public static final String BETA_DISTRIBUTION_MODEL = "betaDistributionModel";
 
-    public BetaDistributionModel(Variable<Double> alpha, Variable<Double> beta) {
+    public BetaDistributionModel(Parameter alpha, Parameter beta) {
         this(alpha, beta, 0.0, 1.0);
     }
 
@@ -52,7 +52,7 @@ public class BetaDistributionModel extends AbstractModel implements ParametricDi
     /**
      * Constructor.
      */
-    public BetaDistributionModel(Variable<Double> alpha, Variable<Double> beta, double offset, double length) {
+    public BetaDistributionModel(Parameter alpha, Parameter beta, double offset, double length) {
 
         super(BETA_DISTRIBUTION_MODEL);
 
@@ -61,10 +61,10 @@ public class BetaDistributionModel extends AbstractModel implements ParametricDi
         this.length = length;
         this.offset = offset;
 
-        addVariable(alpha);
+        addParameter(alpha);
         alpha.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
-        addVariable(beta);
+        addParameter(beta);
         beta.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
         recomputeBetaDistribution();
@@ -171,8 +171,8 @@ public class BetaDistributionModel extends AbstractModel implements ParametricDi
     // Private instance variables
     // **************************************************************
 
-    private Variable<Double> alpha = null;
-    private Variable<Double> beta = null;
+    private Parameter alpha = null;
+    private Parameter beta = null;
     private double offset = 0.0;
     private double length = 0.0;
 

@@ -68,15 +68,15 @@ public class ConstantExponentialModel extends DemographicModel implements Citabl
         constExponential = new ConstExponential(units);
 
         this.N0Parameter = N0Parameter;
-        addVariable(N0Parameter);
+        addParameter(N0Parameter);
         N0Parameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
         this.timeParameter = timeParameter;
-        addVariable(timeParameter);
+        addParameter(timeParameter);
         timeParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
         this.growthRateParameter = growthRateParameter;
-        addVariable(growthRateParameter);
+        addParameter(growthRateParameter);
         growthRateParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
         this.usingGrowthRate = usingGrowthRate;

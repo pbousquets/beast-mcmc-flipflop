@@ -77,9 +77,8 @@ public class GeneralSubstitutionModelTest extends TraceCorrelationAssert {
         GeneralSubstitutionModel generalSubstitutionModel = new GeneralSubstitutionModel(dataType, freqModel, ratesPara, 4); // relativeTo="5"
 
         //siteModel
-        GammaSiteModel siteModel = new GammaSiteModel(generalSubstitutionModel);
         Parameter mu = new Parameter.Default(GammaSiteModelParser.MUTATION_RATE, 1.0, 0, Double.POSITIVE_INFINITY);
-        siteModel.setMutationRateParameter(mu);
+        GammaSiteModel siteModel = new GammaSiteModel(generalSubstitutionModel, mu, null, 0, null);
 
         //treeLikelihood
         SitePatterns patterns = new SitePatterns(alignment, null, 0, -1, 1, true);

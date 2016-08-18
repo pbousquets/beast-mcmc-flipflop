@@ -202,16 +202,16 @@ public class DiscreteTraitBranchRateModel extends AbstractBranchRateModel {
         this.traitIndex = traitIndex;
 
         this.rateParameter = rateParameter;
-        addVariable(rateParameter);
+        addParameter(rateParameter);
 
         this.relativeRatesParameter = relativeRatesParameter;
         if (relativeRatesParameter != null) {
-            addVariable(relativeRatesParameter);
+            addParameter(relativeRatesParameter);
         }
 
         this.indicatorParameter = indicatorParameter;
         if (indicatorParameter != null) {
-            addVariable(indicatorParameter);
+            addParameter(indicatorParameter);
         }
 
         rates = new double[treeModel.getNodeCount()];

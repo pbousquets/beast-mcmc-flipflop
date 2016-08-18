@@ -30,7 +30,6 @@ import dr.inference.distribution.MultivariateDistributionLikelihood;
 import dr.inference.distribution.NormalDistributionModel;
 import dr.inference.distribution.ParametricDistributionModel;
 import dr.inference.model.*;
-import dr.inference.prior.Prior;
 import dr.inferencexml.operators.EllipticalSliceOperatorParser;
 import dr.math.MathUtils;
 import dr.math.distributions.CompoundGaussianProcess;

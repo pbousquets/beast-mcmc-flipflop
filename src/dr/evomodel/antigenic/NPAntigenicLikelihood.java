@@ -84,15 +84,15 @@ public class NPAntigenicLikelihood extends AbstractModelLikelihood {
 
 
 
-        addVariable(traitParameter);
-        addVariable(assignments);
-        addVariable(links);
+        addParameter(traitParameter);
+        addParameter(assignments);
+        addParameter(links);
         addModel(treeModel);
-        addVariable(chi);
-        addVariable(transformFactor);
-        addVariable(alpha);
+        addParameter(chi);
+        addParameter(transformFactor);
+        addParameter(alpha);
        // addVariable(locationDrift);
-        addVariable(offsets);
+        addParameter(offsets);
 
         numdata = traitParameter.getParameterCount();
         this.allTips=Tree.Utils.getExternalNodes(treeModel,treeModel.getRoot());

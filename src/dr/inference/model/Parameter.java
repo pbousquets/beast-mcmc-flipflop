@@ -38,7 +38,7 @@ import java.util.*;
  * @author Alexei Drummond
  * @version $Id: Parameter.java,v 1.22 2005/06/08 11:23:25 alexei Exp $
  */
-public interface Parameter extends Statistic, Variable<Double> {
+public interface Parameter extends Storeable, Statistic, Variable<Double> {
 
     /**
      * @param dim the index of the parameter dimension of interest
@@ -95,21 +95,6 @@ public interface Parameter extends Statistic, Variable<Double> {
      * @param listener the listener
      */
     void removeParameterListener(VariableListener listener);
-
-    /**
-     * stores the state of this parameter for subsquent restore
-     */
-    void storeParameterValues();
-
-    /**
-     * restores the stored state of this parameter
-     */
-    void restoreParameterValues();
-
-    /**
-     * accepts the stored state of this parameter
-     */
-    void acceptParameterValues();
 
     /**
      * adopt the state of the source parameter
@@ -280,8 +265,8 @@ public interface Parameter extends Statistic, Variable<Double> {
             return copyOfValues;
         }
 
-
-        public final void storeParameterValues() {
+        @Override
+        public final void storeModelState() {
             if (isValid) {
                 storeValues();
 
@@ -289,7 +274,8 @@ public interface Parameter extends Statistic, Variable<Double> {
             }
         }
 
-        public final void restoreParameterValues() {
+        @Override
+        public final void restoreModelState() {
             if (!isValid) {
                 restoreValues();
 
@@ -297,14 +283,22 @@ public interface Parameter extends Statistic, Variable<Double> {
             }
         }
 
-        public final void acceptParameterValues() {
-            if (!isValid) {
-                acceptValues();
-
-                isValid = true;
-            }
+        @Override
+        public final void acceptModelState() {
+            throw new UnsupportedOperationException("AcceptModelState is not used for parameters");
         }
 
+        @Override
+        public void saveModelState(Map<String, Object> stateMap) {
+            saveValues(stateMap);
+        }
+
+        @Override
+        public void loadModelState(Map<String, Object> stateMap) {
+            loadValues(stateMap);
+        }
+
+        @Override
         public final void adoptParameterValues(Parameter source) {
 
             adoptValues(source);
@@ -312,6 +306,7 @@ public interface Parameter extends Statistic, Variable<Double> {
             isValid = true;
         }
 
+        @Override
         public boolean isWithinBounds() {
             Bounds<Double> bounds = getBounds();
             for (int i = 0; i < getDimension(); i++) {
@@ -330,18 +325,22 @@ public interface Parameter extends Statistic, Variable<Double> {
         /**
          * @return the name of this variable.
          */
+        @Override
         public final String getVariableName() {
             return getParameterName();
         }
 
+        @Override
         public final Double getValue(int index) {
             return getParameterValue(index);
         }
 
+        @Override
         public final void setValue(int index, Double value) {
             setParameterValue(index, value);
         }
 
+        @Override
         public Double[] getValues() {
             Double[] copyOfValues = new Double[getDimension()];
             for (int i = 0; i < getDimension(); i++) {
@@ -353,6 +352,7 @@ public interface Parameter extends Statistic, Variable<Double> {
         /**
          * @return the size of this variable - i.e. the length of the vector
          */
+        @Override
         public int getSize() {
             return getDimension();
         }
@@ -362,6 +362,7 @@ public interface Parameter extends Statistic, Variable<Double> {
          *
          * @param listener the listener
          */
+        @Override
         public final void addVariableListener(VariableListener listener) {
             addParameterListener(listener);
         }
@@ -371,31 +372,12 @@ public interface Parameter extends Statistic, Variable<Double> {
          *
          * @param listener the listener
          */
+        @Override
         public final void removeVariableListener(VariableListener listener) {
             removeParameterListener(listener);
         }
 
-        /**
-         * stores the state of this parameter for subsquent restore
-         */
-        public void storeVariableValues() {
-            storeParameterValues();
-        }
-
-        /**
-         * restores the stored state of this parameter
-         */
-        public void restoreVariableValues() {
-            restoreParameterValues();
-        }
-
-        /**
-         * accepts the stored state of this parameter
-         */
-        public void acceptVariableValues() {
-            acceptParameterValues();
-        }
-
+        @Override
         public boolean isUsed() {
             return listeners != null && listeners.size() > 0;
         }
@@ -406,7 +388,9 @@ public interface Parameter extends Statistic, Variable<Double> {
 
         protected abstract void restoreValues();
 
-        protected abstract void acceptValues();
+        protected abstract void saveValues(Map<String, Object> stateMap);
+
+        protected abstract void loadValues(Map<String, Object> stateMap);
 
         protected abstract void adoptValues(Parameter source);
 
@@ -528,6 +512,11 @@ public interface Parameter extends Statistic, Variable<Double> {
         public Default(double[] values) {
             this.values = new double[values.length];
             System.arraycopy(values, 0, this.values, 0, values.length);
+        }
+
+        public Default(String id, double initialValue) {
+            this(1, initialValue);
+            setId(id);
         }
 
         public Default(String id, int dimension, double initialValue) {
@@ -707,6 +696,7 @@ public interface Parameter extends Statistic, Variable<Double> {
             fireParameterChangedEvent(-1, Parameter.ChangeType.ALL_VALUES_CHANGED);
         }
 
+        @Override
         protected final void storeValues() {
             // no need to pay a price in a very common call for one-time rare usage
             //hasBeenStored = true;
@@ -716,6 +706,7 @@ public interface Parameter extends Statistic, Variable<Double> {
             System.arraycopy(values, 0, storedValues, 0, storedValues.length);
         }
 
+        @Override
         protected final void restoreValues() {
 
             //swap the arrays
@@ -728,10 +719,14 @@ public interface Parameter extends Statistic, Variable<Double> {
             //} else throw new RuntimeException("restore called before store!");
         }
 
-        /**
-         * Nothing to do
-         */
-        protected final void acceptValues() {
+        @Override
+        protected void saveValues(Map<String, Object> stateMap) {
+            throw new UnsupportedOperationException("unsupported");
+        }
+
+        @Override
+        protected void loadValues(Map<String, Object> stateMap) {
+            throw new UnsupportedOperationException("unsupported");
         }
 
         protected final void adoptValues(Parameter source) {

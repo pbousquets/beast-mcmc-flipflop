@@ -1,13 +1,11 @@
 package dr.evomodel.antigenic.phyloClustering.misc.obsolete;
 
-import dr.evolution.util.*;
 import dr.inference.model.*;
 import dr.math.MathUtils;
 import dr.math.LogTricks;
 import dr.math.distributions.NormalDistribution;
 import dr.util.*;
 import dr.xml.*;
-import mpi.Comm;
 
 import java.io.*;
 import java.util.*;
@@ -163,21 +161,21 @@ public class AGLikelihoodCluster extends AbstractModelLikelihood implements Cita
         this.mdsDimension = mdsDimension;
 
         this.mdsPrecisionParameter = mdsPrecisionParameter;
-        addVariable(mdsPrecisionParameter);
+        addParameter(mdsPrecisionParameter);
 
         this.locationDriftParameter = locationDriftParameter;
         if (this.locationDriftParameter != null) {
-            addVariable(locationDriftParameter);
+            addParameter(locationDriftParameter);
         }
 
         this.virusDriftParameter = virusDriftParameter;
         if (this.virusDriftParameter != null) {
-            addVariable(virusDriftParameter);
+            addParameter(virusDriftParameter);
         }
 
         this.serumDriftParameter = serumDriftParameter;
         if (this.serumDriftParameter != null) {
-            addVariable(serumDriftParameter);
+            addParameter(serumDriftParameter);
         }
 
         this.virusLocationsParameter = virusLocationsParameter;
@@ -260,7 +258,7 @@ public class AGLikelihoodCluster extends AbstractModelLikelihood implements Cita
                 //	clusterOffsetsParameter = new Parameter.Default("clusterOffsets");
             } else {
                 //clusterOffsetsParameter.addBounds(new Parameter.DefaultBounds(Double.MAX_VALUE, 0.0, 1000));
-                addVariable(clusterOffsetsParameter);
+                addParameter(clusterOffsetsParameter);
                 clusterOffsetsParameter.setDimension(virusNames.size());
 
             }
@@ -279,7 +277,7 @@ public class AGLikelihoodCluster extends AbstractModelLikelihood implements Cita
         if (virusAviditiesParameter != null) {
             virusAviditiesParameter.addBounds(new Parameter.DefaultBounds(Double.MAX_VALUE, Double.MIN_VALUE, 1));
             virusAviditiesParameter.setDimension(virusNames.size());
-            addVariable(virusAviditiesParameter);
+            addParameter(virusAviditiesParameter);
             String[] labelArray = new String[virusNames.size()];
             virusNames.toArray(labelArray);
             virusAviditiesParameter.setDimensionNames(labelArray);
@@ -296,7 +294,7 @@ public class AGLikelihoodCluster extends AbstractModelLikelihood implements Cita
             serumPotenciesParameter = new Parameter.Default("serumPotencies");
         } else {
             serumPotenciesParameter.addBounds(new Parameter.DefaultBounds(Double.MAX_VALUE, 0.0, 1));
-            addVariable(serumPotenciesParameter);
+            addParameter(serumPotenciesParameter);
         }
 
         serumPotenciesParameter.setDimension(serumNames.size());
@@ -315,7 +313,7 @@ public class AGLikelihoodCluster extends AbstractModelLikelihood implements Cita
         if (serumBreadthsParameter != null) {
             serumBreadthsParameter.addBounds(new Parameter.DefaultBounds(Double.MAX_VALUE, 0.0, 1));
             serumBreadthsParameter.setDimension(serumNames.size());
-            addVariable(serumBreadthsParameter);
+            addParameter(serumBreadthsParameter);
             String[] labelArray = new String[serumNames.size()];
             serumNames.toArray(labelArray);
             serumBreadthsParameter.setDimensionNames(labelArray);
@@ -332,7 +330,7 @@ public class AGLikelihoodCluster extends AbstractModelLikelihood implements Cita
         for (int i = 0; i < strains.size(); i++) {
             locationsParameter.getParameter(i).setId(strains.get(i));
         }
-        addVariable(locationsParameter);
+        addParameter(locationsParameter);
     }
 
     private void setupOffsetsParameter(Parameter offsetsParameter, List<String> strainNames, List<Double> strainDates, double earliest) {
@@ -348,7 +346,7 @@ public class AGLikelihoodCluster extends AbstractModelLikelihood implements Cita
             }
             offsetsParameter.setParameterValue(i, offset);
         }
-        addVariable(offsetsParameter);
+        addParameter(offsetsParameter);
     }
 
 
@@ -583,10 +581,6 @@ public class AGLikelihoodCluster extends AbstractModelLikelihood implements Cita
         storedLogLikelihoods = tmp;
 
         likelihoodKnown = false;
-    }
-
-    @Override
-    protected void acceptState() {
     }
 
     public Model getModel() {

@@ -33,6 +33,7 @@ import dr.evomodel.speciation.BirthDeathSerialSamplingModel;
 import dr.evomodel.speciation.SpeciationLikelihood;
 import dr.evomodel.speciation.SpeciationModel;
 import dr.inference.model.Likelihood;
+import dr.inference.model.Parameter;
 import dr.inference.model.Variable;
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -66,18 +67,18 @@ public class BirthDeathSSLikelihoodTest extends TestCase {
 
     public void testBirthDeathLikelihoodBEAST2() {
         System.out.println("RootHeight = " + tree2.getRootHeight());
-        Variable<Double> origin = new Variable.D("origin", 6.0);
+        Parameter origin = new Parameter.Default("origin", 6.0);
 
         final double birthRate = 2.0;
         final double deathRate = 1.0;
         final double psiRate = 0.5; // rate of sampling taxa through time
         final double sampleProbability = 0.0; // the proportion of taxa sampled, default to fix to 0
         final boolean hasFinalSample = false;
-        Variable<Double> b = new Variable.D("b", birthRate);
-        Variable<Double> d = new Variable.D("d", deathRate);
-        Variable<Double> psi = new Variable.D("psi", psiRate);
-        Variable<Double> p = new Variable.D("p", sampleProbability);
-        Variable<Double> r = new Variable.D("r", 0.0); // sampleBecomesNonInfectiousProb
+        Parameter b = new Parameter.Default("b", birthRate);
+        Parameter d = new Parameter.Default("d", deathRate);
+        Parameter psi = new Parameter.Default("psi", psiRate);
+        Parameter p = new Parameter.Default("p", sampleProbability);
+        Parameter r = new Parameter.Default("r", 0.0); // sampleBecomesNonInfectiousProb
 
         SpeciationModel speciationModel = new BirthDeathSerialSamplingModel(b, d, psi, p, false, r, hasFinalSample, origin, Units.Type.YEARS);
         Likelihood likelihood = new SpeciationLikelihood(tree2, speciationModel, "bdss.like");
@@ -108,18 +109,18 @@ public class BirthDeathSSLikelihoodTest extends TestCase {
 
     public void testBirthDeathLikelihoodOrigin() {
         System.out.println("RootHeight = " + tree.getRootHeight());
-        Variable<Double> origin = new Variable.D("origin", 50);
+        Parameter origin = new Parameter.Default("origin", 50);
         likelihoodTester(tree, birthRate, deathRate, origin, -29.529647743897872);
     }
 
-    private void likelihoodTester(Tree tree, double birthRate, double deathRate, Variable<Double> origin, double logL) {
+    private void likelihoodTester(Tree tree, double birthRate, double deathRate, Parameter origin, double logL) {
 
-        Variable<Double> b = new Variable.D("b", birthRate);
-        Variable<Double> d = new Variable.D("d", deathRate);
-        Variable<Double> psi = new Variable.D("psi", this.psi);
-        Variable<Double> p = new Variable.D("p", this.p);
-        Variable<Double> r = new Variable.D("r", 0.5);
-        Variable<Double> fTime = new Variable.D("time", 0.0);
+        Parameter b = new Parameter.Default("b", birthRate);
+        Parameter d = new Parameter.Default("d", deathRate);
+        Parameter psi = new Parameter.Default("psi", this.psi);
+        Parameter p = new Parameter.Default("p", this.p);
+        Parameter r = new Parameter.Default("r", 0.5);
+        Parameter fTime = new Parameter.Default("time", 0.0);
 
         SpeciationModel speciationModel = new BirthDeathSerialSamplingModel(b, d, psi, p, false, r, true, origin, Units.Type.YEARS);
         Likelihood likelihood = new SpeciationLikelihood(tree, speciationModel, "bdss.like");

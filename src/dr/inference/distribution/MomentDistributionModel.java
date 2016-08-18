@@ -29,7 +29,6 @@ package dr.inference.distribution;
 import dr.inference.model.*;
 import dr.inference.model.Parameter;
 import dr.inferencexml.distribution.MomentDistributionModelParser;
-import dr.math.MathUtils;
 import dr.math.distributions.RandomGenerator;
 
 //@author Max Tolkoff
@@ -45,14 +44,14 @@ public class MomentDistributionModel extends AbstractModelLikelihood implements 
 //        DuplicatedParameter precTemp= new DuplicatedParameter(precision);
 //        precTemp.addDuplicationParameter(new Parameter.Default(cutoff.getDimension()));
 //        this.precision=new DiagonalMatrix(precTemp);
-        addVariable(mean);
+        addParameter(mean);
         mean.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
-        addVariable(precision);
+        addParameter(precision);
 //        precision.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
         this.cutoff=cutoff;  if(cutoff!=null){
-        addVariable(cutoff);
+        addParameter(cutoff);
         cutoff.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, cutoff.getDimension()));}
-        addVariable(data);
+        addParameter(data);
         this.data=data;
         untruncated=new NormalDistributionModel(mean, precision, true);
         sumKnown=false;
@@ -164,11 +163,6 @@ public class MomentDistributionModel extends AbstractModelLikelihood implements 
         sum=storedSum;
         untruncated=storedUntruncated;
         untruncatedKnown=storedUntruncatedKnown;
-
-    }
-
-    @Override
-    protected void acceptState() {
 
     }
 

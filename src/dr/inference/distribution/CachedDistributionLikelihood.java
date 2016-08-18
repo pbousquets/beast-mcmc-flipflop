@@ -35,10 +35,10 @@ import dr.inference.model.Variable;
  */
 public class CachedDistributionLikelihood extends AbstractModelLikelihood {
 
-    public CachedDistributionLikelihood(String name, AbstractDistributionLikelihood likelihood, Variable variable) {
+    public CachedDistributionLikelihood(String name, AbstractDistributionLikelihood likelihood, Parameter parameter) {
         super(name);
         this.likelihood = likelihood;
-        addVariable(variable);
+        addParameter(parameter);
     }
 
     protected void handleModelChangedEvent(Model model, Object object, int index) {

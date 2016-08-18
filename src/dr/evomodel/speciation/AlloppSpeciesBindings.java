@@ -986,11 +986,6 @@ public class AlloppSpeciesBindings extends AbstractModel implements Loggable {
 
     }
 
-    @Override
-    protected void acceptState() {
-    }
-
-
     public void addModelListeners(ModelListener listener) {
         for (GeneTreeInfo gti : geneTreeInfos) {
             gti.tree.addModelListener(listener);

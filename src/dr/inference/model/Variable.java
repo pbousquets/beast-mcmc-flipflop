@@ -78,21 +78,6 @@ public interface Variable<V> extends Identifiable {
     void removeVariableListener(VariableListener listener);
 
     /**
-     * stores the state of this parameter for subsequent restore
-     */
-    void storeVariableValues();
-
-    /**
-     * restores the stored state of this parameter
-     */
-    void restoreVariableValues();
-
-    /**
-     * accepts the stored state of this parameter
-     */
-    void acceptVariableValues();
-
-    /**
      * @return the bounds on this parameter
      */
     Bounds<V> getBounds();

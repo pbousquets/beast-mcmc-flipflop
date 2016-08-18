@@ -70,7 +70,7 @@ public class ExponentialSkythingLikelihood extends OldAbstractCoalescentLikeliho
         if (tree instanceof TreeModel) {
             addModel((TreeModel)tree);
         }
-        addVariable(slopeParameter);
+        addParameter(slopeParameter);
 
         setupIntervals();
 

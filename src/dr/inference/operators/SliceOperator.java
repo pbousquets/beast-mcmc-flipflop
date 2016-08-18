@@ -32,7 +32,6 @@ import dr.inference.model.CompoundLikelihood;
 import dr.inference.model.Likelihood;
 import dr.inference.model.Parameter;
 import dr.inference.model.Variable;
-import dr.inference.prior.Prior;
 import dr.math.MathUtils;
 import dr.math.distributions.NormalDistribution;
 import dr.util.Attribute;
@@ -87,7 +86,7 @@ public class SliceOperator extends SimpleMetropolizedGibbsOperator {
 
         // Define normal model
         Parameter meanParameter = new Parameter.Default(1.0); // Starting value
-        Variable<Double> stdev = new Variable.D(1.0, 1); // Fixed value
+        Parameter stdev = new Parameter.Default(1.0); // Fixed value
         ParametricDistributionModel densityModel = new NormalDistributionModel(meanParameter, stdev);
         DistributionLikelihood likelihood = new DistributionLikelihood(densityModel);
 

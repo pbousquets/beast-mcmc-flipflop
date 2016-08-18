@@ -49,10 +49,10 @@ public class UniformDistributionModel extends AbstractModel implements Parametri
         super(UniformDistributionModelParser.UNIFORM_DISTRIBUTION_MODEL);
 
         this.lowerParameter = lowerParameter;
-        addVariable(lowerParameter);
+        addParameter(lowerParameter);
         lowerParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
         this.upperParameter = upperParameter;
-        addVariable(upperParameter);
+        addParameter(upperParameter);
         upperParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
     }
 

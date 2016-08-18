@@ -63,7 +63,7 @@ public class BMPriorLikelihood extends AbstractModelLikelihood {
 
         this.m = m;
         this.sigma = sigma;
-        addVariable(sigma);
+        addParameter(sigma);
 
         // this.lambda = lambda;
 //        if (lambda != null) {

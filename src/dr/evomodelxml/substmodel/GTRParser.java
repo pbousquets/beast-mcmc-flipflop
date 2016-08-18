@@ -27,6 +27,7 @@ package dr.evomodelxml.substmodel;
 
 import dr.evomodel.substmodel.FrequencyModel;
 import dr.evomodel.substmodel.nucleotide.GTR;
+import dr.inference.model.Parameter;
 import dr.inference.model.Variable;
 import dr.xml.*;
 
@@ -55,29 +56,29 @@ public class GTRParser extends AbstractXMLObjectParser {
         XMLObject cxo = xo.getChild(FREQUENCIES);
         FrequencyModel freqModel = (FrequencyModel) cxo.getChild(FrequencyModel.class);
 
-        Variable<Double> rateACVariable = null;
+        Parameter rateACVariable = null;
         if (xo.hasChildNamed(A_TO_C)) {
-            rateACVariable = (Variable<Double>) xo.getElementFirstChild(A_TO_C);
+            rateACVariable = (Parameter) xo.getElementFirstChild(A_TO_C);
         }
-        Variable<Double> rateAGVariable = null;
+        Parameter rateAGVariable = null;
         if (xo.hasChildNamed(A_TO_G)) {
-            rateAGVariable = (Variable<Double>) xo.getElementFirstChild(A_TO_G);
+            rateAGVariable = (Parameter) xo.getElementFirstChild(A_TO_G);
         }
-        Variable<Double> rateATVariable = null;
+        Parameter rateATVariable = null;
         if (xo.hasChildNamed(A_TO_T)) {
-            rateATVariable = (Variable<Double>) xo.getElementFirstChild(A_TO_T);
+            rateATVariable = (Parameter) xo.getElementFirstChild(A_TO_T);
         }
-        Variable<Double> rateCGVariable = null;
+        Parameter rateCGVariable = null;
         if (xo.hasChildNamed(C_TO_G)) {
-            rateCGVariable = (Variable<Double>) xo.getElementFirstChild(C_TO_G);
+            rateCGVariable = (Parameter) xo.getElementFirstChild(C_TO_G);
         }
-        Variable<Double> rateCTVariable = null;
+        Parameter rateCTVariable = null;
         if (xo.hasChildNamed(C_TO_T)) {
-            rateCTVariable = (Variable<Double>) xo.getElementFirstChild(C_TO_T);
+            rateCTVariable = (Parameter) xo.getElementFirstChild(C_TO_T);
         }
-        Variable<Double> rateGTVariable = null;
+        Parameter rateGTVariable = null;
         if (xo.hasChildNamed(G_TO_T)) {
-            rateGTVariable = (Variable<Double>) xo.getElementFirstChild(G_TO_T);
+            rateGTVariable = (Parameter) xo.getElementFirstChild(G_TO_T);
         }
         int countNull = 0;
         if (rateACVariable == null) countNull++;

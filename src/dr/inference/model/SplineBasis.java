@@ -47,12 +47,12 @@ public class SplineBasis extends AbstractModel implements IntegrableUnivariateFu
     public static final String KNOT_VALUES = "knotValues";
     public static final String DEGREE = "degree";
 
-    public SplineBasis(String name, Variable<Double> knotLocations, Variable<Double> knotValues, int degree) {
+    public SplineBasis(String name, Parameter knotLocations, Parameter knotValues, int degree) {
         super(name);
         this.knotLocations = knotLocations;
         this.knotValues = knotValues;
-        addVariable(knotLocations);
-        addVariable(knotValues);
+        addParameter(knotLocations);
+        addParameter(knotValues);
         this.degree = degree;
         updateBasis = true;
 

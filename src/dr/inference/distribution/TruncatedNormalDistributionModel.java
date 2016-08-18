@@ -70,21 +70,20 @@ public class TruncatedNormalDistributionModel extends AbstractModel implements P
     /**
      * Constructor.
      */
-    public TruncatedNormalDistributionModel(Variable<Double> mean, Variable<Double> stdev, Variable<Double> minimum,
-                                            Variable<Double> maximum) {
+    public TruncatedNormalDistributionModel(Parameter mean, Parameter stdev, Parameter minimum,
+                                            Parameter maximum) {
         super(TruncatedNormalDistributionModelParser.TRUNCATED_NORMAL_DISTRIBUTION_MODEL);
         this.mean = mean;
         this.stdev = stdev;
         this.minimum = minimum;
         this.maximum = maximum;
-        this.
-                addVariable(mean);
+        this.addParameter(mean);
         mean.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
-        addVariable(stdev);
+        addParameter(stdev);
         stdev.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
-        addVariable(minimum);
+        addParameter(minimum);
         minimum.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
-        addVariable(maximum);
+        addParameter(maximum);
         maximum.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
         recomputeTruncatedNormalDistribution();
     }
@@ -96,11 +95,11 @@ public class TruncatedNormalDistributionModel extends AbstractModel implements P
         this.maximum = maxParameter;
         this.hasPrecision = isPrecision;
         this.mean = meanParameter;
-        addVariable(meanParameter);
+        addParameter(meanParameter);
         meanParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
-        addVariable(maxParameter);
+        addParameter(maxParameter);
         maxParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
-        addVariable(minParameter);
+        addParameter(minParameter);
         minParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
         if (isPrecision) {
             this.precision = scale;
@@ -108,7 +107,7 @@ public class TruncatedNormalDistributionModel extends AbstractModel implements P
         } else {
             this.stdev = scale;
         }
-        addVariable(scale);
+        addParameter(scale);
         scale.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
         recomputeTruncatedNormalDistribution();
     }
@@ -231,11 +230,11 @@ public class TruncatedNormalDistributionModel extends AbstractModel implements P
     // Private instance variables
     // **************************************************************
 
-    private final Variable<Double> mean;
-    private final Variable<Double> stdev;
-    private final Variable<Double> minimum;
-    private final Variable<Double> maximum;
-    private Variable<Double> precision;
+    private final Parameter mean;
+    private final Parameter stdev;
+    private final Parameter minimum;
+    private final Parameter maximum;
+    private Parameter precision;
     private boolean hasPrecision = false;
     private TruncatedNormalDistribution distribution = null;
     private TruncatedNormalDistribution storedDistribution = null;

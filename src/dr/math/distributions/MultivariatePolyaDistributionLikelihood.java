@@ -78,9 +78,9 @@ public class MultivariatePolyaDistributionLikelihood extends AbstractModel imple
         this.data = data;
         isFixedNormKnown = false;
         isVariableNormKnown = false;
-        addVariable(this.frequencies);
-        addVariable(this.dispersion);
-        addVariable(this.data);
+        addParameter(this.frequencies);
+        addParameter(this.dispersion);
+        addParameter(this.data);
         if (this.alphas.getDimension() != data.getColumnDimension()) {
             System.err.println("Dimensions of the frequency vector and number of columns do not match!");
         }
@@ -97,8 +97,8 @@ public class MultivariatePolyaDistributionLikelihood extends AbstractModel imple
         this.data = data;
         isFixedNormKnown = false;
         isVariableNormKnown = false;
-        addVariable(this.alphas);
-        addVariable(this.data);
+        addParameter(this.alphas);
+        addParameter(this.data);
         if (this.alphas.getDimension() != data.getColumnDimension()) {
             System.err.println("Dimensions of the frequency vector and number of columns do not match!");
         }

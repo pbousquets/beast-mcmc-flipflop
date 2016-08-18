@@ -65,8 +65,8 @@ public class RestrictedPartials extends AbstractModel {
         this.tips = Tree.Utils.getTipsForTaxa(treeModel, taxonList);
         this.tipBitSet = Tree.Utils.getTipsBitSetForTaxa(treeModel, taxonList);
 
-        addVariable(meanParameter);
-        addVariable(priorSampleSize);
+        addParameter(meanParameter);
+        addParameter(priorSampleSize);
     }
 
     // Public API
@@ -99,11 +99,6 @@ public class RestrictedPartials extends AbstractModel {
 
     @Override
     protected void restoreState() {
-
-    }
-
-    @Override
-    protected void acceptState() {
 
     }
 

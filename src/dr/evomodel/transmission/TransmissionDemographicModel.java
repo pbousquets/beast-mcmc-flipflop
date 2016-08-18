@@ -86,25 +86,25 @@ public class TransmissionDemographicModel extends DemographicModel {
 
         if (N0Parameter != null) {
             this.N0Parameter = N0Parameter;
-            addVariable(N0Parameter);
+            addParameter(N0Parameter);
             N0Parameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
         }
 
         if (N1Parameter != null) {
             this.N1Parameter = N1Parameter;
-            addVariable(N1Parameter);
+            addParameter(N1Parameter);
             N1Parameter.addBounds(new Parameter.DefaultBounds(1.0, 0.0, 1));
         }
 
         if (growthRateParameter != null) {
             this.growthRateParameter = growthRateParameter;
-            addVariable(growthRateParameter);
+            addParameter(growthRateParameter);
             growthRateParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
         }
 
         if (doublingTimeParameter != null) {
             this.doublingTimeParameter = doublingTimeParameter;
-            addVariable(doublingTimeParameter);
+            addParameter(doublingTimeParameter);
             doublingTimeParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
         }
 

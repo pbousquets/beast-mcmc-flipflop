@@ -61,15 +61,15 @@ public class PeakAndDeclineModel extends DemographicModel {
         flexibleGrowth = new FlexibleGrowth(units);
 
         this.peakValueParameter = peakValueParameter;
-        addVariable(peakValueParameter);
+        addParameter(peakValueParameter);
         peakValueParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
         this.peakTimeParameter = peakTimeParameter;
-        addVariable(peakTimeParameter);
+        addParameter(peakTimeParameter);
         peakTimeParameter.addBounds(new Parameter.DefaultBounds(0, Double.NEGATIVE_INFINITY, 1));
 
         this.shapeParameter = shapeParameter;
-        addVariable(shapeParameter);
+        addParameter(shapeParameter);
         shapeParameter.addBounds(new Parameter.DefaultBounds(0, Double.NEGATIVE_INFINITY, 1));
 
 

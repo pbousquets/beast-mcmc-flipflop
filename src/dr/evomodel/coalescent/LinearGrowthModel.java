@@ -58,7 +58,7 @@ public class LinearGrowthModel extends DemographicModel {
         linearGrowth = new LinearGrowth(units);
 
         this.slopeParameter = slopeParameter;
-        addVariable(slopeParameter);
+        addParameter(slopeParameter);
         slopeParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
         setUnits(units);
     }

@@ -44,7 +44,6 @@ import dr.math.MathUtils;
 import dr.util.Author;
 import dr.util.Citable;
 import dr.util.Citation;
-import dr.util.CommonCitations;
 import jebl.util.FixedBitSet;
 import java.util.*;
 import java.util.logging.Logger;
@@ -232,8 +231,8 @@ public class AlloppSpeciesNetworkModel extends AbstractModel implements
         int maxnhybpopparams = maxNumberOfHybPopParameters();
         tippopvalues = new Parameter.Default(ntippopparams, tippopvalue);
         rootpopvalues = new Parameter.Default(nrootpopparams, rootpopvalue);
-        addVariable(tippopvalues);
-        addVariable(rootpopvalues);
+        addParameter(tippopvalues);
+        addParameter(rootpopvalues);
         // hybridization pop sizes have to be done differently because they change in number.
         hybpopvalues = new double[maxnhybpopparams];
         for (int hp = 0; hp < hybpopvalues.length; hp++) {
@@ -403,12 +402,6 @@ public class AlloppSpeciesNetworkModel extends AbstractModel implements
         if (DBUGTUNE)
             System.err.println("AlloppSpeciesNetworkModel.restoreState()");
     }
-
-
-    @Override
-    protected void acceptState() {
-    }
-
 
     @Override
     public String toString() {

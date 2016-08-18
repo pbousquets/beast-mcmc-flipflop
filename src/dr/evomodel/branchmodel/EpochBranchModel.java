@@ -70,7 +70,7 @@ public class EpochBranchModel extends AbstractModel implements BranchModel, Cita
         }
 
         addModel(tree);
-        addVariable(epochTimes);
+        addParameter(epochTimes);
     }// END: Constructor
 
     @Override

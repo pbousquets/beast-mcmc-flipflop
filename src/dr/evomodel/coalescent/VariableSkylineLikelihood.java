@@ -83,8 +83,8 @@ public class VariableSkylineLikelihood extends OldAbstractCoalescentLikelihood i
             addModel((TreeModel) tree);
         }
 
-        addVariable(indicatorParameter);
-        addVariable(popSizeParameter);
+        addParameter(indicatorParameter);
+        addParameter(popSizeParameter);
 
         setupIntervals();
     }

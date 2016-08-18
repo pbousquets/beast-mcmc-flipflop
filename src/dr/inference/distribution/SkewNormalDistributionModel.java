@@ -47,7 +47,7 @@ public class SkewNormalDistributionModel extends AbstractModel implements Parame
     /**
      * Constructor.
      */
-    public SkewNormalDistributionModel(Variable<Double> location, Variable<Double> scale, Variable<Double> shape) {
+    public SkewNormalDistributionModel(Parameter location, Parameter scale, Parameter shape) {
 
         super(SKEW_NORMAL_DISTRIBUTION_MODEL);
 
@@ -55,11 +55,11 @@ public class SkewNormalDistributionModel extends AbstractModel implements Parame
         this.scale = scale;
         this.shape = shape;
 
-        addVariable(location);
+        addParameter(location);
         location.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
-        addVariable(scale);
+        addParameter(scale);
         scale.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
-        addVariable(shape);
+        addParameter(shape);
         shape.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
 
     }

@@ -58,12 +58,12 @@ public class RateEpochBranchRateModel extends AbstractBranchRateModel {
 
         this.timeParameters = timeParameters;
         for (Parameter parameter : timeParameters) {
-            addVariable(parameter);
+            addParameter(parameter);
         }
 
         this.rateParameters = rateParameters;
         for (Parameter parameter : rateParameters) {
-            addVariable(parameter);
+            addParameter(parameter);
         }
     }
 

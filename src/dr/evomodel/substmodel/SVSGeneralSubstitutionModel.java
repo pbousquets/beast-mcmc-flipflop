@@ -29,7 +29,7 @@ import dr.evolution.datatype.DataType;
 import dr.inference.loggers.LogColumn;
 import dr.inference.loggers.NumberColumn;
 import dr.inference.model.*;
-import dr.inference.operators.BayesianStochasticSearchVariableSelection;
+import dr.inference.model.BayesianStochasticSearchVariableSelection;
 import dr.util.Citable;
 import dr.util.Citation;
 import dr.util.CommonCitations;
@@ -51,7 +51,7 @@ public class SVSGeneralSubstitutionModel extends GeneralSubstitutionModel implem
             this.indicatorsParameter = new Parameter.Default(ratesParameter.getDimension(), 1.0);
         } else {
             this.indicatorsParameter  = indicatorsParameter;
-            addVariable(indicatorsParameter);
+            addParameter(indicatorsParameter);
         }
 
         setupIndicatorDimensionNames(-1);

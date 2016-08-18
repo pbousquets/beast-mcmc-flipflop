@@ -69,7 +69,7 @@ public class PCACodonModel extends BaseSubstitutionModel {
 		this.rateMatrix = pcaType;
 		
 		this.pcFactors = pcaDimensionParameter;
-		addVariable(pcFactors);
+		addParameter(pcFactors);
 		pcFactors.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY,
 				pcFactors.getDimension()));
 		

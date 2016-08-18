@@ -128,7 +128,7 @@ public abstract class AbstractMultivariateTraitLikelihood extends AbstractModelL
 
         this.deltaParameter = deltaParameter;
         if (deltaParameter != null) {
-            addVariable(deltaParameter);
+            addParameter(deltaParameter);
         }
 
         if (rateModel != null) {
@@ -157,7 +157,7 @@ public abstract class AbstractMultivariateTraitLikelihood extends AbstractModelL
         }
 
         if (traitParameter != null)
-            addVariable(traitParameter);
+            addParameter(traitParameter);
 
         this.reportAsMultivariate = reportAsMultivariate;
 

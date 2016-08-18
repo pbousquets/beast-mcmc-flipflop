@@ -67,7 +67,7 @@ public class SampleQuantileLociRates extends AbstractModel {
         setupRelativeRates();
 
         addModel(distrModel);
-        addVariable(this.rateQuantileParameter);
+        addParameter(this.rateQuantileParameter);
     }
 
     private void setupRates(){

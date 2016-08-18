@@ -63,7 +63,7 @@ public class CountableMixtureBranchRates extends AbstractBranchRateModel impleme
             addModel((Model)rateCategories);
         }
         this.ratesParameter = ratesParameter;
-        addVariable(ratesParameter);
+        addParameter(ratesParameter);
 
         // Handle random effects
         this.randomEffectsModels = randomEffects;

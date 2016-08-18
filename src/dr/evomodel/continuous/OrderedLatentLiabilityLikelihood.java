@@ -36,9 +36,7 @@ import dr.util.CommonCitations;
 import dr.xml.*;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 
@@ -64,8 +62,8 @@ public class OrderedLatentLiabilityLikelihood extends AbstractModelLikelihood im
         this.numClasses = numClasses;
         this.isUnordered = isUnordered;
 
-        addVariable(tipTraitParameter);
-        addVariable(thresholdParameter);
+        addParameter(tipTraitParameter);
+        addParameter(thresholdParameter);
 
 
         for (int i=0; i<tipTraitParameter.getParameterCount();i++){
@@ -136,11 +134,6 @@ public class OrderedLatentLiabilityLikelihood extends AbstractModelLikelihood im
     protected void restoreState() {
         logLikelihood = storedLogLikelihood;
         likelihoodKnown = true;
-    }
-
-    @Override
-    protected void acceptState() {
-        // do nothing
     }
 
     public void makeDirty() {

@@ -28,7 +28,7 @@ package dr.oldevomodelxml.substmodel;
 import dr.oldevomodel.substmodel.FrequencyModel;
 import dr.oldevomodel.substmodel.GTR;
 import dr.oldevomodel.substmodel.SubstitutionModel;
-import dr.inference.model.Variable;
+import dr.inference.model.Parameter;
 import dr.xml.*;
 
 /**
@@ -56,29 +56,29 @@ public class GTRParser extends AbstractXMLObjectParser {
         XMLObject cxo = xo.getChild(FREQUENCIES);
         FrequencyModel freqModel = (FrequencyModel) cxo.getChild(FrequencyModel.class);
 
-        Variable rateACValue = null;
+        Parameter rateACValue = null;
         if (xo.hasChildNamed(A_TO_C)) {
-            rateACValue = (Variable) xo.getElementFirstChild(A_TO_C);
+            rateACValue = (Parameter) xo.getElementFirstChild(A_TO_C);
         }
-        Variable rateAGValue = null;
+        Parameter rateAGValue = null;
         if (xo.hasChildNamed(A_TO_G)) {
-            rateAGValue = (Variable) xo.getElementFirstChild(A_TO_G);
+            rateAGValue = (Parameter) xo.getElementFirstChild(A_TO_G);
         }
-        Variable rateATValue = null;
+        Parameter rateATValue = null;
         if (xo.hasChildNamed(A_TO_T)) {
-            rateATValue = (Variable) xo.getElementFirstChild(A_TO_T);
+            rateATValue = (Parameter) xo.getElementFirstChild(A_TO_T);
         }
-        Variable rateCGValue = null;
+        Parameter rateCGValue = null;
         if (xo.hasChildNamed(C_TO_G)) {
-            rateCGValue = (Variable) xo.getElementFirstChild(C_TO_G);
+            rateCGValue = (Parameter) xo.getElementFirstChild(C_TO_G);
         }
-        Variable rateCTValue = null;
+        Parameter rateCTValue = null;
         if (xo.hasChildNamed(C_TO_T)) {
-            rateCTValue = (Variable) xo.getElementFirstChild(C_TO_T);
+            rateCTValue = (Parameter) xo.getElementFirstChild(C_TO_T);
         }
-        Variable rateGTValue = null;
+        Parameter rateGTValue = null;
         if (xo.hasChildNamed(G_TO_T)) {
-            rateGTValue = (Variable) xo.getElementFirstChild(G_TO_T);
+            rateGTValue = (Parameter) xo.getElementFirstChild(G_TO_T);
         }
         int countNull = 0;
         if (rateACValue == null) countNull++;
@@ -130,17 +130,17 @@ public class GTRParser extends AbstractXMLObjectParser {
             new ElementRule(FREQUENCIES,
                     new XMLSyntaxRule[]{new ElementRule(FrequencyModel.class)}),
             new ElementRule(A_TO_C,
-                    new XMLSyntaxRule[]{new ElementRule(Variable.class)}, true),
+                    new XMLSyntaxRule[]{new ElementRule(Parameter.class)}, true),
             new ElementRule(A_TO_G,
-                    new XMLSyntaxRule[]{new ElementRule(Variable.class)}, true),
+                    new XMLSyntaxRule[]{new ElementRule(Parameter.class)}, true),
             new ElementRule(A_TO_T,
-                    new XMLSyntaxRule[]{new ElementRule(Variable.class)}, true),
+                    new XMLSyntaxRule[]{new ElementRule(Parameter.class)}, true),
             new ElementRule(C_TO_G,
-                    new XMLSyntaxRule[]{new ElementRule(Variable.class)}, true),
+                    new XMLSyntaxRule[]{new ElementRule(Parameter.class)}, true),
             new ElementRule(C_TO_T,
-                    new XMLSyntaxRule[]{new ElementRule(Variable.class)}, true),
+                    new XMLSyntaxRule[]{new ElementRule(Parameter.class)}, true),
             new ElementRule(G_TO_T,
-                    new XMLSyntaxRule[]{new ElementRule(Variable.class)}, true)
+                    new XMLSyntaxRule[]{new ElementRule(Parameter.class)}, true)
     };
 
 

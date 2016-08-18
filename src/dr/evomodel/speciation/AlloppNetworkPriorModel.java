@@ -72,8 +72,8 @@ public class AlloppNetworkPriorModel extends AbstractModel  implements Units {
         this.rpmodel = rootpopmodel;
         this.hpmodel = hybpopmodel;
         this.units = units;
-        addVariable(rate);
-        addVariable(popsf);
+        addParameter(rate);
+        addParameter(popsf);
     }
 
 
@@ -128,10 +128,6 @@ public class AlloppNetworkPriorModel extends AbstractModel  implements Units {
 
 	}
 
-	@Override
-	protected void acceptState() {
-	}
-	
 	public Type getUnits() {
 		return units;
 	}

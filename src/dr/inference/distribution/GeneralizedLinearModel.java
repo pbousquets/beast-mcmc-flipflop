@@ -64,7 +64,7 @@ public abstract class GeneralizedLinearModel extends AbstractModelLikelihood imp
         this.dependentParam = dependentParam;
 
         if (dependentParam != null) {
-            addVariable(dependentParam);
+            addParameter(dependentParam);
             N = dependentParam.getDimension();
         } else
             N = 0;
@@ -82,7 +82,7 @@ public abstract class GeneralizedLinearModel extends AbstractModelLikelihood imp
         if (N != 0 && effect.getDimension() != N) {
             throw new RuntimeException("Random effects have the wrong dimension");
         }
-        addVariable(effect);
+        addParameter(effect);
         randomEffects.add(effect);
         numRandomEffects++;
     }
@@ -104,10 +104,10 @@ public abstract class GeneralizedLinearModel extends AbstractModelLikelihood imp
 
         if (designMatrix.size() != independentParam.size())
             throw new RuntimeException("Independent variables and their design matrices are out of sync");
-        addVariable(effect);
-        addVariable(matrix);
+        addParameter(effect);
+        addParameter(matrix);
         if (delta != null)
-            addVariable(delta);
+            addParameter(delta);
         numIndependentVariables++;
         Logger.getLogger("dr.inference").info("\tAdding independent predictors '" + effect.getStatisticName() + "' with design matrix '" + matrix.getStatisticName() + "'");
     }
@@ -288,7 +288,7 @@ public abstract class GeneralizedLinearModel extends AbstractModelLikelihood imp
         scaleDesign = new int[design.getDimension()];
         for (int i = 0; i < scaleDesign.length; i++)
             scaleDesign[i] = (int) design.getParameterValue(i);
-        addVariable(scaleParameter);
+        addParameter(scaleParameter);
     }
 
 /*	// **************************************************************

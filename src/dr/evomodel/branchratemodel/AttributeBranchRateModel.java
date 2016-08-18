@@ -75,11 +75,6 @@ public class AttributeBranchRateModel extends AbstractBranchRateModel {
     }
 
     @Override
-    protected void acceptState() {
-        // nothing to do
-    }
-
-    @Override
     public double getBranchRate(Tree tree, NodeRef node) {
         Object value = tree.getNodeAttribute(node, rateAttributeName);
         return Double.parseDouble((String)value);

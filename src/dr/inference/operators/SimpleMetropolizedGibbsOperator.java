@@ -30,7 +30,6 @@ package dr.inference.operators;
 
 import dr.inference.model.Likelihood;
 import dr.inference.model.Model;
-import dr.inference.prior.Prior;
 
 import java.util.logging.Logger;
 

@@ -39,7 +39,7 @@ import java.util.*;
  * @author Andrew Rambaut
  */
 
-public interface Model extends Identifiable, Serializable {
+public interface Model extends Storeable, Identifiable, Serializable {
 
 	/**
 	 * Adds a listener that is notified when the this model changes.
@@ -51,23 +51,6 @@ public interface Model extends Identifiable, Serializable {
      * @param listener
      */
     void removeModelListener(ModelListener listener);
-
-	/**
-	 * This function should be called to store the state of the
-	 * entire model. This makes the model state invalid until either
-	 * an acceptModelState or restoreModelState is called.
-	 */
-	void storeModelState();
-
-	/**
-	 * This function should be called to restore the state of the entire model.
-	 */
-	void restoreModelState();
-
-	/**
-	 * This function should be called to accept the state of the entire model
-	 */
-	void acceptModelState();
 
 	/**
 	 * @return whether this model is in a valid state
@@ -87,7 +70,7 @@ public interface Model extends Identifiable, Serializable {
 	/**
 	 * @return the total number of variable in this model
 	 */
-	int getVariableCount();
+	int getParameterCount();
 
 	/**
 	 * @return the ith variable

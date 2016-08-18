@@ -37,13 +37,13 @@ import dr.inference.model.Bounds;
  */
 public class NtdBMA extends AbstractNucleotideModel{
 
-    private Variable<Double> logKappa = null;
-    private Variable<Double> logTN = null;
-    private Variable<Double> logAC = null;
-    private Variable<Double> logAT = null;
-    private Variable<Double> logGC = null;
-    private Variable<Double> logGT = null;
-    private Variable<Integer> modelChoose = null;
+    private Parameter logKappa = null;
+    private Parameter  logTN = null;
+    private Parameter  logAC = null;
+    private Parameter  logAT = null;
+    private Parameter  logGC = null;
+    private Parameter  logGT = null;
+    private Parameter  modelChoose = null;
 
     public static final int TN_INDEX = 0;
     public static final int GTR_INDEX = 1;
@@ -52,45 +52,44 @@ public class NtdBMA extends AbstractNucleotideModel{
     public static final int PRESENT = 1;
 
     public NtdBMA(
-            Variable<Double> logKappa,
-            Variable<Double> logTN,
-            Variable<Double> logAC,
-            Variable<Double> logAT,
-            Variable<Double> logGC,
-            Variable<Double> logGT,
-            Variable<Integer> modelChoose,
+            Parameter logKappa,
+            Parameter logTN,
+            Parameter logAC,
+            Parameter logAT,
+            Parameter logGC,
+            Parameter logGT,
+            Parameter modelChoose,
             FrequencyModel freqModel){
         super("NucleotideBMA", freqModel);
 
 
-        addVariable(logKappa);
+        addParameter(logKappa);
         logKappa.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
         this.logKappa = logKappa;
 
-        addVariable(logTN);
+        addParameter(logTN);
         logTN.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
         this.logTN = logTN;
 
-        addVariable(logAC);
+        addParameter(logAC);
         logAC.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
         this.logAC = logAC;
 
-        addVariable(logAT);
+        addParameter(logAT);
         logAT.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
         this.logAT = logAT;
 
-        addVariable(logGC);
+        addParameter(logGC);
         logGC.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
         this.logGC = logGC;
 
-        addVariable(logGT);
+        addParameter(logGT);
         logGT.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
         this.logGT = logGT;
 
-        addVariable(modelChoose);
-        modelChoose.addBounds(new Bounds.Int(modelChoose, 0, 1));
+        addParameter(modelChoose);
+        modelChoose.addBounds(new Parameter.DefaultBounds(0.0, 1.0, 1));
 
-        
         this.modelChoose = modelChoose;
     }
 
@@ -113,7 +112,7 @@ public class NtdBMA extends AbstractNucleotideModel{
 
     protected void handleVariableChangedEvent(Variable variable, int index, Parameter.ChangeType type) {
         boolean changeRateMatrix = false;
-        
+
         if(variable == modelChoose){
             //changing the substitution model
             changeRateMatrix = true;
@@ -127,7 +126,7 @@ public class NtdBMA extends AbstractNucleotideModel{
                 variable == logAT ||
                 variable == logGC ||
                 variable == logGT &&
-                modelChoose.getValue(GTR_INDEX) == PRESENT && modelChoose.getValue(TN_INDEX) == PRESENT){
+                        modelChoose.getValue(GTR_INDEX) == PRESENT && modelChoose.getValue(TN_INDEX) == PRESENT){
             //Changing any one of A<->C, A<->T, G<->C, G<->T rates while the current model is GTR.
             changeRateMatrix = true;
         }

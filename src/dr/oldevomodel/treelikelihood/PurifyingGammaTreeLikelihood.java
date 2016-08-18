@@ -73,10 +73,10 @@ public class PurifyingGammaTreeLikelihood extends AbstractTreeLikelihood {
             addModel(frequencyModel);
 
             this.substitutionRateParameter = substitutionRateParameter;
-            addVariable(substitutionRateParameter);
+            addParameter(substitutionRateParameter);
 
             this.halfLifeParameter = halfLifeParameter;
-            addVariable(halfLifeParameter);
+            addParameter(halfLifeParameter);
 
             this.gammaCategoryCount = siteModel.getCategoryCount();
             this.categoryCount = gammaCategoryCount;

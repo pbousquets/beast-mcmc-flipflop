@@ -64,13 +64,13 @@ public class LogNormalDistributionModel extends AbstractModel implements Paramet
         this.meanParameter = meanParameter;
         this.scaleParameter = stdevParameter;
         this.offset = offset;
-        addVariable(meanParameter);
+        addParameter(meanParameter);
         if (isMeanInRealSpace) {
             meanParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
         } else {
             meanParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
         }
-        addVariable(stdevParameter);
+        addParameter(stdevParameter);
         stdevParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
     }
 
@@ -86,13 +86,13 @@ public class LogNormalDistributionModel extends AbstractModel implements Paramet
         this.meanParameter = meanParameter;
         this.scaleParameter = scaleParameter;
         this.offset = offset;
-        addVariable(meanParameter);
+        addParameter(meanParameter);
         if (isMeanInRealSpace) {
             meanParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
         } else {
             meanParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
         }
-        addVariable(this.scaleParameter);
+        addParameter(this.scaleParameter);
         this.scaleParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
     }
 

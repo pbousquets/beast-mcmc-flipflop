@@ -29,6 +29,8 @@ package dr.inference.model;
 @author Max Tolkoff
 */
 
+import java.util.Map;
+
 //Designed to return a data matrix post computation if asked. Designed for latent liabilities
 public class MatrixMatrixProduct extends MatrixParameter implements VariableListener {
     MatrixParameter left;
@@ -109,23 +111,31 @@ public class MatrixMatrixProduct extends MatrixParameter implements VariableList
 
     protected void storeValues() {
         System.arraycopy(areValuesStored, 0, oldStoredValues, 0, areValuesStored.length);
-        left.storeParameterValues();
-        right.storeParameterValues();
-        inPlace.storeParameterValues();
+        left.storeModelState();
+        right.storeModelState();
+        inPlace.storeModelState();
     }
 
     protected void restoreValues() {
-        left.restoreParameterValues();
-        right.restoreVariableValues();
-        inPlace.restoreParameterValues();
+        left.restoreModelState();
+        right.restoreModelState();
+        inPlace.restoreModelState();
         areValuesStored=oldStoredValues;
     }
 
-//    protected void acceptValues() {
-//        left.acceptParameterValues();
-//        right.acceptParameterValues();
-//    }
+    @Override
+    protected void saveValues(Map<String, Object> stateMap) {
+        left.saveModelState(stateMap);
+        right.saveModelState(stateMap);
+        inPlace.saveModelState(stateMap);
+    }
 
+    @Override
+    protected void loadValues(Map<String, Object> stateMap) {
+        left.loadModelState(stateMap);
+        right.loadModelState(stateMap);
+        inPlace.loadModelState(stateMap);
+    }
 
     public double getParameterValue(int i, int j) {
         double sum = 0;

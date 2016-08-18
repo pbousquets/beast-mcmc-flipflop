@@ -52,7 +52,7 @@ public class WeightedMixtureModel extends AbstractModelLikelihood implements Cit
         for (AbstractModelLikelihood model : likelihoodList) {
             addModel(model);
         }
-        addVariable(mixtureWeights);
+        addParameter(mixtureWeights);
 
         StringBuilder sb = new StringBuilder();
         sb.append("Constructing a finite mixture model\n");
@@ -219,10 +219,6 @@ public class WeightedMixtureModel extends AbstractModelLikelihood implements Cit
             protected void restoreState() {
             }
 
-            @Override
-            protected void acceptState() {
-            }
-
             public void setUsed() {
             }
 
@@ -273,10 +269,6 @@ public class WeightedMixtureModel extends AbstractModelLikelihood implements Cit
 
             @Override
             protected void restoreState() {
-            }
-
-            @Override
-            protected void acceptState() {
             }
 
             public void setUsed() {

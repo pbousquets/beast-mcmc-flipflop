@@ -63,7 +63,7 @@ public class MarkovModulatedGY94CodonModel extends GY94CodonModel {
 
         this.hiddenClassCount = codonDataType.getHiddenClassCount();
         this.switchingRates = switchingRates;
-        addVariable(switchingRates);
+        addParameter(switchingRates);
 
         // Subclassed constructors fill relativeRates with 1
         for (int i = 0; i < relativeRates.length; i++)

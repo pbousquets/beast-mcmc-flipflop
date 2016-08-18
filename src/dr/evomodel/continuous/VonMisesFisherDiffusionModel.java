@@ -58,7 +58,7 @@ public class VonMisesFisherDiffusionModel extends MultivariateDiffusionModel {
         this.p = p;
         this.concentrationParameter = concentrationParameter;
         calculatePrecisionInfo();
-        addVariable(concentrationParameter);
+        addParameter(concentrationParameter);
     }
 
     protected void calculatePrecisionInfo() {

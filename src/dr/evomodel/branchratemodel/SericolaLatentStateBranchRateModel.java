@@ -106,10 +106,10 @@ public class SericolaLatentStateBranchRateModel extends AbstractModelLikelihood 
         addModel(nonLatentRateModel);
 
         this.latentTransitionRateParameter = latentTransitionRateParameter;
-        addVariable(latentTransitionRateParameter);
+        addParameter(latentTransitionRateParameter);
 
         this.latentTransitionFrequencyParameter = latentTransitionFrequencyParameter;
-        addVariable(latentTransitionFrequencyParameter);
+        addParameter(latentTransitionFrequencyParameter);
 
         if (branchCategoryProvider ==  null) {
             this.latentStateProportions = new TreeParameterModel(tree, latentStateProportionParameter, false, Intent.BRANCH);
@@ -129,7 +129,7 @@ public class SericolaLatentStateBranchRateModel extends AbstractModelLikelihood 
                 setUpdateAllCategories();
             }
 
-            addVariable(latentStateProportionParameter);
+            addParameter(latentStateProportionParameter);
         }
 
         branchLikelihoods = new double[tree.getNodeCount()];
@@ -321,11 +321,6 @@ public class SericolaLatentStateBranchRateModel extends AbstractModelLikelihood 
             updateCategory = storedUpdateCategory;
             storedUpdateCategory = tmp3;
         }
-    }
-
-    @Override
-    protected void acceptState() {
-
     }
 
     @Override

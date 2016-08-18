@@ -48,10 +48,10 @@ public class PassageBranchRateModel extends AbstractBranchRateModel {
         super(PASSAGE_BRANCH_RATE_MODEL);
 
         this.internalRateParameter = internalRateParameter;
-        addVariable(internalRateParameter);
+        addParameter(internalRateParameter);
 
         this.externalRateParameter = externalRateParameter;
-        addVariable(externalRateParameter);
+        addParameter(externalRateParameter);
     }
 
     public void handleModelChangedEvent(Model model, Object object, int index) {

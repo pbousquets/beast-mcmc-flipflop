@@ -126,7 +126,7 @@ public class MulSpeciesTreeModel extends AbstractModel implements MutableTree, C
         this.nonConstRootPopulation = nonConstRootPopulation;
         this.constantPopulation = constantPopulation;
 
-        addVariable(sppSplitPopulations);
+        addParameter(sppSplitPopulations);
 
         addModel(species);
 
@@ -134,8 +134,8 @@ public class MulSpeciesTreeModel extends AbstractModel implements MutableTree, C
             assert coalPointsIndicator != null;
             assert !constantPopulation;
 
-            addVariable(coalPointsPops);
-            addVariable(coalPointsIndicator);
+            addParameter(coalPointsPops);
+            addParameter(coalPointsIndicator);
 
             final double[][] pts = species.getPopTimesSingle();
 

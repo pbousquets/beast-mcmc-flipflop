@@ -44,7 +44,7 @@ public class BiasedMultivariateDiffusionModel extends MultivariateDiffusionModel
     BiasedMultivariateDiffusionModel(Parameter biasParam, MatrixParameter diffusionParam) {
         super(diffusionParam);
         this.biasParam = biasParam;
-        addVariable(biasParam);
+        addParameter(biasParam);
     }
 
     protected void handleVariableChangedEvent(Variable variable, int index, Parameter.ChangeType type) {

@@ -30,6 +30,8 @@ import dr.inference.model.Model;
 import dr.inference.model.ModelListener;
 import dr.inference.model.Parameter;
 
+import java.util.Map;
+
 /**
  * @author Marc A. Suchard
  * @author Rory E. Wasiolek
@@ -56,7 +58,12 @@ public class ExposeRateCategoriesWrapper extends Parameter.Abstract implements M
     }
 
     @Override
-    protected void acceptValues() {
+    protected void saveValues(Map<String, Object> stateMap) {
+        // Do nothing
+    }
+
+    @Override
+    protected void loadValues(Map<String, Object> stateMap) {
         // Do nothing
     }
 

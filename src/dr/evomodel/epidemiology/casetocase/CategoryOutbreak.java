@@ -77,7 +77,7 @@ public class CategoryOutbreak extends AbstractOutbreak {
             addModel(hyperprior);
         }
         for(Parameter hyperprior : latentMap.values()){
-            addVariable(hyperprior);
+            addParameter(hyperprior);
         }
         weightMap = new HashMap<AbstractCase, Double>();
     }
@@ -228,7 +228,7 @@ public class CategoryOutbreak extends AbstractOutbreak {
             this.infectiousCategory = infectiousCategory;
             this.infectionBranchPosition = infectionBranchPosition;
             if(infectionBranchPosition!=null) {
-                addVariable(infectionBranchPosition);
+                addParameter(infectionBranchPosition);
             }
             endOfInfectiousTime = endTime;
             this.associatedTaxa = associatedTaxa;

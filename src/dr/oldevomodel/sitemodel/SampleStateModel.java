@@ -65,11 +65,11 @@ public class SampleStateModel extends AbstractModel implements SiteModel {
 
 //		stateCount = ((SubstitutionModel)substitutionModels.elementAt(0)).getDataType().getStateCount();
 
-        addVariable(muParameter);
+        addParameter(muParameter);
         muParameter.addBounds(new Parameter.DefaultBounds(1000.0, 0.0, 1));
 
         this.proportionParameter = proportionParameter;
-        addVariable(proportionParameter);
+        addParameter(proportionParameter);
         proportionParameter.addBounds(new Parameter.DefaultBounds(1.0, 0.0, proportionParameter.getDimension()));
 
         proportionParameter.setParameterValue(0, (0.5));

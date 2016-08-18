@@ -158,7 +158,7 @@ public abstract class SpatialKernel extends AbstractModel implements IntegrableU
             }
 
             this.alpha = params.get(0);
-            addVariable(alpha);
+            addParameter(alpha);
         }
 
         public Exponential() throws InstantiationException {
@@ -200,7 +200,7 @@ public abstract class SpatialKernel extends AbstractModel implements IntegrableU
                 throw new InstantiationException("No parameter named alpha");
             }
             this.alpha = params.get(0);
-            addVariable(alpha);
+            addParameter(alpha);
         }
 
         public PowerLaw() throws InstantiationException {
@@ -258,7 +258,7 @@ public abstract class SpatialKernel extends AbstractModel implements IntegrableU
             }
 
             this.alpha = params.get(0);
-            addVariable(alpha);
+            addParameter(alpha);
 
 
             integrator = new RiemannApproximation(steps);
@@ -328,8 +328,8 @@ public abstract class SpatialKernel extends AbstractModel implements IntegrableU
                 throw new InstantiationException("Kernel function does not have the required parameters");
             }
 
-            addVariable(alpha);
-            addVariable(r_0);
+            addParameter(alpha);
+            addParameter(r_0);
 
             integrator = new RiemannApproximation(steps);
         }

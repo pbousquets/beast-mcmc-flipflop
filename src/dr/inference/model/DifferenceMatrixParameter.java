@@ -26,6 +26,7 @@
 package dr.inference.model;
 
 import java.util.List;
+import java.util.Map;
 
 import dr.inference.model.Bounds;
 import dr.inference.model.Parameter;
@@ -183,16 +184,27 @@ public class DifferenceMatrixParameter extends MatrixParameter implements
 
     @Override
     protected void storeValues() {
-        parameter1.storeParameterValues();
-        parameter2.storeParameterValues();
+        parameter1.storeModelState();
+        parameter2.storeModelState();
     }
 
     @Override
     protected void restoreValues() {
-        parameter1.restoreParameterValues();
-        parameter2.restoreParameterValues();
+        parameter1.restoreModelState();
+        parameter2.restoreModelState();
     }
 
+    @Override
+    protected void saveValues(Map<String, Object> stateMap) {
+        parameter1.saveModelState(stateMap);
+        parameter2.saveModelState(stateMap);
+    }
+
+    @Override
+    protected void loadValues(Map<String, Object> stateMap) {
+        parameter1.loadModelState(stateMap);
+        parameter2.loadModelState(stateMap);
+    }
     @Override
     public int getRowDimension() {
         boolean param1 = parameter1 instanceof MatrixParameter;

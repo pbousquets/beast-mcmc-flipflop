@@ -52,9 +52,9 @@ public class TwoPieceLocationScaleDistributionModel extends AbstractModel implem
         this.gammaParameter = gammaParameter;
         this.distribution = distribution;
 
-        addVariable(locationParam);
-        addVariable(sigmaParameter);
-        addVariable(gammaParameter);
+        addParameter(locationParam);
+        addParameter(sigmaParameter);
+        addParameter(gammaParameter);
 
         locationParam.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
         sigmaParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));

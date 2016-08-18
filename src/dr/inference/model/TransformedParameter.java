@@ -27,6 +27,8 @@ package dr.inference.model;
 
 import dr.util.Transform;
 
+import java.util.Map;
+
 /**
  * @author Marc A. Suchard
  */
@@ -48,16 +50,24 @@ public class TransformedParameter extends Parameter.Abstract implements Variable
         return parameter.getDimension();
     }
 
+    @Override
     protected void storeValues() {
-        parameter.storeParameterValues();
+        parameter.storeModelState();
     }
 
+    @Override
     protected void restoreValues() {
-        parameter.restoreParameterValues();
+        parameter.restoreModelState();
     }
 
-    protected void acceptValues() {
-        parameter.acceptParameterValues();
+    @Override
+    protected void saveValues(Map<String, Object> stateMap) {
+        parameter.saveModelState(stateMap);
+    }
+
+    @Override
+    protected void loadValues(Map<String, Object> stateMap) {
+        parameter.loadModelState(stateMap);
     }
 
     protected void adoptValues(Parameter source) {

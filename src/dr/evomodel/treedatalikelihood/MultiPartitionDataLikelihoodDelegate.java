@@ -826,10 +826,6 @@ public class MultiPartitionDataLikelihoodDelegate extends AbstractModel implemen
 
     }
 
-    @Override
-    protected void acceptState() {
-    }
-
     // **************************************************************
     // INSTANCE CITABLE
     // **************************************************************

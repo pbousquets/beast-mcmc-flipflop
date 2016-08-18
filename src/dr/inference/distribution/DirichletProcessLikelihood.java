@@ -47,7 +47,7 @@ public class DirichletProcessLikelihood extends AbstractModelLikelihood {
 
         this.etaParameter = etaParameter;
         this.chiParameter = chiParameter;
-        addVariable(chiParameter);
+        addParameter(chiParameter);
 
         K = etaParameter.getDimension();
         int count = 0;

@@ -72,7 +72,7 @@ public class AvgPosteriorIBDReporter extends AbstractModel implements TreeTraitP
         this.branchRateModel = branchRateModel;
         addModel(this.branchRateModel);
         this.mutationParameter = mutationParameter;
-        addVariable(this.mutationParameter);
+        addParameter(this.mutationParameter);
         this.likelihoodReporter = likelihoodReporter;
         this.probabilities = new double[substitutionModel.getStateCount() * substitutionModel.getStateCount()];
     }

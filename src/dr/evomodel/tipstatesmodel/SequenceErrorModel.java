@@ -35,7 +35,6 @@ import dr.util.Citable;
 import dr.util.Citation;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -78,21 +77,21 @@ public class SequenceErrorModel extends TipStatesModel implements Citable {
 
         if (baseErrorRateParameter != null) {
             this.baseErrorRateParameter = baseErrorRateParameter;
-            addVariable(this.baseErrorRateParameter);
+            addParameter(this.baseErrorRateParameter);
         } else {
             this.baseErrorRateParameter = null;
         }
 
         if (ageRelatedErrorRateParameter != null) {
             this.ageRelatedErrorRateParameter = ageRelatedErrorRateParameter;
-            addVariable(ageRelatedErrorRateParameter);
+            addParameter(ageRelatedErrorRateParameter);
         } else {
             this.ageRelatedErrorRateParameter = null;
         }
 
         if (indicatorParameter != null) {
             this.indicatorParameter = indicatorParameter;
-            addVariable(indicatorParameter);
+            addParameter(indicatorParameter);
         } else {
             this.indicatorParameter = null;
         }

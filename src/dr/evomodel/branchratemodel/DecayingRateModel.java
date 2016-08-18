@@ -72,13 +72,13 @@ public class DecayingRateModel extends AbstractBranchRateModel {
         this.proportionParameter = proportionParameter;
         this.halfLifeParameter = halfLifeParameter;
 
-        addVariable(mutationRateParameter);
+        addParameter(mutationRateParameter);
         if (proportionParameter != null) {
-            addVariable(proportionParameter);
+            addParameter(proportionParameter);
         } else {
-            addVariable(substitutionRateParameter);
+            addParameter(substitutionRateParameter);
         }
-        addVariable(halfLifeParameter);
+        addParameter(halfLifeParameter);
 
         this.useAveraging = useAveraging;
     }

@@ -73,8 +73,8 @@ public class SelfControlledCaseSeries extends AbstractModelLikelihood {
         logSCCSPrior = regressionInterface.getLogPrior(instance);
         betaChanged = false; // Internal state is at mode
 
-        addVariable(beta);
-        addVariable(precision);
+        addParameter(beta);
+        addParameter(precision);
     }
 
     private void setPrecision() {

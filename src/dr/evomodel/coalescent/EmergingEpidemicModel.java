@@ -75,19 +75,19 @@ public class EmergingEpidemicModel extends DemographicModel {
         exponentialGrowth = new ExponentialGrowth(units);
 
         this.growthRateParameter = growthRateParameter;
-        addVariable(growthRateParameter);
+        addParameter(growthRateParameter);
         growthRateParameter.addBounds(new Parameter.DefaultBounds(Double.MAX_VALUE, 0.0, 1));
 
         this.generationTimeParameter = generationTimeParameter;
-        addVariable(generationTimeParameter);
+        addParameter(generationTimeParameter);
         generationTimeParameter.addBounds(new Parameter.DefaultBounds(Double.MAX_VALUE, 0.0, 1));
 
         this.generationShapeParameter = generationShapeParameter;
-        addVariable(generationShapeParameter);
+        addParameter(generationShapeParameter);
         generationShapeParameter.addBounds(new Parameter.DefaultBounds(Double.MAX_VALUE, 0.0, 1));
 
         this.offspringDispersionParameter = offspringDispersionParameter;
-        addVariable(offspringDispersionParameter);
+        addParameter(offspringDispersionParameter);
         offspringDispersionParameter.addBounds(new Parameter.DefaultBounds(Double.MAX_VALUE, 0.0, 1));
 
         this.treeModel = treeModel;

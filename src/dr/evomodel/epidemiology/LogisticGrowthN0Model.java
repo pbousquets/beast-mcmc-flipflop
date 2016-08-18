@@ -68,15 +68,15 @@ public class LogisticGrowthN0Model extends DemographicModel
 		logisticGrowthN0 = new LogisticGrowthN0(units);
 		
 		this.N0Parameter = N0Parameter;
-		addVariable(N0Parameter);
+		addParameter(N0Parameter);
 		N0Parameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
 		this.growthRateParameter = growthRateParameter;
-		addVariable(growthRateParameter);
+		addParameter(growthRateParameter);
 		growthRateParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
 
 		this.t50Parameter = t50Parameter;
-		addVariable(t50Parameter);
+		addParameter(t50Parameter);
 		t50Parameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
 
 		this.usingGrowthRate = usingGrowthRate;

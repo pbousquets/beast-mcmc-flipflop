@@ -60,11 +60,11 @@ public class HypermutantErrorModel extends TipStatesModel implements Citable {
         this.unlinkedRates = unlinkedRates;
 
         this.hypermutationRateParameter = hypermutationRateParameter;
-        addVariable(this.hypermutationRateParameter);
+        addParameter(this.hypermutationRateParameter);
 
         this.hypermutationIndicatorParameter = hypermuationIndicatorParameter;
 
-        addVariable(this.hypermutationIndicatorParameter);
+        addParameter(this.hypermutationIndicatorParameter);
 
         addStatistic(new TaxonHypermutatedStatistic());
         addStatistic(new TaxonHypermutationRateStatistic());

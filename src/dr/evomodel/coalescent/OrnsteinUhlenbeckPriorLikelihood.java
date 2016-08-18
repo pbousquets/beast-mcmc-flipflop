@@ -68,15 +68,15 @@ public class OrnsteinUhlenbeckPriorLikelihood extends AbstractModelLikelihood {
 
         this.mean = mean;
         if (mean != null) {
-            addVariable(mean);
+            addParameter(mean);
         }
 
         this.sigma = sigma;
-        addVariable(sigma);
+        addParameter(sigma);
 
         this.lambda = lambda;
         if (lambda != null) {
-            addVariable(lambda);
+            addParameter(lambda);
         }
     }
 

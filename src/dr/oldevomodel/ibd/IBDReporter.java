@@ -68,7 +68,7 @@ public class IBDReporter extends AbstractModel implements TreeTraitProvider {
         this.branchRateModel = branchRateModel;
         addModel(this.branchRateModel);
         this.mutationParameter = mutationParameter;
-        addVariable(this.mutationParameter);
+        addParameter(this.mutationParameter);
     }
 
     public void forwardIBD() {

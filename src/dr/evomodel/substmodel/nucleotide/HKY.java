@@ -70,7 +70,7 @@ public class HKY extends BaseSubstitutionModel implements Citable {
         super("HKY", Nucleotides.INSTANCE, freqModel);
 
         this.kappaParameter = kappaParameter;
-        addVariable(kappaParameter);
+        addParameter(kappaParameter);
         kappaParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
         addStatistic(tsTvStatistic);

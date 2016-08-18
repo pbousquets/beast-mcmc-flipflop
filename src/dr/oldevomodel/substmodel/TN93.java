@@ -57,8 +57,8 @@ import java.util.List;
  */
 public class TN93 extends AbstractNucleotideModel implements Citable {
 
-    private Variable<Double> kappa1Variable = null;
-    private Variable<Double> kappa2Variable = null;
+    private Parameter kappa1Variable = null;
+    private Parameter kappa2Variable = null;
 
     private boolean updateIntermediates = true;
 
@@ -93,13 +93,13 @@ public class TN93 extends AbstractNucleotideModel implements Citable {
      * @param kappa2Variable
      * @param freqModel
      */
-    public TN93(Variable kappa1Variable, Variable kappa2Variable, FrequencyModel freqModel) {
+    public TN93(Parameter kappa1Variable, Parameter kappa2Variable, FrequencyModel freqModel) {
 
         super(TN93Parser.TN93_MODEL, freqModel);
         this.kappa1Variable = kappa1Variable;
         this.kappa2Variable = kappa2Variable;
-        addVariable(kappa1Variable);
-        addVariable(kappa2Variable);
+        addParameter(kappa1Variable);
+        addParameter(kappa2Variable);
         kappa1Variable.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
         kappa2Variable.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
         updateIntermediates = true;

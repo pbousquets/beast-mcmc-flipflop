@@ -44,8 +44,8 @@ public class MultivariateTDiffusionModel extends MultivariateDiffusionModel {
         super();
         this.dfParameter = df;
         this.precisionParameter = precision;
-        addVariable(dfParameter);
-        addVariable(precisionParameter);
+        addParameter(dfParameter);
+        addParameter(precisionParameter);
 
     }
 

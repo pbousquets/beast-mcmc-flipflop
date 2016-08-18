@@ -27,41 +27,43 @@ package dr.inference.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * An interface that describes a model of some data.
  *
- * @version $Id: CompoundModel.java,v 1.8 2005/05/24 20:25:59 rambaut Exp $
- *
  * @author Alexei Drummond
  * @author Andrew Rambaut
+ * @version $Id: CompoundModel.java,v 1.8 2005/05/24 20:25:59 rambaut Exp $
  */
 
 public class CompoundModel implements Model {
 
-	public static final String COMPOUND_MODEL = "compoundModel";
+    public static final String COMPOUND_MODEL = "compoundModel";
 
-	public CompoundModel(String name) { this.name = name; }
+    public CompoundModel(String name) {
+        this.name = name;
+    }
 
 
-	public void addModel(Model model) {
+    public void addModel(Model model) {
 
-		if ( !models.contains(model) ) {
-			models.add(model);
+        if (!models.contains(model)) {
+            models.add(model);
             // add all listeners to this model
-            for( ModelListener ml : listeners ) {
-                 model.addModelListener(ml);
+            for (ModelListener ml : listeners) {
+                model.addModelListener(ml);
             }
         }
-	}
+    }
 
-	public int getModelCount() {
-		return models.size();
-	}
+    public int getModelCount() {
+        return models.size();
+    }
 
-	public final Model getModel(int i) {
-		return models.get(i);
-	}
+    public final Model getModel(int i) {
+        return models.get(i);
+    }
 
     public boolean isUsed() {
         return listeners.size() > 0;
@@ -72,73 +74,96 @@ public class CompoundModel implements Model {
         // means the compund model changed
 
         listeners.add(listener);
-        for( Model m : models ) {
+        for (Model m : models) {
             m.addModelListener(listener);
         }
 
         //throw new IllegalArgumentException("Compound models don't have listeners");
-	}
+    }
 
-	public void removeModelListener(ModelListener listener) {
-        for( Model m : models ) {
+    public void removeModelListener(ModelListener listener) {
+        for (Model m : models) {
             m.removeModelListener(listener);
         }
         listeners.remove(listener);
-       // throw new IllegalArgumentException("Compound models don't have listeners");
-	}
+        // throw new IllegalArgumentException("Compound models don't have listeners");
+    }
 
-	public void storeModelState() {
+    @Override
+    public void storeModelState() {
         for (Model model : models) {
             model.storeModelState();
         }
     }
 
-	public void restoreModelState() {
+    @Override
+    public void restoreModelState() {
         for (Model model : models) {
             model.restoreModelState();
         }
     }
 
-	public void acceptModelState() {
+    @Override
+    public final void acceptModelState() {
+        throw new UnsupportedOperationException("AcceptModelState is not used for parameters");
+    }
+
+    @Override
+    public void loadModelState(Map<String, Object> stateMap) {
         for (Model model : models) {
-            model.acceptModelState();
+            model.saveModelState(stateMap);
         }
     }
 
-	public boolean isValidState() {
+    @Override
+    public void saveModelState(Map<String, Object> stateMap) {
+        for (Model model : models) {
+            model.loadModelState(stateMap);
+        }
+    }
 
-		for (int i = 0; i < models.size(); i++) {
-			if (!getModel(i).isValidState()) {
-				return false;
-			}
-		}
+    public boolean isValidState() {
 
-		return true;
-	}
+        for (int i = 0; i < models.size(); i++) {
+            if (!getModel(i).isValidState()) {
+                return false;
+            }
+        }
 
-	public int getVariableCount() { return 0; }
+        return true;
+    }
 
-	public Variable getVariable(int index) {
-		throw new IllegalArgumentException("Compound models don't have parameters");
-	}
+    public int getParameterCount() {
+        return 0;
+    }
 
-	// **************************************************************
+    public Variable getVariable(int index) {
+        throw new IllegalArgumentException("Compound models don't have parameters");
+    }
+
+    // **************************************************************
     // Identifiable IMPLEMENTATION
     // **************************************************************
 
-	private String id = null;
+    private String id = null;
 
-	public void setId(String id) { this.id = id; }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public String getId() { return id; }
+    public String getId() {
+        return id;
+    }
 
-	/**
-	 * @return the name of this model
-	 */
-	public String getModelName() { return name; }
+    /**
+     * @return the name of this model
+     */
+    public String getModelName() {
+        return name;
+    }
 
 	/* AER - do we need a parser?
-	public static XMLObjectParser PARSER = new AbstractXMLObjectParser() {
+    public static XMLObjectParser PARSER = new AbstractXMLObjectParser() {
 
 		public String getParserName() { return COMPOUND_MODEL; }
 
@@ -173,8 +198,8 @@ public class CompoundModel implements Model {
 		};
 	};*/
 
-	private String name = null;
-	private final ArrayList<Model> models = new ArrayList<Model>();
+    private String name = null;
+    private final ArrayList<Model> models = new ArrayList<Model>();
     private final List<ModelListener> listeners = new ArrayList<ModelListener>();
 }
 

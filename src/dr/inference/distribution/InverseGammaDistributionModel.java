@@ -47,27 +47,27 @@ public class InverseGammaDistributionModel extends AbstractModel implements Para
     /**
      * Construct a constant mutation rate model.
      */
-    public InverseGammaDistributionModel(Variable<Double> shape, Variable<Double> scale) {
+    public InverseGammaDistributionModel(Parameter shape, Parameter scale) {
 
         super(INVERSE_GAMMA_DISTRIBUTION_MODEL);
 
         this.shape = shape;
         this.scale = scale;
-        addVariable(shape);
+        addParameter(shape);
         shape.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
-        addVariable(scale);
+        addParameter(scale);
         scale.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
     }
 
     /**
      * Construct a constant mutation rate model.
      */
-    public InverseGammaDistributionModel(Variable<Double> shape) {
+    public InverseGammaDistributionModel(Parameter shape) {
 
         super(INVERSE_GAMMA_DISTRIBUTION_MODEL);
 
         this.shape = shape;
-        addVariable(shape);
+        addParameter(shape);
         shape.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
     }
 
@@ -158,7 +158,7 @@ public class InverseGammaDistributionModel extends AbstractModel implements Para
     // Private instance variables
     // **************************************************************
 
-    private Variable<Double> shape = null;
-    private Variable<Double> scale = null;
+    private Parameter shape = null;
+    private Parameter scale = null;
 }
 

@@ -57,7 +57,7 @@ public class ScaledTreeLengthRateModel extends AbstractBranchRateModel {
         this.treeModel = treeModel;
         currentFactorKnown = false;
         addModel(treeModel);
-        addVariable(totalLength);
+        addParameter(totalLength);
     }
 
     public double getBranchRate(final Tree tree, final NodeRef node) {

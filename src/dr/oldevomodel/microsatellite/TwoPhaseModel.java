@@ -29,8 +29,6 @@ package dr.oldevomodel.microsatellite;
 import dr.evolution.datatype.Microsatellite;
 import dr.inference.model.Parameter;
 import dr.inference.model.Variable;
-import dr.oldevomodel.microsatellite.MicrosatelliteModel;
-import dr.oldevomodel.microsatellite.OnePhaseModel;
 import dr.oldevomodel.substmodel.FrequencyModel;
 
 import java.util.ArrayList;
@@ -84,7 +82,7 @@ public class TwoPhaseModel extends MicrosatelliteModel {
         if(this.estimateSubmodelParams){
             submodelParameters = new ArrayList<Variable<Double>>();
             for(int i = 0; i < subModel.getNestedParameterCount(); i++){
-                addVariable(subModel.getNestedParameter(i));
+                addParameter(subModel.getNestedParameter(i));
                 submodelParameters.add(subModel.getNestedParameter(i));
             }
             updateSubmodelRates = true;
@@ -93,8 +91,8 @@ public class TwoPhaseModel extends MicrosatelliteModel {
         this.geoParam = geoParam;
         this.onePhasePrParam = onePhasePrParam;
 
-        addVariable(this.geoParam);
-        addVariable(this.onePhasePrParam);
+        addParameter(this.geoParam);
+        addParameter(this.onePhasePrParam);
 
         this.estimateSubmodelParams = estimateSubmodelParams;
 

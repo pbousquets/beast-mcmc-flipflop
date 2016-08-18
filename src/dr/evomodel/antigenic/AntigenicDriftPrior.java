@@ -26,7 +26,6 @@
 package dr.evomodel.antigenic;
 
 import dr.inference.model.*;
-import dr.util.Author;
 import dr.util.Citable;
 import dr.util.Citation;
 import dr.util.CommonCitations;
@@ -54,20 +53,20 @@ public class AntigenicDriftPrior extends AbstractModelLikelihood implements Cita
         super(ANTIGENIC_DRIFT_PRIOR);
 
         this.locationsParameter = locationsParameter;
-        addVariable(this.locationsParameter);
+        addParameter(this.locationsParameter);
 
         this.offsetsParameter = offsetsParameter;
-        addVariable(this.offsetsParameter);
+        addParameter(this.offsetsParameter);
 
         dimension = locationsParameter.getParameter(0).getDimension();
         count = locationsParameter.getParameterCount();
 
         this.regressionSlopeParameter = regressionSlopeParameter;
-        addVariable(regressionSlopeParameter);
+        addParameter(regressionSlopeParameter);
         regressionSlopeParameter.addBounds(new Parameter.DefaultBounds(Double.MAX_VALUE, 0.0, 1));
 
         this.regressionPrecisionParameter = regressionPrecisionParameter;
-        addVariable(regressionPrecisionParameter);
+        addParameter(regressionPrecisionParameter);
         regressionPrecisionParameter.addBounds(new Parameter.DefaultBounds(Double.MAX_VALUE, 0.0, 1));
 
         likelihoodKnown = false;
@@ -96,10 +95,6 @@ public class AntigenicDriftPrior extends AbstractModelLikelihood implements Cita
     protected void restoreState() {
         logLikelihood = storedLogLikelihood;
         likelihoodKnown = false;
-    }
-
-    @Override
-    protected void acceptState() {
     }
 
     @Override

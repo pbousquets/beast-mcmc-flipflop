@@ -107,7 +107,7 @@ public class MixtureModelBranchRates extends AbstractBranchRateModel {
         this.tree = new SimpleTree(tree);
 
         this.distributionIndexParameter = distributionIndexParameter;
-        addVariable(this.distributionIndexParameter);
+        addParameter(this.distributionIndexParameter);
 
         //Force the boundaries of rateCategoryParameter to match the category count
         //d Parameter.DefaultBounds bound = new Parameter.DefaultBounds(categoryCount - 1, 0, rateCategoryParameter.getDimension());

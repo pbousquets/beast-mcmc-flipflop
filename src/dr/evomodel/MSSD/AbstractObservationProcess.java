@@ -93,8 +93,8 @@ abstract public class AbstractObservationProcess extends AbstractModel {
         addModel(treeModel);
         addModel(siteModel);
         addModel(this.branchRateModel);
-        addVariable(mu);
-        addVariable(lam);
+        addParameter(mu);
+        addParameter(lam);
 
         nodeCount = treeModel.getNodeCount();
         stateCount = patterns.getDataType().getStateCount();

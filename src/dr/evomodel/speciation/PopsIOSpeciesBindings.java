@@ -475,7 +475,4 @@ public class PopsIOSpeciesBindings extends AbstractModel   {
     protected void restoreState() {
     }
 
-    @Override
-    protected void acceptState() {
-   }
 }

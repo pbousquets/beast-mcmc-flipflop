@@ -26,6 +26,7 @@
 package dr.evomodel.branchmodel.lineagespecific;
 
 import java.util.LinkedList;
+import java.util.Map;
 
 import dr.inference.model.Bounds;
 import dr.inference.model.CompoundParameter;
@@ -82,21 +83,31 @@ public class CountableRealizationsParameter extends Parameter.Abstract implement
     	return dim * realizationCount; //  paramList.get(0).getDimension(); // Unwritten contract
     }
 
+    @Override
     protected void storeValues() {
         for (Parameter p : paramList) {
-            p.storeParameterValues();
+            p.storeModelState();
         }
     }
 
+    @Override
     protected void restoreValues() {
         for (Parameter p : paramList) {
-            p.restoreParameterValues();
+            p.restoreModelState();
         }
     }
 
-    protected void acceptValues() {
-        for (Parameter p : paramList) {
-            p.acceptParameterValues();
+    @Override
+    protected void saveValues(Map<String, Object> stateMap) {
+        for (Parameter parameter : paramList) {
+            parameter.saveModelState(stateMap);
+        }
+    }
+
+    @Override
+    protected void loadValues(Map<String, Object> stateMap) {
+        for (Parameter parameter : paramList) {
+            parameter.loadModelState(stateMap);
         }
     }
 

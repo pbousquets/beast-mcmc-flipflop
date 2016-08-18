@@ -53,7 +53,7 @@ public class EpochTreeBranchSubstitutionModel extends TreeBranchSubstitutionMode
         this.transitionTimesParameter = transitionTimes;
         this.transitionTimes = transitionTimesParameter.getParameterValues();
 
-        addVariable(transitionTimes);
+        addParameter(transitionTimes);
 
         for (SubstitutionModel model : modelList)
             addModel(model);

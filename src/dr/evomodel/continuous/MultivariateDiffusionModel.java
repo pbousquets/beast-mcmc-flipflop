@@ -56,7 +56,7 @@ public class MultivariateDiffusionModel extends AbstractModel implements TreeAtt
 
         this.diffusionPrecisionMatrixParameter = diffusionPrecisionMatrixParameter;
         calculatePrecisionInfo();
-        addVariable(diffusionPrecisionMatrixParameter);
+        addParameter(diffusionPrecisionMatrixParameter);
 
     }
 

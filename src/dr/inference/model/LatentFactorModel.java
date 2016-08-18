@@ -154,11 +154,11 @@ public class LatentFactorModel extends AbstractModelLikelihood implements Citabl
         this.rowPrecision = rowPrecision;
         this.colPrecision = colPrecision;
 
-        addVariable(data);
-        addVariable(factors);
-        addVariable(loadings);
-        addVariable(rowPrecision);
-        addVariable(colPrecision);
+        addParameter(data);
+        addParameter(factors);
+        addParameter(loadings);
+        addParameter(rowPrecision);
+        addParameter(colPrecision);
 
         dimFactors = factors.getRowDimension();
         dimData = loadings.getRowDimension();
@@ -575,15 +575,6 @@ public class LatentFactorModel extends AbstractModelLikelihood implements Citabl
 //                index++;
 //            }
 //        }
-    }
-
-    /**
-     * This call specifies that the current state is accept. Most models will not need to do anything.
-     * Sub-models are handled automatically and do not need to be considered in this method.
-     */
-    @Override
-    protected void acceptState() {
-        // Do nothing
     }
 
     /**

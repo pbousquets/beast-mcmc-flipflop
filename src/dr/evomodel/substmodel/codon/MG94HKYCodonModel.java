@@ -68,7 +68,7 @@ public class MG94HKYCodonModel extends MG94CodonModel {
         super(codonDataType, alphaParameter, betaParameter, freqModel, eigenSystem);
 
         this.kappaParameter = kappaParameter;
-        addVariable(kappaParameter);
+        addParameter(kappaParameter);
         kappaParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0,
         kappaParameter.getDimension()));
 

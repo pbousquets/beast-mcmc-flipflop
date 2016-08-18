@@ -104,15 +104,15 @@ public class GaussianProcessMultilocusSkytrackLikelihood extends GaussianProcess
 //        System.out.println("numGridPoints: " + numGridPoints);
 //        setupGridPoints();
 
-        addVariable(popSizeParameter);
-        addVariable(precisionParameter);
-        addVariable(changePoints);
-        addVariable(numPoints);
-        addVariable(GPcounts);
-        addVariable(GPtype);
-        addVariable(coalfactor);
-        addVariable(lambda_boundParameter);
-        addVariable(CoalCounts);
+        addParameter(popSizeParameter);
+        addParameter(precisionParameter);
+        addParameter(changePoints);
+        addParameter(numPoints);
+        addParameter(GPcounts);
+        addParameter(GPtype);
+        addParameter(coalfactor);
+        addParameter(lambda_boundParameter);
+        addParameter(CoalCounts);
 
 
         setTree(treeList);

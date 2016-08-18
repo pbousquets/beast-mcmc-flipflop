@@ -51,12 +51,12 @@ public class LocationScaleJeffreysPrior extends AbstractModelLikelihood {
         this.alpha0 = alpha0;
         this.beta0 = beta0;
 
-        addVariable(location);
-        addVariable(sigma);
-        addVariable(gamma);
+        addParameter(location);
+        addParameter(sigma);
+        addParameter(gamma);
 
-        if (alpha0 != null) addVariable(alpha0);
-        if (beta0 != null) addVariable(beta0);
+        if (alpha0 != null) addParameter(alpha0);
+        if (beta0 != null) addParameter(beta0);
 
         this.type = type;
 

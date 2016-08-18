@@ -71,7 +71,7 @@ public class DiscretizedLociRates extends AbstractModel {
 
 
         addModel(distrModel);
-        addVariable(this.rateCategoryParameter);
+        addParameter(this.rateCategoryParameter);
 
     }
 

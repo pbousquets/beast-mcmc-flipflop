@@ -39,7 +39,7 @@ public class SingleScalarTreeTransform extends TreeTransform {
         super("singleScalarTreeTransform");
         scale.addBounds(new Parameter.DefaultBounds(1.0, 0.0, 1));
         this.scale = scale;
-        addVariable(scale);
+        addParameter(scale);
     }
 
     public double transform(Tree tree, NodeRef node, double originalHeight) {

@@ -208,7 +208,7 @@ public class AdvancedTreeLikelihood extends AbstractTreeLikelihood {
             Logger.getLogger("dr.evomodel").info("Delta parameter added for all tips.");
         }
 
-        addVariable(deltaParameter);
+        addParameter(deltaParameter);
     }
 
     // **************************************************************

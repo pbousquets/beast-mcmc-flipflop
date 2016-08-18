@@ -64,11 +64,11 @@ public class PowerLawGrowthModel extends DemographicModel {
         powerLawGrowth = new PowerLawGrowth(units);
 
         this.N0Parameter = N0Parameter;
-        addVariable(N0Parameter);
+        addParameter(N0Parameter);
         N0Parameter.addBounds(new Parameter.DefaultBounds(Double.MAX_VALUE, 0.0, 1));
 
         this.powerParameter = powerParameter;
-        addVariable(powerParameter);
+        addParameter(powerParameter);
         powerParameter.addBounds(new Parameter.DefaultBounds(Double.MAX_VALUE, 1, 1));
 
         setUnits(units);

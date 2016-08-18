@@ -107,7 +107,7 @@ public class MarkovJumpsBeagleTreeLikelihood extends AncestralStateBeagleTreeLik
                 ) {
             throw new RuntimeException("Register parameter of wrong dimension");
         }
-        addVariable(addRegisterParameter);
+        addParameter(addRegisterParameter);
         final String tag = addRegisterParameter.getId();
 
         for (int i = 0; i < substitutionModelDelegate.getSubstitutionModelCount(); ++i) {

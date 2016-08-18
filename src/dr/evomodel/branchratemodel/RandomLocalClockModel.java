@@ -82,7 +82,7 @@ public class RandomLocalClockModel extends AbstractBranchRateModel
 
         addModel(indicators);
         addModel(rates);
-        if (meanRateParameter != null) addVariable(meanRateParameter);
+        if (meanRateParameter != null) addParameter(meanRateParameter);
 
         unscaledBranchRates = new double[treeModel.getNodeCount()];
 

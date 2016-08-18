@@ -5,6 +5,8 @@ import dr.inference.model.Parameter;
 import dr.inference.model.Statistic;
 import dr.xml.*;
 
+import java.util.Map;
+
 /**
  * Created by Guy Baele on 18/12/15.
  */
@@ -22,18 +24,25 @@ public class ImmutableParameterParser extends AbstractXMLObjectParser {
             public void setParameterValueQuietly(int dim, double value) {
                 throw new RuntimeException("Forbidden call to ImmutableParameter.");
             }
-            public void storeValues() {
-                //do nothing
-            }
-            public void restoreValues() {
-                //do nothing
-            }
-            public void acceptValues() {
-                //do nothing
-            }
 
             public int getDimension() {
                 return statistic.getDimension();
+            }
+
+            @Override
+            protected void storeValues() {
+            }
+
+            @Override
+            protected void restoreValues() {
+            }
+
+            @Override
+            protected void saveValues(Map<String, Object> stateMap) {
+            }
+
+            @Override
+            protected void loadValues(Map<String, Object> stateMap) {
             }
 
             public void setParameterValue(int dim, double value) {

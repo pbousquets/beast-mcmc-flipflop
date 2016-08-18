@@ -33,13 +33,6 @@ import dr.inference.model.Model;
 import dr.inference.model.Parameter;
 import dr.inference.model.Variable;
 import dr.util.Citable;
-import dr.util.Citation;
-import dr.util.CommonCitations;
-
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Marc A. Suchard
@@ -65,7 +58,7 @@ public class ProgressiveScalarTreeTransform extends TreeTransform {
             dim = treeParameterModel.getParameterSize();
             addModel(treeParameterModel);
         } else {
-            addVariable(scale);
+            addParameter(scale);
         }
         scale.addBounds(new Parameter.DefaultBounds(1.0, 0.0, dim));
 

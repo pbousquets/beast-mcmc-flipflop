@@ -48,15 +48,15 @@ public class TDistributionModel extends AbstractModel implements ParametricDistr
         super(NormalDistributionModelParser.NORMAL_DISTRIBUTION_MODEL);
 
         this.location = location;
-        addVariable(location);
+        addParameter(location);
         location.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
 
         this.scale = scale;
-        addVariable(scale);
+        addParameter(scale);
         scale.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
         this.df = df;
-        addVariable(df);
+        addParameter(df);
         df.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
     }
 

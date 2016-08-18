@@ -69,7 +69,7 @@ public class PCACodonModel extends AbstractCodonModel {
 		for(int i=0; i<pcFactors.getDimension(); i++) {
 			pcFactors.setParameterValueQuietly(i, startFacs[i]/facSum);
 		}
-		addVariable(pcFactors);
+		addParameter(pcFactors);
 		pcFactors.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0,
 				pcFactors.getDimension()));
 	}

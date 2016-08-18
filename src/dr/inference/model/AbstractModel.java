@@ -30,7 +30,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 /**
  * A model that brings together a number of model components
@@ -74,34 +74,34 @@ public abstract class AbstractModel implements Model, ModelListener, VariableLis
         return models.get(i);
     }
 
-    public final void addVariable(Variable variable) {
-        if (variable instanceof Parameter) {
-            Parameter.CONNECTED_PARAMETER_SET.add((Parameter)variable);
+    public final void addParameter(Parameter parameter) {
+        if (parameter instanceof Parameter) {
+            Parameter.CONNECTED_PARAMETER_SET.add((Parameter) parameter);
         }
 
-        if (!variables.contains(variable)) {
-            variables.add(variable);
-            variable.addVariableListener(this);
+        if (!parameters.contains(parameter)) {
+            parameters.add(parameter);
+            parameter.addVariableListener(this);
         }
 
         // parameters are also statistics
-        if (variable instanceof Statistic) addStatistic((Statistic) variable);
+        if (parameter instanceof Statistic) addStatistic((Statistic) parameter);
     }
 
-    public final void removeVariable(Variable variable) {
-        variables.remove(variable);
-        variable.removeVariableListener(this);
+    public final void removeParameter(Parameter parameter) {
+        parameters.remove(parameter);
+        parameter.removeVariableListener(this);
 
         // parameters are also statistics
-        if (variable instanceof Statistic) removeStatistic((Statistic) variable);
+        if (parameter instanceof Statistic) removeStatistic((Statistic) parameter);
     }
 
     /**
      * @param parameter
      * @return true of the given parameter is contained in this model
      */
-    public final boolean hasVariable(Variable parameter) {
-        return variables.contains(parameter);
+    public final boolean hasParameter(Parameter parameter) {
+        return parameters.contains(parameter);
     }
 
     /**
@@ -142,12 +142,12 @@ public abstract class AbstractModel implements Model, ModelListener, VariableLis
         listenerHelper.fireModelChanged(this, object, index);
     }
 
-    public final int getVariableCount() {
-        return variables.size();
+    public final int getParameterCount() {
+        return parameters.size();
     }
 
     public final Variable getVariable(int i) {
-        return variables.get(i);
+        return parameters.get(i);
     }
 
     // **************************************************************
@@ -162,8 +162,8 @@ public abstract class AbstractModel implements Model, ModelListener, VariableLis
             ((AbstractModel) model).sendState(toRank);
         }
         // Send current model parameters
-        for (Variable variable : variables) {
-            if (variable instanceof Parameter.Abstract) ((Parameter.Abstract) variable).sendState(toRank);
+        for (Parameter parameter : parameters) {
+            if (parameter instanceof Parameter.Abstract) ((Parameter.Abstract) parameter).sendState(toRank);
         }
     }
 
@@ -187,9 +187,9 @@ public abstract class AbstractModel implements Model, ModelListener, VariableLis
             ((AbstractModel) model).receiveState(fromRank);
         }
         // Send current model parameters
-        for (Variable variable : variables) {
-            if (variable instanceof Parameter.Abstract)
-                ((Parameter.Abstract) variable).receiveState(fromRank);
+        for (Parameter parameter : parameters) {
+            if (parameter instanceof Parameter.Abstract)
+                ((Parameter.Abstract) parameter).receiveState(fromRank);
         }
 
 
@@ -254,8 +254,8 @@ public abstract class AbstractModel implements Model, ModelListener, VariableLis
                 m.storeModelState();
             }
 
-            for (Variable variable : variables) {
-                variable.storeVariableValues();
+            for (Parameter parameter : parameters) {
+                parameter.storeModelState();
             }
 
             storeState();
@@ -267,8 +267,8 @@ public abstract class AbstractModel implements Model, ModelListener, VariableLis
         if (!isValidState) {
             //System.out.println("RESTORE MODEL: " + getModelName() + "/" + getId());
 
-            for (Variable variable : variables) {
-                variable.restoreVariableValues();
+            for (Parameter parameter : parameters) {
+                parameter.restoreModelState();
             }
             for (Model m : models) {
                 m.restoreModelState();
@@ -285,15 +285,46 @@ public abstract class AbstractModel implements Model, ModelListener, VariableLis
         if (!isValidState) {
             //System.out.println("ACCEPT MODEL: " + getModelName() + "/" + getId());
 
-            for (Variable variable : variables) {
-                variable.acceptVariableValues();
-            }
-
             for (Model m : models) {
                 m.acceptModelState();
             }
 
             acceptState();
+            isValidState = true;
+        }
+    }
+
+    @Override
+    public void saveModelState(Map<String, Object> stateMap) {
+        if (!isValidState) {
+            //System.out.println("ACCEPT MODEL: " + getModelName() + "/" + getId());
+
+            for (Parameter parameter : parameters) {
+                parameter.saveModelState(stateMap);
+            }
+
+            for (Model m : models) {
+                m.saveModelState(stateMap);
+            }
+
+            saveState(stateMap);
+        }
+    }
+
+    @Override
+    public void loadModelState(Map<String, Object> stateMap) {
+        if (!isValidState) {
+            //System.out.println("ACCEPT MODEL: " + getModelName() + "/" + getId());
+
+            for (Parameter parameter : parameters) {
+                parameter.saveModelState(stateMap);
+            }
+
+            for (Model m : models) {
+                m.saveModelState(stateMap);
+            }
+
+            loadState(stateMap);
 
             isValidState = true;
         }
@@ -321,10 +352,21 @@ public abstract class AbstractModel implements Model, ModelListener, VariableLis
     protected abstract void restoreState();
 
     /**
-     * This call specifies that the current state is accept. Most models will not need to do anything.
+     * After this call the model is guaranteed to have returned its extra state information to
+     * the values coinciding with the last storeState call.
      * Sub-models are handled automatically and do not need to be considered in this method.
      */
-    protected abstract void acceptState();
+    protected void acceptState() {
+        // do nothing by default - override
+    }
+
+    protected void saveState(Map<String, Object> stateMap) {
+        throw new UnsupportedOperationException("must be overridden");
+    }
+
+    protected void loadState(Map<String, Object> loadMap) {
+        throw new UnsupportedOperationException("must be overridden");
+    }
 
     // **************************************************************
     // StatisticList IMPLEMENTATION
@@ -406,6 +448,7 @@ public abstract class AbstractModel implements Model, ModelListener, VariableLis
     protected Model.ListenerHelper listenerHelper = new Model.ListenerHelper();
 
     private final ArrayList<Model> models = new ArrayList<Model>();
+    private final ArrayList<Parameter> parameters = new ArrayList<Parameter>();
     private final ArrayList<Variable> variables = new ArrayList<Variable>();
     private final ArrayList<Statistic> statistics = new ArrayList<Statistic>();
 

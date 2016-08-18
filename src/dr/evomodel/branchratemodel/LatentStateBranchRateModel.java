@@ -102,10 +102,10 @@ public class LatentStateBranchRateModel extends AbstractModelLikelihood implemen
         addModel(nonLatentRateModel);
 
         this.latentTransitionRateParameter = latentTransitionRateParameter;
-        addVariable(latentTransitionRateParameter);
+        addParameter(latentTransitionRateParameter);
 
         this.latentTransitionFrequencyParameter = latentTransitionFrequencyParameter;
-        addVariable(latentTransitionFrequencyParameter);
+        addParameter(latentTransitionFrequencyParameter);
 
         if (branchCategoryProvider ==  null) {
             this.latentStateProportions = new TreeParameterModel(tree, latentStateProportionParameter, false, Intent.BRANCH);
@@ -125,7 +125,7 @@ public class LatentStateBranchRateModel extends AbstractModelLikelihood implemen
                 setUpdateAllCategories();
             }
 
-            addVariable(latentStateProportionParameter);
+            addParameter(latentStateProportionParameter);
         }
 
         branchLikelihoods = new double[tree.getNodeCount()];
@@ -322,11 +322,6 @@ public class LatentStateBranchRateModel extends AbstractModelLikelihood implemen
             updateCategory = storedUpdateCategory;
             storedUpdateCategory = tmp3;
         }
-    }
-
-    @Override
-    protected void acceptState() {
-
     }
 
     @Override

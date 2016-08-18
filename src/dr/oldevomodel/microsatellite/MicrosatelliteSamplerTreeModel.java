@@ -108,7 +108,7 @@ public class MicrosatelliteSamplerTreeModel extends AbstractModel {
 
 
         addModel(tree);
-        addVariable(parameter);
+        addParameter(parameter);
    }
 
 

@@ -167,7 +167,7 @@ public class MultidimensionalScalingLikelihood extends AbstractModelLikelihood {
 
         this.locationsParameter = locationsParameter;
         setupLocationsParameter(this.locationsParameter);
-        addVariable(locationsParameter);
+        addParameter(locationsParameter);
         locationUpdated = new boolean[locationsParameter.getParameterCount()];
 
         // a cache of row to column distances (column indices given by array above).
@@ -184,7 +184,7 @@ public class MultidimensionalScalingLikelihood extends AbstractModelLikelihood {
         storedThresholds = new double[thresholdCount];
 
         this.mdsPrecisionParameter = mdsPrecision;
-        addVariable(mdsPrecision);
+        addParameter(mdsPrecision);
 
         this.isLeftTruncated = isLeftTruncated; // Re-normalize likelihood for strictly positive distances
 
@@ -298,11 +298,6 @@ public class MultidimensionalScalingLikelihood extends AbstractModelLikelihood {
 
         sumOfSquaredResiduals = storedSumOfSquaredResiduals;
         residualsKnown = true;
-    }
-
-    @Override
-    protected void acceptState() {
-        // do nothing
     }
 
     public void makeDirty() {

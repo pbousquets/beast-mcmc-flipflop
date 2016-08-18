@@ -25,6 +25,7 @@
 
 package dr.oldevomodelxml.substmodel;
 
+import dr.inference.model.Parameter;
 import dr.oldevomodel.substmodel.FrequencyModel;
 import dr.oldevomodel.substmodel.NucModelType;
 import dr.oldevomodel.substmodel.TN93;
@@ -49,8 +50,8 @@ public class TN93Parser extends AbstractXMLObjectParser {
 
     public Object parseXMLObject(XMLObject xo) throws XMLParseException {
 
-        Variable kappa1Param = (Variable) xo.getElementFirstChild(KAPPA1);
-        Variable kappa2Param = (Variable) xo.getElementFirstChild(KAPPA2);
+        Parameter kappa1Param = (Parameter) xo.getElementFirstChild(KAPPA1);
+        Parameter kappa2Param = (Parameter) xo.getElementFirstChild(KAPPA2);
         FrequencyModel freqModel = (FrequencyModel) xo.getElementFirstChild(FREQUENCIES);
 
         Logger.getLogger("dr.evomodel").info("Creating TN93 substitution model. Initial kappa = "
@@ -80,9 +81,9 @@ public class TN93Parser extends AbstractXMLObjectParser {
                 new ElementRule(FREQUENCIES,
                         new XMLSyntaxRule[]{new ElementRule(FrequencyModel.class)}),
                 new ElementRule(KAPPA1,
-                        new XMLSyntaxRule[]{new ElementRule(Variable.class)}),
+                        new XMLSyntaxRule[]{new ElementRule(Parameter.class)}),
                 new ElementRule(KAPPA2,
-                        new XMLSyntaxRule[]{new ElementRule(Variable.class)})
+                        new XMLSyntaxRule[]{new ElementRule(Parameter.class)})
         };
     }
 

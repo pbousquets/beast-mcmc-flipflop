@@ -67,8 +67,8 @@ public class KnownVarianceNormalPeriodPriorDistribution extends AbstractPeriodPr
         this.hyperprior = hyperprior;
         posteriorVariance = new Parameter.Default(1);
         posteriorMean = new Parameter.Default(1);
-        addVariable(posteriorVariance);
-        addVariable(posteriorMean);
+        addParameter(posteriorVariance);
+        addParameter(posteriorMean);
         this.sigma = sigma;
     }
 

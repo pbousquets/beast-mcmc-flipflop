@@ -73,7 +73,7 @@ public class PositiveDefiniteSubstitutionModel extends AbstractModel implements 
         Ksquared = stateCount * stateCount;
 
         rates = parameter;
-        addVariable(rates);
+        addParameter(rates);
 
         eigenInitialised = false;
     }

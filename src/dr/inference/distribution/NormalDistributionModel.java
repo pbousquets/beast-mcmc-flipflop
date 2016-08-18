@@ -45,15 +45,15 @@ public class NormalDistributionModel extends AbstractModel implements Parametric
     /**
      * Constructor.
      */
-    public NormalDistributionModel(Variable<Double> mean, Variable<Double> stdev) {
+    public NormalDistributionModel(Parameter mean, Parameter stdev) {
 
         super(NormalDistributionModelParser.NORMAL_DISTRIBUTION_MODEL);
 
         this.mean = mean;
         this.stdev = stdev;
-        addVariable(mean);
+        addParameter(mean);
         mean.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
-        addVariable(stdev);
+        addParameter(stdev);
         stdev.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
     }
 
@@ -61,7 +61,7 @@ public class NormalDistributionModel extends AbstractModel implements Parametric
         super(NormalDistributionModelParser.NORMAL_DISTRIBUTION_MODEL);
         this.hasPrecision = isPrecision;
         this.mean = meanParameter;
-        addVariable(meanParameter);
+        addParameter(meanParameter);
         meanParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
         if (isPrecision) {
             this.precision = scale;
@@ -69,7 +69,7 @@ public class NormalDistributionModel extends AbstractModel implements Parametric
         } else {
             this.stdev = scale;
         }
-        addVariable(scale);
+        addParameter(scale);
         scale.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
     }
 
@@ -167,8 +167,8 @@ public class NormalDistributionModel extends AbstractModel implements Parametric
     // Private instance variables
     // **************************************************************
 
-    private final Variable<Double> mean;
-    private final Variable<Double> stdev;
+    private final Parameter mean;
+    private final Parameter stdev;
     private Variable<Double> precision;
     private boolean hasPrecision = false;
 

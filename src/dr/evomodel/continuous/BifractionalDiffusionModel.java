@@ -44,8 +44,8 @@ public class BifractionalDiffusionModel extends MultivariateDiffusionModel {
         super();
         this.alpha = alpha;
         this.beta = beta;
-        addVariable(alpha);
-        addVariable(beta);
+        addParameter(alpha);
+        addParameter(beta);
         densityKnown = false;
     }
 

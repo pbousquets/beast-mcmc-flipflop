@@ -32,7 +32,6 @@ import dr.inference.markovchain.MarkovChainListener;
 import dr.inference.model.Model;
 import dr.inference.model.PathLikelihood;
 import dr.inference.operators.*;
-import dr.inference.prior.Prior;
 import dr.util.Author;
 import dr.util.Citable;
 import dr.util.Citation;

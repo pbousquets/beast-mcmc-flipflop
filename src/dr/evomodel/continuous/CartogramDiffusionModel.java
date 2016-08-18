@@ -56,7 +56,7 @@ public class CartogramDiffusionModel extends MultivariateDiffusionModel {
     public CartogramDiffusionModel(String name, Parameter precision) {
         super();
         this.precision = precision;
-        addVariable(precision);
+        addParameter(precision);
         setId(name);
         Logger.getLogger("dr.evomodel.continuous").info(
             "Constructing cartogram diffusion model '"+ getId() +"': \n" +

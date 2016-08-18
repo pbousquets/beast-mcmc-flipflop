@@ -43,7 +43,7 @@ public class DefaultModel extends AbstractModelLikelihood {
 
     public DefaultModel(Parameter parameter) {
         super(DefaultModelParser.DUMMY_MODEL);
-        addVariable(parameter);
+        addParameter(parameter);
     }
 
     protected void handleModelChangedEvent(Model model, Object object, int index) {

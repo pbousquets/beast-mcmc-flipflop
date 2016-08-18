@@ -60,12 +60,12 @@ public class YangCodonModel extends AbstractCodonModel {
 		super(YangCodonModelParser.YANG_CODON_MODEL, codonDataType, freqModel);
 
 		this.omegaParameter = omegaParameter;
-		addVariable(omegaParameter);
+		addParameter(omegaParameter);
 		omegaParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0,
 				omegaParameter.getDimension()));
 
 		this.kappaParameter = kappaParameter;
-		addVariable(kappaParameter);
+		addParameter(kappaParameter);
 		kappaParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0,
 				kappaParameter.getDimension()));
 

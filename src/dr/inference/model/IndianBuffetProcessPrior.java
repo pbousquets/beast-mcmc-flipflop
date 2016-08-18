@@ -37,12 +37,12 @@ public class IndianBuffetProcessPrior extends AbstractModelLikelihood {
         super(null);
         this.alpha=alpha;
         alpha.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0, 1));
-        addVariable(alpha);
+        addParameter(alpha);
         this.beta=beta;
         beta.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0, 1));
-        addVariable(beta);
+        addParameter(beta);
         this.data=data;
-        addVariable(data);
+        addParameter(data);
     }
 
     private int factorial(int num){
@@ -114,11 +114,6 @@ public class IndianBuffetProcessPrior extends AbstractModelLikelihood {
         H=storedH;
         bottom=storedBottom;
         sum2=storedSum2;
-    }
-
-    @Override
-    protected void acceptState() {
-
     }
 
     @Override

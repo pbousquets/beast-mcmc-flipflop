@@ -28,6 +28,7 @@ package dr.inferencexml.distribution;
 import dr.inference.distribution.AbstractDistributionLikelihood;
 import dr.inference.distribution.CachedDistributionLikelihood;
 import dr.inference.distribution.DistributionLikelihood;
+import dr.inference.model.Parameter;
 import dr.inference.model.Variable;
 import dr.xml.*;
 
@@ -52,12 +53,12 @@ public class CachedDistributionLikelihoodParser extends AbstractXMLObjectParser 
         final String name = xo.hasId() ? xo.getId() : CACHED_PRIOR;
 
         final AbstractDistributionLikelihood likelihood = (AbstractDistributionLikelihood) xo.getChild(AbstractDistributionLikelihood.class);
-        final Variable variable = (Variable) xo.getChild(Variable.class);
+        final Parameter parameter = (Parameter) xo.getChild(Parameter.class);
 
         final Logger logger = Logger.getLogger("dr.inference");
-        logger.info("Constructing a cache around likelihood '" + likelihood.getId() + "', signal = " + variable.getVariableName());
+        logger.info("Constructing a cache around likelihood '" + likelihood.getId() + "', signal = " + parameter.getVariableName());
 
-        return new CachedDistributionLikelihood(name, likelihood, variable);
+        return new CachedDistributionLikelihood(name, likelihood, parameter);
 
     }
 

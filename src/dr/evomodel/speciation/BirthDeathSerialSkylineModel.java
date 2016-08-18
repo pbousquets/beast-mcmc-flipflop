@@ -29,11 +29,15 @@ import dr.evolution.io.Importer;
 import dr.evolution.io.NewickImporter;
 import dr.evolution.tree.Tree;
 import dr.evolution.util.Taxon;
+import dr.inference.loggers.LogColumn;
+import dr.inference.model.Bounds;
 import dr.inference.model.Parameter;
 import dr.inference.model.Variable;
+import dr.inference.model.VariableListener;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -84,12 +88,12 @@ public class BirthDeathSerialSkylineModel extends SpeciationModel {
     protected double[] timesFromTips;
 
     public BirthDeathSerialSkylineModel(
-            Variable<Double> times,
-            Variable<Double> lambda,
-            Variable<Double> mu,
-            Variable<Double> psi,
-            Variable<Double> p,
-            Variable<Double> origin,
+            Parameter times,
+            Parameter lambda,
+            Parameter mu,
+            Parameter psi,
+            Parameter p,
+            Parameter origin,
             boolean relativeDeath,
             boolean sampledIndividualsRemainInfectious,
             boolean timesStartFromOrigin,
@@ -101,12 +105,12 @@ public class BirthDeathSerialSkylineModel extends SpeciationModel {
 
     public BirthDeathSerialSkylineModel(
             String modelName,
-            Variable<Double> times,
-            Variable<Double> lambda,
-            Variable<Double> mu,
-            Variable<Double> psi,
-            Variable<Double> p,
-            Variable<Double> origin,
+            Parameter times,
+            Parameter lambda,
+            Parameter mu,
+            Parameter psi,
+            Parameter p,
+            Parameter origin,
             boolean relativeDeath,
             boolean sampledIndividualsRemainInfectious,
             boolean timesStartFromOrigin,
@@ -125,27 +129,27 @@ public class BirthDeathSerialSkylineModel extends SpeciationModel {
         this.timesStartFromOrigin = timesStartFromOrigin;
 
         this.times = times;
-        addVariable(times);
+        addParameter(times);
         times.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, times.getSize()));
 
         this.lambda = lambda;
-        addVariable(lambda);
+        addParameter(lambda);
         lambda.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, lambda.getSize()));
 
         this.mu = mu;
-        addVariable(mu);
+        addParameter(mu);
         mu.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, mu.getSize()));
 
         this.p = p;
-        addVariable(p);
+        addParameter(p);
         p.addBounds(new Parameter.DefaultBounds(1.0, 0.0, p.getSize()));
 
         this.origin = origin;
-        addVariable(origin);
+        addParameter(origin);
         p.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, origin.getSize()));
 
         this.psi = psi;
-        addVariable(psi);
+        addParameter(psi);
         psi.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, psi.getSize()));
 
 
@@ -371,39 +375,4 @@ public class BirthDeathSerialSkylineModel extends SpeciationModel {
         throw new RuntimeException("Not implemented!");
     }
 
-    public static void main(String[] args) throws IOException, Importer.ImportException {
-
-        // test framework
-
-        Variable<Double> times = new Variable.D(1, 10);
-
-        Variable<Double> mu = new Variable.D(1, 10);
-        for (int i = 0; i < mu.getSize(); i++) {
-            times.setValue(i, (i + 1) * 2.0);
-            mu.setValue(i, i + 1.0);
-        }
-
-        Variable<Double> lambda = new Variable.D(1, 10);
-        Variable<Double> psi = new Variable.D(0.5, 1);
-        Variable<Double> p = new Variable.D(0.5, 1);
-        Variable<Double> origin = new Variable.D(0.5, 1);
-        boolean relativeDeath = false;
-        boolean sampledIndividualsRemainInfectious = false;
-        boolean timesStartFromOrigin = false;
-
-        BirthDeathSerialSkylineModel model =
-                new BirthDeathSerialSkylineModel(times, lambda, mu, psi, p, origin, relativeDeath,
-                        sampledIndividualsRemainInfectious, timesStartFromOrigin, Type.SUBSTITUTIONS);
-
-        NewickImporter importer = new NewickImporter("((A:6,B:5):4,(C:3,D:2):1);");
-        Tree tree = importer.importNextTree();
-
-        model.calculateTreeLogLikelihood(tree);
-
-        for (int i = 0; i < times.getSize(); i += 1) {
-            System.out.println("mu at time " + i + " is " + model.mu(i));
-            System.out.println("p0 at time " + i + " is " + model.p0(0, i, i));
-        }
-
-    }
 }

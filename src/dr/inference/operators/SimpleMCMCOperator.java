@@ -26,7 +26,6 @@
 package dr.inference.operators;
 
 import dr.inference.model.Likelihood;
-import dr.inference.prior.Prior;
 
 public abstract class SimpleMCMCOperator implements MCMCOperator {
 

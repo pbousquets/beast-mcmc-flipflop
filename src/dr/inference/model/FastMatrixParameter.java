@@ -29,6 +29,7 @@ import dr.xml.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Marc A. Suchard
@@ -80,9 +81,10 @@ public class FastMatrixParameter extends CompoundParameter implements MatrixPara
         }
 
         @Override
-        protected void acceptValues() {
-            throw new RuntimeException("Do not call");
-        }
+        protected void saveValues(Map<String, Object> stateMap) { throw new RuntimeException("Do not call"); }
+
+        @Override
+        protected void loadValues(Map<String, Object> stateMap) { throw new RuntimeException("Do not call"); }
 
         @Override
         protected void adoptValues(Parameter source) {

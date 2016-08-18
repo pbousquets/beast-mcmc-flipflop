@@ -52,17 +52,17 @@ public class RandomLocalYuleModel extends UltrametricSpeciationModel implements 
 
         super(RandomLocalYuleModelParser.YULE_MODEL, units);
 
-        addVariable(birthRates);
+        addParameter(birthRates);
         birthRates.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, birthRates.getDimension()));
 
         for (int i = 0; i < indicators.getDimension(); i++) {
             indicators.setParameterValueQuietly(i, 0.0);
         }
 
-        addVariable(indicators);
+        addParameter(indicators);
 
         this.meanRate = meanRate;
-        addVariable(meanRate);
+        addParameter(meanRate);
 
         birthRatesAreMultipliers = ratesAsMultipliers;
 

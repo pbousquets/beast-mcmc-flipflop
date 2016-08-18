@@ -116,7 +116,7 @@ public class ClusterViruses extends AbstractModelLikelihood {
          for (int i = 0; i < numdata; i++) {      	
             clusterLabels.setParameterValue(i, 0);
         }
-         addVariable(clusterLabels);
+         addParameter(clusterLabels);
          
         
          
@@ -147,13 +147,13 @@ public class ClusterViruses extends AbstractModelLikelihood {
         */
         
          
-		addVariable(virusLocations);
+		addParameter(virusLocations);
 		addModel(treeModel);
 		//addVariable(locationDrift);
-		addVariable(offsets);
-		 addVariable(K);
-		 addVariable(excisionPoints);
-		 addVariable(mu);
+		addParameter(offsets);
+		 addParameter(K);
+		 addParameter(excisionPoints);
+		 addParameter(mu);
 		 System.out.println("Finished loading the constructor for ClusterViruses");
 
  }    

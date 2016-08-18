@@ -75,11 +75,11 @@ public class HKY extends AbstractNucleotideModel implements Citable {
     /**
      * Constructor
      */
-    public HKY(Variable kappaParameter, FrequencyModel freqModel) {
+    public HKY(Parameter kappaParameter, FrequencyModel freqModel) {
 
         super(NucModelType.HKY.getXMLName(), freqModel);
         this.kappaParameter = kappaParameter;
-        addVariable(kappaParameter);
+        addParameter(kappaParameter);
         kappaParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
         updateIntermediates = true;
 

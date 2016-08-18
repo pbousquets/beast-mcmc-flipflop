@@ -28,7 +28,6 @@ package dr.oldevomodel.microsatellite;
 import dr.evolution.datatype.Microsatellite;
 import dr.inference.model.Parameter;
 import dr.inference.model.Variable;
-import dr.oldevomodel.microsatellite.MicrosatelliteModel;
 import dr.oldevomodel.substmodel.FrequencyModel;
 
 import java.util.ArrayList;
@@ -40,7 +39,7 @@ import java.util.ArrayList;
  * An abstract for One Phase Microsatellite Models
  */
 public abstract class OnePhaseModel extends MicrosatelliteModel {
-    protected ArrayList<Variable<Double>> nestedParams = null;
+    protected ArrayList<Parameter> nestedParams = null;
 
     /**
      * Constructor
@@ -52,24 +51,24 @@ public abstract class OnePhaseModel extends MicrosatelliteModel {
      */
     public OnePhaseModel(String name, Microsatellite microsatellite, FrequencyModel freqModel, Parameter parameter){
         super(name, microsatellite, freqModel, parameter);
-        nestedParams=new ArrayList<Variable<Double>>();
+        nestedParams=new ArrayList<Parameter>();
     }
 
     /*
      * adding the parameters only if its not a submodel.
      */
-    protected void addParam(Variable<Double> param){
+    protected void addParam(Parameter param){
         if(isNested){
             nestedParams.add(param);
         }else{
-            super.addVariable(param);
+            super.addParameter(param);
         }
     }
 
     /*
      * get the parameters in this submodel
      */
-    public Variable<Double> getNestedParameter(int i){
+    public Parameter getNestedParameter(int i){
         return nestedParams.get(i);
     }
 

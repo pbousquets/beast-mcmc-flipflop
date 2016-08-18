@@ -32,6 +32,7 @@ import dr.xml.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Marc A. Suchard
@@ -123,21 +124,31 @@ public class EqualityConstrainedParameter extends Parameter.Abstract implements 
         isLocked = false;
     }
 
+    @Override
     protected void storeValues() {
         for (Parameter parameter : uniqueParameters) {
-            parameter.storeParameterValues();
+            parameter.storeModelState();
         }
     }
 
+    @Override
     protected void restoreValues() {
         for (Parameter parameter : uniqueParameters) {
-            parameter.restoreParameterValues();
+            parameter.restoreModelState();
         }
     }
 
-    protected final void acceptValues() {
+    @Override
+    protected void saveValues(Map<String, Object> stateMap) {
         for (Parameter parameter : uniqueParameters) {
-            parameter.acceptParameterValues();
+            parameter.saveModelState(stateMap);
+        }
+    }
+
+    @Override
+    protected void loadValues(Map<String, Object> stateMap) {
+        for (Parameter parameter : uniqueParameters) {
+            parameter.loadModelState(stateMap);
         }
     }
 

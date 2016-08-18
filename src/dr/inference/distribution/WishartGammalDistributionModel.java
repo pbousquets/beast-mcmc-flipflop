@@ -55,9 +55,9 @@ public class WishartGammalDistributionModel extends AbstractModel implements Par
         this.mixing = mixing;
         this.scale = scale;
 
-        addVariable(df);
-        addVariable(mixing);
-        addVariable(scale);
+        addParameter(df);
+        addParameter(mixing);
+        addParameter(scale);
 
         this.randomMixing = randomMixing;
 

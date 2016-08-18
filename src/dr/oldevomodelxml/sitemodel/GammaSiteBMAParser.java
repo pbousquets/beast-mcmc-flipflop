@@ -63,7 +63,7 @@ public class GammaSiteBMAParser extends AbstractXMLObjectParser {
 
         int catCount = cxo.getIntegerAttribute(GAMMA_CATEGORIES);
 
-        Variable<Integer> modelChoose = (Variable<Integer>) xo.getElementFirstChild(MODEL_CHOOSE);
+        Parameter modelChoose = (Parameter) xo.getElementFirstChild(MODEL_CHOOSE);
 
         return new GammaSiteBMA(substitutionModel, muParam, logitInvar, logShape, catCount, modelChoose);
     }
@@ -95,7 +95,7 @@ public class GammaSiteBMAParser extends AbstractXMLObjectParser {
                     new ElementRule(Parameter.class)
             }),
             new ElementRule(MODEL_CHOOSE, new XMLSyntaxRule[]{
-                    new ElementRule(Variable.class)
+                    new ElementRule(Parameter.class)
             })
     };
 

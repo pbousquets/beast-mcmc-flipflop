@@ -74,9 +74,9 @@ public class LineageModelLikelihood extends AbstractModelLikelihood {
             }
         }
 
-        addVariable(errorRate);
+        addParameter(errorRate);
         addModel(patterns);
-        addVariable(mixtureMatrix);
+        addParameter(mixtureMatrix);
     }
     @Override
     protected void handleModelChangedEvent(Model model, Object object, int index) {
@@ -98,10 +98,6 @@ public class LineageModelLikelihood extends AbstractModelLikelihood {
     protected void restoreState() {
         logLikelihood = storedLogLikelihood;
         likelihoodKnown = storedLikelihoodKnown;
-    }
-
-    @Override
-    protected void acceptState() {
     }
 
     public Model getModel() {

@@ -63,7 +63,7 @@ public class LocalClockModel extends AbstractBranchRateModel implements Citable 
         addModel(treeModel);
 
         this.globalRateParameter = globalRateParameter;
-        addVariable(globalRateParameter);
+        addParameter(globalRateParameter);
 
         // add the super class' tree traits (just the rate)
         helper.addTrait(this);
@@ -78,7 +78,7 @@ public class LocalClockModel extends AbstractBranchRateModel implements Citable 
         for (int i : tips) {
             localTipClocks.put(i, clock);
         }
-        addVariable(rateParameter);
+        addParameter(rateParameter);
     }
 
     public void addCladeClock(TaxonList taxonList, Parameter rateParameter, boolean isRelativeRate, double stemProportion, boolean excludeClade) throws Tree.MissingTaxonException {
@@ -86,7 +86,7 @@ public class LocalClockModel extends AbstractBranchRateModel implements Citable 
         BitSet tipBitSet = Tree.Utils.getTipsBitSetForTaxa(treeModel, taxonList);
         LocalClock clock = new LocalClock(rateParameter, isRelativeRate, tips, stemProportion, excludeClade);
         localCladeClocks.put(tipBitSet, clock);
-        addVariable(rateParameter);
+        addParameter(rateParameter);
     }
 
     public void addTrunkClock(TaxonList taxonList, Parameter rateParameter, Parameter indexParameter, boolean isRelativeRate) throws Tree.MissingTaxonException {
@@ -96,9 +96,9 @@ public class LocalClockModel extends AbstractBranchRateModel implements Citable 
 
         List<Integer> tipList = new ArrayList<Integer>(Tree.Utils.getTipsForTaxa(treeModel, taxonList));
         trunkClock = new LocalClock(rateParameter, indexParameter, isRelativeRate, tipList, ClockType.TRUNK);
-        addVariable(rateParameter);
+        addParameter(rateParameter);
         if (indexParameter != null) {
-            addVariable(indexParameter);
+            addParameter(indexParameter);
         }
 
         helper.addTrait("trunk", new TreeTrait.S() {

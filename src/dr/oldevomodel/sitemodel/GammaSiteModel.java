@@ -90,7 +90,7 @@ public class GammaSiteModel extends AbstractModel implements SiteModel {
 
         this.muParameter = muParameter;
         if (muParameter != null) {
-            addVariable(muParameter);
+            addParameter(muParameter);
             muParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
         }
 
@@ -98,7 +98,7 @@ public class GammaSiteModel extends AbstractModel implements SiteModel {
         if (shapeParameter != null) {
             this.categoryCount = gammaCategoryCount;
 
-            addVariable(shapeParameter);
+            addParameter(shapeParameter);
 
             // The quantile calculator fails when the shape parameter goes much below
             // 1E-3 so we have put a hard lower bound on it. If this is not there then
@@ -114,7 +114,7 @@ public class GammaSiteModel extends AbstractModel implements SiteModel {
         if (invarParameter != null) {
             this.categoryCount += 1;
 
-            addVariable(invarParameter);
+            addParameter(invarParameter);
             invarParameter.addBounds(new Parameter.DefaultBounds(1.0, 0.0, 1));
         }
 
@@ -163,24 +163,6 @@ public class GammaSiteModel extends AbstractModel implements SiteModel {
 
     public Parameter getPInvParameter() {
         return invarParameter;
-    }
-
-    public void setMutationRateParameter(Parameter parameter) {
-        if (muParameter != null) removeVariable(muParameter);
-        muParameter = parameter;
-        if (muParameter != null) addVariable(muParameter);
-    }
-
-    public void setAlphaParameter(Parameter parameter) {
-        if (shapeParameter != null) removeVariable(shapeParameter);
-        shapeParameter = parameter;
-        if (shapeParameter != null) addVariable(shapeParameter);
-    }
-
-    public void setPInvParameter(Parameter parameter) {
-        if (invarParameter != null) removeVariable(invarParameter);
-        invarParameter = parameter;
-        if (invarParameter != null) addVariable(invarParameter);
     }
 
     // *****************************************************************

@@ -72,10 +72,10 @@ public class FixedDriftModel extends AbstractBranchRateModel {
         super(FixedDriftModelParser.FIXED_DRIFT);
 
         this.backboneDrift = backboneDrift;
-        addVariable(backboneDrift);
+        addParameter(backboneDrift);
 
         this.otherDrift = otherDrift;
-        addVariable(otherDrift);
+        addParameter(otherDrift);
 
 
         this.backbone = new BackboneNodeFilter("backbone", treeModel, taxonList, true, true);

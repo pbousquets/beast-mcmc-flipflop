@@ -89,7 +89,7 @@ public class MarkovModulatedSubstitutionModel extends ComplexSubstitutionModel i
         }
 
         this.switchingRates = switchingRates;
-        addVariable(switchingRates);
+        addParameter(switchingRates);
 
         List<FrequencyModel> freqModels = new ArrayList<FrequencyModel>();
         int stateSizes = 0;
@@ -125,7 +125,7 @@ public class MarkovModulatedSubstitutionModel extends ComplexSubstitutionModel i
         if (gammaRateModel != null) addModel(gammaRateModel);
         this.gammaRateModel = gammaRateModel;
 
-        if (rateScalar != null) addVariable(rateScalar);
+        if (rateScalar != null) addParameter(rateScalar);
         this.rateScalar = rateScalar;
 
         setDoNormalization(false);

@@ -69,11 +69,11 @@ public class SampleStateAndCategoryModel extends AbstractModel implements SiteMo
         //	stateCount = ((SubstitutionModel)substitutionModels.elementAt(0)).getDataType().getStateCount();
 
         this.muParameter = muParameter;
-        addVariable(muParameter);
+        addParameter(muParameter);
         muParameter.addBounds(new Parameter.DefaultBounds(1000.0, 0.0, 1));
 
         this.categoriesParameter = categoriesParameter;
-        addVariable(categoriesParameter);
+        addParameter(categoriesParameter);
 
         if (categoryCount > 1) {
             for (int i = 0; i < categoryCount; i++) {

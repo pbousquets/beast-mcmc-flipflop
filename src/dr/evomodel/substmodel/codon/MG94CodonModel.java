@@ -65,12 +65,12 @@ public class MG94CodonModel extends AbstractCodonModel implements Citable {
         super("MG94", codonDataType, freqModel, eigenSystem);
 
         this.alphaParameter = alphaParameter;
-        addVariable(alphaParameter);
+        addParameter(alphaParameter);
         alphaParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0,
                 alphaParameter.getDimension()));
 
         this.betaParameter = betaParameter;
-        addVariable(betaParameter);
+        addParameter(betaParameter);
         betaParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0,
                 betaParameter.getDimension()));
 

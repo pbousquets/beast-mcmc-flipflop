@@ -51,7 +51,7 @@ public class ARGRatePrior extends AbstractModelLikelihood {
         this.logNormalSigma = sigma;
 
         addModel(arg);
-        addVariable(sigma);
+        addParameter(sigma);
 
     }
 

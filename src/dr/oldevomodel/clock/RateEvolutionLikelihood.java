@@ -66,7 +66,7 @@ public abstract class RateEvolutionLikelihood extends AbstractBranchRateModel {
 
         this.rootRateParameter = rootRateParameter;
         rootRateParameter.addBounds(new Parameter.DefaultBounds(Double.MAX_VALUE, 0, 1));
-        addVariable(rootRateParameter);
+        addParameter(rootRateParameter);
 
         if (rootRateParameter.getDimension() != 1) {
             throw new IllegalArgumentException("The root rate parameter must be of dimension 1");

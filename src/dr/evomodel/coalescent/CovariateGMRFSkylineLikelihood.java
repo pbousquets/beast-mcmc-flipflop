@@ -57,7 +57,7 @@ public class CovariateGMRFSkylineLikelihood extends GMRFSkyrideLikelihood {
 
 		fieldLength += covariateData.getDimension();
 
-		addVariable(covariateData); // this can have missing values for imputation
+		addParameter(covariateData); // this can have missing values for imputation
 
 	}
 

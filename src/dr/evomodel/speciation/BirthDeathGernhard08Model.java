@@ -32,9 +32,7 @@ import dr.inference.model.Parameter;
 import dr.util.Author;
 import dr.util.Citable;
 import dr.util.Citation;
-import dr.util.CommonCitations;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -109,18 +107,18 @@ public class BirthDeathGernhard08Model extends UltrametricSpeciationModel implem
         super(modelName, units);
 
         this.birthDiffRateParameter = birthDiffRateParameter;
-        addVariable(birthDiffRateParameter);
+        addParameter(birthDiffRateParameter);
         birthDiffRateParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
         this.relativeDeathRateParameter = relativeDeathRateParameter;
         if( relativeDeathRateParameter != null ) {
-            addVariable(relativeDeathRateParameter);
+            addParameter(relativeDeathRateParameter);
             relativeDeathRateParameter.addBounds(new Parameter.DefaultBounds(1.0, 0.0, 1));
         }
 
         this.sampleProbability = sampleProbability;
         if (sampleProbability != null) {
-            addVariable(sampleProbability);
+            addParameter(sampleProbability);
             sampleProbability.addBounds(new Parameter.DefaultBounds(1.0, 0.0, 1));
         }
 

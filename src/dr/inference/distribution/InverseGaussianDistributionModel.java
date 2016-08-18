@@ -55,18 +55,18 @@ public class InverseGaussianDistributionModel extends AbstractModel implements P
         if(useShape) {
             this.shapeParameter = igParameter;
             this.stdevParameter = null;
-            addVariable(shapeParameter);
+            addParameter(shapeParameter);
             this.shapeParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
         }
         else {
             this.stdevParameter = igParameter;
             this.shapeParameter = null;
-            addVariable(stdevParameter);
+            addParameter(stdevParameter);
             this.stdevParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
         }
 
         this.meanParameter = meanParameter;
-        addVariable(meanParameter);
+        addParameter(meanParameter);
         this.offset = offset;
         this.meanParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 

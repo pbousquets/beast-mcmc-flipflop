@@ -55,12 +55,12 @@ public class Tutorial1 {
     public static void main(String[] arg) throws IOException, TraceException {
 
         // constructing random variable representing mean of normal distribution
-        Variable.D mean = new Variable.D("mean", 1.0);
+        Parameter mean = new Parameter.Default("mean", 1, 1.0);
         // give mean a uniform prior [-1000, 1000]
         mean.addBounds(new Parameter.DefaultBounds(1000, -1000, 1));
 
         // constructing random variable representing stdev of normal distribution
-        Variable.D stdev = new Variable.D("stdev", 1.0);
+        Parameter stdev = new Parameter.Default("stdev", 1, 1.0);
         // give stdev a uniform prior [0, 1000]
         stdev.addBounds(new Parameter.DefaultBounds(1000, 0, 1));
 

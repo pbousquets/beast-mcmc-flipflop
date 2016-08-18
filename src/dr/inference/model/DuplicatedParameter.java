@@ -25,6 +25,8 @@
 
 package dr.inference.model;
 
+import java.util.Map;
+
 /**
  * @author Marc Suchard
  */
@@ -64,16 +66,24 @@ public class DuplicatedParameter extends Parameter.Abstract implements VariableL
         return parameter.getDimension() * copies;
     }
 
+    @Override
     protected void storeValues() {
-        parameter.storeParameterValues();
+        parameter.storeModelState();
     }
 
+    @Override
     protected void restoreValues() {
-        parameter.restoreParameterValues();
+        parameter.restoreModelState();
     }
 
-    protected void acceptValues() {
-        parameter.acceptParameterValues();
+    @Override
+    protected void saveValues(Map<String, Object> stateMap) {
+        parameter.saveModelState(stateMap);
+    }
+
+    @Override
+    protected void loadValues(Map<String, Object> stateMap) {
+        parameter.loadModelState(stateMap);
     }
 
     protected void adoptValues(Parameter source) {

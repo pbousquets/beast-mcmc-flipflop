@@ -75,26 +75,26 @@ public class ConstExpConstModel extends DemographicModel implements Citable {
                 useNumericalIntegrator, units);
 
         this.N0Parameter = N0Parameter;
-        addVariable(N0Parameter);
+        addParameter(N0Parameter);
         N0Parameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
         this.N1Parameter = N1Parameter;
         this.growthRateParameter = growthRateParameter;
 
         if (N1Parameter != null) {
-            addVariable(N1Parameter);
+            addParameter(N1Parameter);
             N1Parameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
         } else {
-            addVariable(growthRateParameter);
+            addParameter(growthRateParameter);
             growthRateParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, 1));
         }
 
         this.timeParameter = timeParameter;
-        addVariable(timeParameter);
+        addParameter(timeParameter);
         timeParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
         this.epochParameter = epochParameter;
-        addVariable(epochParameter);
+        addParameter(epochParameter);
         epochParameter.addBounds(new Parameter.DefaultBounds(Double.POSITIVE_INFINITY, 0.0, 1));
 
         setUnits(units);
