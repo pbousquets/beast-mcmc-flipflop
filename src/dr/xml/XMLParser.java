@@ -303,16 +303,26 @@ public class XMLParser {
                     }
                 }
             }
-            if (e.hasAttribute(ID)) {
-                id = e.getAttribute(ID);
-            }
-
-            if ((id != null) && objectStore.get(id) != null) {
-                throw new XMLParseException("Object with Id=" + id + " already exists");
-            }
 
             Object obj = null;
             if (parser != null) {
+
+                if (e.hasAttribute(ID)) { // object has ID
+                    id = e.getAttribute(ID);
+                } else { // generate an ID
+                    int count = 0;
+                    if (objectIDMap.containsKey(parser.getParserName())) {
+                        count = objectIDMap.get(parser.getParserName());
+                    }
+                    count++;
+                    objectIDMap.put(parser.getParserName(), count);
+                    id = parser.getParserName() + "_" + count;
+                }
+
+                if ((id != null) && objectStore.get(id) != null) {
+                    throw new XMLParseException("Object with Id=" + id + " already exists");
+                }
+
                 obj = parser.parseXMLObject(xo, id, objectStore, strictXML);
 
                 if (obj instanceof Identifiable) {
@@ -332,6 +342,14 @@ public class XMLParser {
                 }
 
                 xo.setNativeObject(obj);
+            } else {
+                // The element doesn't have a specific parser so is likely to be an internal
+                // element to another parser. However, it has an ID then it is likely to be
+                // something that was intended to parse so gie a warning.
+                if (e.hasAttribute(ID)) { // object has ID
+                    java.util.logging.Logger.getLogger("dr.xml").warning("Element called, " + xo.getName() +
+                            ", has an ID, " + e.getAttribute(ID) + ", but no parser.");
+                }
             }
 
             if (id != null) {
@@ -587,6 +605,7 @@ public class XMLParser {
     private final Map<String, XMLObjectParser> parserStore = new TreeMap<String, XMLObjectParser>(new ParserComparator());
     private final Map<String, XMLObject> objectStore = new LinkedHashMap<String, XMLObject>();
     private final Map<Pair<String, String>, List<Citation>> citationStore = new LinkedHashMap<Pair<String, String>, List<Citation>>();
+    private final Map<String, Integer> objectIDMap = new HashMap<String, Integer>();
     private boolean concurrent = false;
     private XMLObject root = null;
 
