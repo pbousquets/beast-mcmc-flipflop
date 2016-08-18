@@ -26,7 +26,7 @@
 package dr.evomodel.operators;
 
 import dr.evolution.tree.NodeRef;
-import dr.evomodel.tree.MicrosatelliteSamplerTreeModel;
+import dr.oldevomodel.microsatellite.MicrosatelliteSamplerTreeModel;
 import dr.evomodel.tree.TreeModel;
 import dr.inference.model.Parameter;
 import dr.evomodelxml.operators.RandomWalkIntegerNodeHeightWeightedOperatorParser;

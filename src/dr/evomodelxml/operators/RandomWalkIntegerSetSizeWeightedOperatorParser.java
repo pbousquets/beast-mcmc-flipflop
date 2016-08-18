@@ -29,7 +29,7 @@ import dr.xml.*;
 import dr.inference.operators.MCMCOperator;
 import dr.evomodel.operators.RandomWalkIntegerSetSizeWeightedOperator;
 import dr.inference.model.Parameter;
-import dr.evomodel.tree.MicrosatelliteSamplerTreeModel;
+import dr.oldevomodel.microsatellite.MicrosatelliteSamplerTreeModel;
 
 /**
  * @author Chieh-Hsi Wu

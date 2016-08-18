@@ -1,7 +1,7 @@
 /*
- * HiddenLinkageLikelihoodParser.java
+ * MoveLinkageGroupParser.java
  *
- * Copyright (c) 2002-2015 Alexei Drummond, Andrew Rambaut and Marc Suchard
+ * Copyright (c) 2002-2016 Alexei Drummond, Andrew Rambaut and Marc Suchard
  *
  * This file is part of BEAST.
  * See the NOTICE file distributed with this work for additional
@@ -23,49 +23,49 @@
  * Boston, MA  02110-1301  USA
  */
 
-package dr.oldevomodelxml.treelikelihood;
+package dr.oldevomodelxml.hiddenlinkage;
 
+import dr.evomodel.operators.MoveLinkageGroup;
 import dr.oldevomodel.hiddenlinkage.HiddenLinkageModel;
-import dr.evomodel.tree.TreeModel;
-import dr.oldevomodel.treelikelihood.HiddenLinkageLikelihood;
-import dr.xml.*;
+import dr.inference.operators.MCMCOperator;
+import dr.xml.AbstractXMLObjectParser;
+import dr.xml.ElementRule;
+import dr.xml.StringAttributeRule;
+import dr.xml.XMLObject;
+import dr.xml.XMLParseException;
+import dr.xml.XMLSyntaxRule;
 
 /**
  * @author Aaron Darling (koadman)
  */
-@Deprecated // Switching to BEAGLE
-public class HiddenLinkageLikelihoodParser extends AbstractXMLObjectParser {
 
-	@Override
+public class MoveLinkageGroupParser extends AbstractXMLObjectParser {
+    public static final String MOVE_LINKAGE_GROUP = "moveLinkageGroup";
+
 	public String getParserDescription() {
-		return "A likelihood calculator for hidden linkage among metagenomic reads";
+		return "Operator to reassign metagenomic reads from one linkage group to another";
 	}
 
-	@Override
 	public Class getReturnType() {
-		return HiddenLinkageLikelihood.class;
+		return MoveLinkageGroup.class;
 	}
 
-	@Override
 	public XMLSyntaxRule[] getSyntaxRules() {
 		return rules;
 	}
 
-	
 	public Object parseXMLObject(XMLObject xo) throws XMLParseException {
-		HiddenLinkageModel hlm = (HiddenLinkageModel) xo.getChild(HiddenLinkageModel.class);
-		TreeModel tree = (TreeModel) xo.getChild(TreeModel.class);
-        return new HiddenLinkageLikelihood(hlm, tree);
+        final double weight = xo.getDoubleAttribute(MCMCOperator.WEIGHT);
+        final HiddenLinkageModel hlm = (HiddenLinkageModel) xo.getChild(HiddenLinkageModel.class);
+        return new MoveLinkageGroup(hlm, weight);
 	}
-
 
 	public String getParserName() {
-		return "HiddenLinkageLikelihood";
+		return MOVE_LINKAGE_GROUP;
 	}
 
-	private XMLSyntaxRule[] rules = new XMLSyntaxRule[]{
-            new ElementRule(HiddenLinkageModel.class),
-            new ElementRule(TreeModel.class),
+    private XMLSyntaxRule[] rules = new XMLSyntaxRule[]{
+            new StringAttributeRule(MCMCOperator.WEIGHT, "Weight of the move", true),
+            new ElementRule(HiddenLinkageModel.class)
     };
-
 }

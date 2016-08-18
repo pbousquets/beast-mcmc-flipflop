@@ -8,7 +8,7 @@ import dr.evolution.alignment.Patterns;
 import dr.evolution.io.NewickImporter;
 import dr.evolution.tree.Tree;
 import dr.evomodel.tree.TreeModel;
-import dr.oldevomodel.substmodel.AsymmetricQuadraticModel;
+import dr.oldevomodel.microsatellite.AsymmetricQuadraticModel;
 import dr.oldevomodel.sitemodel.GammaSiteModel;
 import dr.oldevomodel.treelikelihood.TreeLikelihood;
 

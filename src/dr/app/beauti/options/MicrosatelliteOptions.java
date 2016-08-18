@@ -26,7 +26,7 @@
 package dr.app.beauti.options;
 
 import dr.app.beauti.types.OperatorType;
-import dr.evomodelxml.tree.MicrosatelliteSamplerTreeModelParser;
+import dr.oldevomodelxml.microsatellite.MicrosatelliteSamplerTreeModelParser;
 
 import java.util.List;
 

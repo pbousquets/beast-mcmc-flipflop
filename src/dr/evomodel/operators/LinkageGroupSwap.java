@@ -27,7 +27,7 @@ package dr.evomodel.operators;
 
 import dr.evolution.alignment.Alignment;
 import dr.evolution.util.Taxon;
-import dr.evomodel.tree.HiddenLinkageModel;
+import dr.oldevomodel.hiddenlinkage.HiddenLinkageModel;
 import dr.inference.operators.OperatorFailedException;
 import dr.inference.operators.SimpleMCMCOperator;
 import dr.math.MathUtils;

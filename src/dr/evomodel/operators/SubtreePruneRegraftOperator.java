@@ -30,7 +30,7 @@ package dr.evomodel.operators;
 
 import dr.evolution.tree.NodeRef;
 import dr.evomodel.tree.TreeModel;
-import dr.evomodelxml.operators.SubtreePruneRegraftParser;
+import dr.evomodelxml.operators.SPRParser;
 import dr.inference.operators.OperatorFailedException;
 import dr.math.MathUtils;
 
@@ -131,7 +131,7 @@ public class SubtreePruneRegraftOperator extends AbstractTreeOperator {
     */
     @Override
     public String getOperatorName() {
-        return SubtreePruneRegraftParser.FNPR;
+        return SPRParser.FNPR;
     }
 
     public double getTargetAcceptanceProbability() {

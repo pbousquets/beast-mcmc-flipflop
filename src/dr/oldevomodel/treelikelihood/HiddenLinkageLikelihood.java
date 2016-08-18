@@ -28,7 +28,7 @@ package dr.oldevomodel.treelikelihood;
 import dr.evolution.LinkedGroup;
 import dr.evolution.util.Taxon;
 import dr.evolution.util.TaxonList;
-import dr.evomodel.tree.HiddenLinkageModel;
+import dr.oldevomodel.hiddenlinkage.HiddenLinkageModel;
 import dr.evomodel.tree.TreeModel;
 import dr.inference.model.AbstractModelLikelihood;
 import dr.inference.model.Model;

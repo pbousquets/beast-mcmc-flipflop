@@ -31,7 +31,7 @@ import dr.app.beauti.types.ClockType;
 import dr.app.beauti.types.TreePriorType;
 import dr.app.beauti.util.XMLWriter;
 import dr.evolution.datatype.DataType;
-import dr.evomodelxml.microsatellite.MicrosatelliteUpDownOperatorParser;
+import dr.oldevomodelxml.microsatellite.MicrosatelliteUpDownOperatorParser;
 import dr.inference.operators.BitFlipInSubstitutionModelOperator;
 import dr.oldevomodel.substmodel.AbstractSubstitutionModel;
 import dr.evomodel.tree.TreeModel;

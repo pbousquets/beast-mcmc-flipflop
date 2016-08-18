@@ -1,7 +1,7 @@
 /*
- * HiddenLinkageLikelihoodParser.java
+ * HiddenLinkageModelParser.java
  *
- * Copyright (c) 2002-2015 Alexei Drummond, Andrew Rambaut and Marc Suchard
+ * Copyright (c) 2002-2016 Alexei Drummond, Andrew Rambaut and Marc Suchard
  *
  * This file is part of BEAST.
  * See the NOTICE file distributed with this work for additional
@@ -23,49 +23,52 @@
  * Boston, MA  02110-1301  USA
  */
 
-package dr.oldevomodelxml.treelikelihood;
+package dr.oldevomodelxml.hiddenlinkage;
 
+import dr.evolution.MetagenomeData;
 import dr.oldevomodel.hiddenlinkage.HiddenLinkageModel;
-import dr.evomodel.tree.TreeModel;
-import dr.oldevomodel.treelikelihood.HiddenLinkageLikelihood;
 import dr.xml.*;
 
 /**
  * @author Aaron Darling (koadman)
  */
-@Deprecated // Switching to BEAGLE
-public class HiddenLinkageLikelihoodParser extends AbstractXMLObjectParser {
+public class HiddenLinkageModelParser extends AbstractXMLObjectParser {
 
-	@Override
+    public static final String LINKAGE_GROUP_COUNT = "linkageGroupCount";
+
+    public static final String NAME = "HiddenLinkageModel";
+
+    
 	public String getParserDescription() {
-		return "A likelihood calculator for hidden linkage among metagenomic reads";
+		return "A model to describe missing information about linkage among several reads from a metagenome";
 	}
 
-	@Override
+
 	public Class getReturnType() {
-		return HiddenLinkageLikelihood.class;
+		return HiddenLinkageModel.class;
 	}
 
-	@Override
+
 	public XMLSyntaxRule[] getSyntaxRules() {
 		return rules;
 	}
 
-	
+
 	public Object parseXMLObject(XMLObject xo) throws XMLParseException {
-		HiddenLinkageModel hlm = (HiddenLinkageModel) xo.getChild(HiddenLinkageModel.class);
-		TreeModel tree = (TreeModel) xo.getChild(TreeModel.class);
-        return new HiddenLinkageLikelihood(hlm, tree);
+        String linkageGroupCount = xo.getAttribute(LINKAGE_GROUP_COUNT, xo.getId());
+        MetagenomeData data = (MetagenomeData)xo.getChild(MetagenomeData.class);
+
+        int tc = Integer.parseInt(linkageGroupCount);
+        return new HiddenLinkageModel(tc, data);
 	}
 
 
 	public String getParserName() {
-		return "HiddenLinkageLikelihood";
+		return NAME;
 	}
 
-	private XMLSyntaxRule[] rules = new XMLSyntaxRule[]{
-            new ElementRule(HiddenLinkageModel.class),
-            new ElementRule(TreeModel.class),
+    private XMLSyntaxRule[] rules = new XMLSyntaxRule[]{
+            new StringAttributeRule(LINKAGE_GROUP_COUNT, "The number of hidden lineages", true),
+            new ElementRule(MetagenomeData.class)
     };
-
 }

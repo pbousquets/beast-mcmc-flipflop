@@ -25,9 +25,9 @@
 
 package dr.oldevomodel.treelikelihood;
 
-import dr.evomodel.tree.MicrosatelliteSamplerTreeModel;
+import dr.oldevomodel.microsatellite.MicrosatelliteSamplerTreeModel;
 import dr.evomodel.tree.TreeModel;
-import dr.oldevomodel.substmodel.MicrosatelliteModel;
+import dr.oldevomodel.microsatellite.MicrosatelliteModel;
 import dr.evomodel.branchratemodel.BranchRateModel;
 import dr.evolution.tree.NodeRef;
 import dr.inference.model.Model;

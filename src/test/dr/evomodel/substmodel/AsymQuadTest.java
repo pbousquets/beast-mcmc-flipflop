@@ -2,7 +2,7 @@ package test.dr.evomodel.substmodel;
 
 import junit.framework.TestCase;
 import dr.inference.model.Parameter;
-import dr.oldevomodel.substmodel.AsymmetricQuadraticModel;
+import dr.oldevomodel.microsatellite.AsymmetricQuadraticModel;
 import dr.evolution.datatype.Microsatellite;
 
 /**

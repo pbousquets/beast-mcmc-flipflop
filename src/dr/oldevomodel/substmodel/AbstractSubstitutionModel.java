@@ -1025,4 +1025,12 @@ public abstract class AbstractSubstitutionModel extends AbstractModel implements
         index = null;
         omtrx = null;
     }
+
+    public double[][] getAmat() {
+        return amat;
+    }
+
+    public void setAmat(double[][] amat) {
+        this.amat = amat;
+    }
 }

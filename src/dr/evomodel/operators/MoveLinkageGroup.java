@@ -26,8 +26,8 @@
 package dr.evomodel.operators;
 
 import dr.evolution.util.Taxon;
-import dr.evomodel.tree.HiddenLinkageModel;
-import dr.evomodelxml.operators.MoveLinkageGroupParser;
+import dr.oldevomodel.hiddenlinkage.HiddenLinkageModel;
+import dr.oldevomodelxml.hiddenlinkage.MoveLinkageGroupParser;
 import dr.inference.operators.OperatorFailedException;
 import dr.inference.operators.SimpleMCMCOperator;
 import dr.math.MathUtils;

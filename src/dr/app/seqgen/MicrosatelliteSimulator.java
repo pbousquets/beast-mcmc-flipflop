@@ -35,7 +35,7 @@ import dr.evolution.util.Taxa;
 import dr.oldevomodel.sitemodel.SiteModel;
 import dr.oldevomodel.sitemodel.GammaSiteModel;
 import dr.evomodel.branchratemodel.BranchRateModel;
-import dr.oldevomodel.substmodel.MicrosatelliteModel;
+import dr.oldevomodel.microsatellite.MicrosatelliteModel;
 
 /**
  * @author Chieh-Hsi Wu

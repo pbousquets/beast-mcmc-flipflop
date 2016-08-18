@@ -27,8 +27,8 @@ package dr.oldevomodelxml.treelikelihood;
 
 import dr.evomodel.branchratemodel.BranchRateModel;
 import dr.evomodel.branchratemodel.StrictClockBranchRates;
-import dr.oldevomodel.substmodel.MicrosatelliteModel;
-import dr.evomodel.tree.MicrosatelliteSamplerTreeModel;
+import dr.oldevomodel.microsatellite.MicrosatelliteModel;
+import dr.oldevomodel.microsatellite.MicrosatelliteSamplerTreeModel;
 import dr.oldevomodel.treelikelihood.MicrosatelliteSamplerTreeLikelihood;
 import dr.inference.model.Parameter;
 import dr.xml.*;

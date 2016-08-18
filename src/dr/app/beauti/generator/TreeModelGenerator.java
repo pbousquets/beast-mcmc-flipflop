@@ -33,7 +33,7 @@ import dr.app.beauti.util.XMLWriter;
 import dr.evolution.datatype.DataType;
 import dr.evomodel.tree.TreeModel;
 import dr.evomodelxml.coalescent.OldCoalescentSimulatorParser;
-import dr.evomodelxml.tree.MicrosatelliteSamplerTreeModelParser;
+import dr.oldevomodelxml.microsatellite.MicrosatelliteSamplerTreeModelParser;
 import dr.evomodelxml.tree.TreeModelParser;
 import dr.evoxml.MicrosatellitePatternParser;
 import dr.evoxml.UPGMATreeParser;
