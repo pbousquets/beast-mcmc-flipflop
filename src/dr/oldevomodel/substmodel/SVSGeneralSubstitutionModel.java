@@ -29,6 +29,7 @@ import dr.evolution.datatype.*;
 import dr.inference.loggers.LogColumn;
 import dr.inference.loggers.NumberColumn;
 import dr.inference.model.*;
+import dr.inference.operators.BayesianStochasticSearchVariableSelection;
 import dr.util.Citable;
 import dr.util.Citation;
 import dr.util.CommonCitations;

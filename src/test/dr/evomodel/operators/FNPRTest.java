@@ -7,12 +7,13 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Set;
 
+import dr.oldevomodel.operators.ImportanceSubtreeSwap;
 import junit.framework.TestSuite;
 import junit.framework.Test;
 
 import dr.evolution.io.Importer.ImportException;
 import dr.evolution.tree.Tree;
-import dr.evomodel.operators.FNPR;
+import dr.evomodel.operators.SubtreePruneRegraftOperator;
 import dr.evomodel.tree.TreeModel;
 import dr.inference.model.Parameter;
 import dr.inference.operators.CoercionMode;
@@ -33,7 +34,7 @@ public class FNPRTest extends OperatorAssert{
     }
     
 	/**
-	 * Test method for {@link dr.evomodel.operators.ImportanceSubtreeSwap#doOperation()}.
+	 * Test method for {@link ImportanceSubtreeSwap#doOperation()}.
 	 * @throws ImportException 
 	 * @throws IOException 
 	 */
@@ -60,7 +61,7 @@ public class FNPRTest extends OperatorAssert{
 
             try {
                 TreeModel treeModel = new TreeModel("treeModel", tree5);
-                FNPR operator = new FNPR(treeModel, 1);
+                SubtreePruneRegraftOperator operator = new SubtreePruneRegraftOperator(treeModel, 1);
                 operator.doOperation();
 
                 String tree = Tree.Utils.newickNoLengths(treeModel);
@@ -98,7 +99,7 @@ public class FNPRTest extends OperatorAssert{
         Parameter rootParameter = treeModel.createNodeHeightsParameter(true, false, false);
         Parameter internalHeights = treeModel.createNodeHeightsParameter(false, true, false);
 
-        FNPR operator = new FNPR(treeModel, 1.0);
+        SubtreePruneRegraftOperator operator = new SubtreePruneRegraftOperator(treeModel, 1.0);
         ScaleOperator scaleOperator = new ScaleOperator(rootParameter, 0.75, CoercionMode.COERCION_ON, 1.0);
         UniformOperator uniformOperator = new UniformOperator(internalHeights, 1.0);
 

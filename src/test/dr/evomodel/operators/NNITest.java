@@ -6,6 +6,7 @@ package test.dr.evomodel.operators;
 
 import java.io.IOException;
 
+import dr.oldevomodel.operators.ImportanceSubtreeSwap;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -32,7 +33,7 @@ public class NNITest extends OperatorAssert{
     }
 	
 	/**
-	 * Test method for {@link dr.evomodel.operators.ImportanceSubtreeSwap#doOperation()}.
+	 * Test method for {@link ImportanceSubtreeSwap#doOperation()}.
 	 * @throws ImportException 
 	 * @throws IOException 
 	 */

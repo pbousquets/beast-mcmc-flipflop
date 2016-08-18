@@ -12,7 +12,7 @@ import junit.framework.TestSuite;
 import dr.evolution.io.Importer.ImportException;
 //import dr.evolution.tree.FlexibleTree;
 import dr.evolution.tree.Tree;
-import dr.evomodel.operators.GibbsSubtreeSwap;
+import dr.oldevomodel.operators.GibbsSubtreeSwap;
 //import dr.evomodel.operators.ImportanceSubtreeSwap;
 import dr.evomodel.tree.TreeModel;
 import dr.inference.model.Parameter;
@@ -36,7 +36,7 @@ public class GibbsSubtreeSwapTestProblem extends OperatorAssert{
     }
 	
 	/**
-	 * Test method for {@link dr.evomodel.operators.GibbsSubtreeSwap#doOperation()}.
+	 * Test method for {@link GibbsSubtreeSwap#doOperation()}.
 	 * @throws ImportException 
 	 * @throws IOException 
 	 */

@@ -30,7 +30,7 @@ import dr.oldevomodel.substmodel.ComplexSubstitutionModel;
 import dr.oldevomodel.substmodel.FrequencyModel;
 import dr.oldevomodel.substmodel.SVSComplexSubstitutionModel;
 import dr.evoxml.util.DataTypeUtils;
-import dr.inference.model.BayesianStochasticSearchVariableSelection;
+import dr.inference.operators.BayesianStochasticSearchVariableSelection;
 import dr.inference.model.Parameter;
 import dr.xml.*;
 

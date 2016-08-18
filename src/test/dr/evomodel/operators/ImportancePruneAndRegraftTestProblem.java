@@ -5,6 +5,7 @@ package test.dr.evomodel.operators;
 
 import java.io.IOException;
 
+import dr.oldevomodel.operators.ImportanceSubtreeSwap;
 import junit.framework.TestSuite;
 import junit.framework.Test;
 
@@ -12,7 +13,7 @@ import dr.evolution.io.NewickImporter;
 import dr.evolution.io.Importer.ImportException;
 import dr.evolution.tree.FlexibleTree;
 import dr.evolution.tree.Tree;
-import dr.evomodel.operators.ImportancePruneAndRegraft;
+import dr.oldevomodel.operators.ImportancePruneAndRegraft;
 import dr.evomodel.tree.TreeModel;
 import dr.inference.model.Parameter;
 import dr.inference.operators.CoercionMode;
@@ -34,7 +35,7 @@ public class ImportancePruneAndRegraftTestProblem extends OperatorAssert{
     }
 	
 	/**
-	 * Test method for {@link dr.evomodel.operators.ImportanceSubtreeSwap#doOperation()}.
+	 * Test method for {@link ImportanceSubtreeSwap#doOperation()}.
 	 * @throws ImportException 
 	 * @throws IOException 
 	 */

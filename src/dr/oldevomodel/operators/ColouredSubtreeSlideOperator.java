@@ -1,7 +1,7 @@
 /*
- * SubtreeSlideOperator.java
+ * ColouredSubtreeSlideOperator.java
  *
- * Copyright (c) 2002-2015 Alexei Drummond, Andrew Rambaut and Marc Suchard
+ * Copyright (c) 2002-2016 Alexei Drummond, Andrew Rambaut and Marc Suchard
  *
  * This file is part of BEAST.
  * See the NOTICE file distributed with this work for additional
@@ -23,15 +23,21 @@
  * Boston, MA  02110-1301  USA
  */
 
-package dr.evomodel.operators;
+package dr.oldevomodel.operators;
 
-import dr.evolution.tree.MutableTree;
 import dr.evolution.tree.NodeRef;
 import dr.evolution.tree.Tree;
+import dr.evomodel.coalescent.structure.ColourSamplerModel;
+import dr.evomodel.operators.AbstractTreeOperator;
 import dr.evomodel.tree.TreeModel;
-import dr.evomodelxml.operators.SubtreeSlideOperatorParser;
-import dr.inference.operators.*;
+import dr.inference.operators.CoercableMCMCOperator;
+import dr.inference.operators.CoercionMode;
+import dr.inference.operators.OperatorFailedException;
+import dr.inference.operators.OperatorUtils;
 import dr.math.MathUtils;
+import dr.xml.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,40 +46,35 @@ import java.util.List;
  * Implements the subtree slide move.
  *
  * @author Alexei Drummond
- * @author Andrew Rambaut
- *
- * @version $Id: SubtreeSlideOperator.java,v 1.15 2005/06/14 10:40:34 rambaut Exp $
+ * @version $Id: ColouredSubtreeSlideOperator.java,v 1.4 2006/09/11 09:33:01 gerton Exp $
  */
-public class SubtreeSlideOperator extends AbstractTreeOperator implements CoercableMCMCOperator {
+public class ColouredSubtreeSlideOperator extends AbstractTreeOperator implements CoercableMCMCOperator {
 
+    public static final String SUBTREE_SLIDE = "colouredSubtreeSlide";
+    public static final String SWAP_RATES = "swapRates";
+    public static final String SWAP_TRAITS = "swapTraits";
     private TreeModel tree = null;
     private double size = 1.0;
     private boolean gaussian = false;
-    private final boolean swapInRandomRate;
-    private final boolean swapInRandomTrait;
-    private final boolean scaledDirichletBranches;
+    private boolean swapRates;
+    private boolean swapTraits;
     private CoercionMode mode = CoercionMode.DEFAULT;
 
-    public SubtreeSlideOperator(TreeModel tree, double weight, double size, boolean gaussian,
-                                boolean swapRates, boolean swapTraits, boolean scaleDirichletBranches, CoercionMode mode) {
+    private ColourSamplerModel colouringModel;
+
+    public ColouredSubtreeSlideOperator(TreeModel tree, ColourSamplerModel colouringModel, double weight, double size, boolean gaussian, boolean swapRates, boolean swapTraits, CoercionMode mode) {
         this.tree = tree;
         setWeight(weight);
 
-        if (size == 0.0) {
-            double b = 0.0;
-            for (int k = 0; k < tree.getNodeCount(); ++k) {
-                b += tree.getBranchLength(tree.getNode(k));
-            }
-            size = b / (2 * tree.getNodeCount());
-        }
-
         this.size = size;
         this.gaussian = gaussian;
-        this.swapInRandomRate = swapRates;
-        this.swapInRandomTrait = swapTraits;
-        this.scaledDirichletBranches = scaleDirichletBranches;
+        this.swapRates = swapRates;
+        this.swapTraits = swapTraits;
 
         this.mode = mode;
+
+        this.colouringModel = colouringModel;
+
     }
 
     /**
@@ -83,35 +84,34 @@ public class SubtreeSlideOperator extends AbstractTreeOperator implements Coerca
      */
     public double doOperation() throws OperatorFailedException {
 
+        double logP = colouringModel.getTreeColouringWithProbability().getLogProbabilityDensity();
+
         double logq;
 
-        final NodeRef root = tree.getRoot();
-        final double oldTreeHeight = tree.getNodeHeight(root);
-
-        NodeRef i;
+        NodeRef i, newParent, newChild;
 
         // 1. choose a random node avoiding root
         do {
             i = tree.getNode(MathUtils.nextInt(tree.getNodeCount()));
-        } while (root == i);
-
-        final NodeRef iP = tree.getParent(i);
-        final NodeRef CiP = getOtherChild(tree, iP, i);
-        final NodeRef PiP = tree.getParent(iP);
+        } while (tree.getRoot() == i);
+        NodeRef iP = tree.getParent(i);
+        NodeRef CiP = getOtherChild(tree, iP, i);
+        NodeRef PiP = tree.getParent(iP);
 
         // 2. choose a delta to move
-        final double delta = getDelta();
-        final double oldHeight = tree.getNodeHeight(iP);
-        final double newHeight = oldHeight + delta;
+        double delta = getDelta();
+        double oldHeight = tree.getNodeHeight(iP);
+        double newHeight = oldHeight + delta;
 
         // 3. if the move is up
         if (delta > 0) {
 
             // 3.1 if the topology will change
             if (PiP != null && tree.getNodeHeight(PiP) < newHeight) {
+
                 // find new parent
-                NodeRef newParent = PiP;
-                NodeRef newChild = iP;
+                newParent = PiP;
+                newChild = iP;
                 while (tree.getNodeHeight(newParent) < newHeight) {
                     newChild = newParent;
                     newParent = tree.getParent(newParent);
@@ -123,38 +123,20 @@ public class SubtreeSlideOperator extends AbstractTreeOperator implements Coerca
                 // 3.1.1 if creating a new root
                 if (tree.isRoot(newChild)) {
                     tree.removeChild(iP, CiP);
-                    tree.removeChild(PiP, iP);
-                    tree.addChild(iP, newChild);
-                    tree.addChild(PiP, CiP);
+                    tree.removeChild(PiP, iP);  // remove iP from in between PiP and CiP
+                    tree.addChild(iP, newChild);                           // add new edge from iP to newChild (old root)
+                    tree.addChild(PiP, CiP);                               // formerly two edges
                     tree.setRoot(iP);
                     //System.err.println("Creating new root!");
-
-                    if (tree.hasNodeTraits()) {
-                        // **********************************************
-                        // swap traits and rates so that root keeps it trait and rate values
-                        // **********************************************
-
-                        tree.swapAllTraits(newChild, iP);
-
-                    }
-
-                    if (tree.hasRates()) {
-                        final double rootNodeRate = tree.getNodeRate(newChild);
-                        tree.setNodeRate(newChild, tree.getNodeRate(iP));
-                        tree.setNodeRate(iP, rootNodeRate);
-                    }
-
-                    // **********************************************
-
                 }
                 // 3.1.2 no new root
                 else {
                     tree.removeChild(iP, CiP);
-                    tree.removeChild(PiP, iP);
-                    tree.removeChild(newParent, newChild);
-                    tree.addChild(iP, newChild);
-                    tree.addChild(PiP, CiP);
-                    tree.addChild(newParent, iP);
+                    tree.removeChild(PiP, iP);  // remove iP from in between PiP and CiP
+                    tree.removeChild(newParent, newChild);                 // split edge: first remove old one
+                    tree.addChild(iP, newChild);                           // split edge: put iP in middle
+                    tree.addChild(PiP, CiP);                               // formerly two edges
+                    tree.addChild(newParent, iP);                          // split edge: put iP in middle
                     //System.err.println("No new root!");
                 }
 
@@ -163,10 +145,10 @@ public class SubtreeSlideOperator extends AbstractTreeOperator implements Coerca
                 tree.endTreeEdit();
 
                 // 3.1.3 count the hypothetical sources of this destination.
-                final int possibleSources = intersectingEdges(tree, newChild, oldHeight, null);
+                int possibleSources = intersectingEdges(tree, newChild, oldHeight, null);
                 //System.out.println("possible sources = " + possibleSources);
 
-                logq = -Math.log(possibleSources);
+                logq = Math.log(1.0 / (double) possibleSources);
 
             } else {
                 // just change the node height
@@ -186,7 +168,7 @@ public class SubtreeSlideOperator extends AbstractTreeOperator implements Coerca
             if (tree.getNodeHeight(CiP) > newHeight) {
 
                 List<NodeRef> newChildren = new ArrayList<NodeRef>();
-                final int possibleDestinations = intersectingEdges(tree, CiP, newHeight, newChildren);
+                int possibleDestinations = intersectingEdges(tree, CiP, newHeight, newChildren);
 
                 // if no valid destinations then return a failure
                 if (newChildren.size() == 0) {
@@ -194,9 +176,9 @@ public class SubtreeSlideOperator extends AbstractTreeOperator implements Coerca
                 }
 
                 // pick a random parent/child destination edge uniformly from options
-                final int childIndex = MathUtils.nextInt(newChildren.size());
-                NodeRef newChild = newChildren.get(childIndex);
-                NodeRef newParent = tree.getParent(newChild);
+                int childIndex = MathUtils.nextInt(newChildren.size());
+                newChild = newChildren.get(childIndex);
+                newParent = tree.getParent(newChild);
 
                 tree.beginTreeEdit();
 
@@ -208,24 +190,6 @@ public class SubtreeSlideOperator extends AbstractTreeOperator implements Coerca
                     tree.addChild(iP, newChild);
                     tree.addChild(newParent, iP);
                     tree.setRoot(CiP);
-
-                    if (tree.hasNodeTraits()) {
-                        // **********************************************
-                        // swap traits and rates, so that root keeps it trait and rate values
-                        // **********************************************
-
-                        tree.swapAllTraits(iP, CiP);
-
-                    }
-
-                    if (tree.hasRates()) {
-                        final double rootNodeRate = tree.getNodeRate(iP);
-                        tree.setNodeRate(iP, tree.getNodeRate(CiP));
-                        tree.setNodeRate(CiP, rootNodeRate);
-                    }
-
-                    // **********************************************
-
                     //System.err.println("DOWN: Creating new root!");
                 } else {
                     tree.removeChild(iP, CiP);
@@ -241,44 +205,40 @@ public class SubtreeSlideOperator extends AbstractTreeOperator implements Coerca
 
                 tree.endTreeEdit();
 
-                logq = Math.log(possibleDestinations);
+                logq = Math.log((double) possibleDestinations);
             } else {
                 tree.setNodeHeight(iP, newHeight);
                 logq = 0.0;
             }
         }
 
-        if (swapInRandomRate) {
-            final NodeRef j = tree.getNode(MathUtils.nextInt(tree.getNodeCount()));
+        if (swapRates) {
+            NodeRef j = tree.getNode(MathUtils.nextInt(tree.getNodeCount()));
             if (j != i) {
-                final double tmp = tree.getNodeRate(i);
+                double tmp = tree.getNodeRate(i);
                 tree.setNodeRate(i, tree.getNodeRate(j));
                 tree.setNodeRate(j, tmp);
             }
 
         }
 
-        if (swapInRandomTrait) {
-            final NodeRef j = tree.getNode(MathUtils.nextInt(tree.getNodeCount()));
+        if (swapTraits) {
+            NodeRef j = tree.getNode(MathUtils.nextInt(tree.getNodeCount()));
             if (j != i) {
-
-                tree.swapAllTraits(i, j);
-
-//                final double tmp = tree.getNodeTrait(i, TRAIT);
-//                tree.setNodeTrait(i, TRAIT, tree.getNodeTrait(j, TRAIT));
-//                tree.setNodeTrait(j, TRAIT, tmp);
+                double tmp = tree.getNodeTrait(i, "trait");
+                tree.setNodeTrait(i, "trait", tree.getNodeTrait(j, "trait"));
+                tree.setNodeTrait(j, "trait", tmp);
             }
 
         }
 
         if (logq == Double.NEGATIVE_INFINITY) throw new OperatorFailedException("invalid slide");
 
-        if (scaledDirichletBranches) {
-            if (oldTreeHeight != tree.getNodeHeight(tree.getRoot()))
-                throw new OperatorFailedException("Temporarily disabled."); // TODO calculate Hastings ratio
-        }
+        colouringModel.resample();
 
-        return logq;
+        double logQ = colouringModel.getTreeColouringWithProbability().getLogProbabilityDensity();
+
+        return logq + logP - logQ;
     }
 
     private double getDelta() {
@@ -291,7 +251,7 @@ public class SubtreeSlideOperator extends AbstractTreeOperator implements Coerca
 
     private int intersectingEdges(Tree tree, NodeRef node, double height, List<NodeRef> directChildren) {
 
-        final NodeRef parent = tree.getParent(node);
+        NodeRef parent = tree.getParent(node);
 
         if (tree.getNodeHeight(parent) < height) return 0;
 
@@ -337,7 +297,7 @@ public class SubtreeSlideOperator extends AbstractTreeOperator implements Coerca
 
 
     public String getPerformanceSuggestion() {
-        double prob = MCMCOperator.Utils.getAcceptanceProbability(this);
+        double prob = Utils.getAcceptanceProbability(this);
         double targetProb = getTargetAcceptanceProbability();
 
         double ws = OperatorUtils.optimizeWindowSize(getSize(), Double.MAX_VALUE, prob, targetProb);
@@ -350,7 +310,55 @@ public class SubtreeSlideOperator extends AbstractTreeOperator implements Coerca
     }
 
     public String getOperatorName() {
-        return SubtreeSlideOperatorParser.SUBTREE_SLIDE + "(" + tree.getId() + ")";
+        return SUBTREE_SLIDE;
     }
+
+    public Element createOperatorElement(Document d) {
+        return d.createElement(SUBTREE_SLIDE);
+    }
+
+    public static XMLObjectParser PARSER = new AbstractXMLObjectParser() {
+
+        public String getParserName() {
+            return SUBTREE_SLIDE;
+        }
+
+        public Object parseXMLObject(XMLObject xo) throws XMLParseException {
+
+            boolean swapRates = xo.getAttribute(SWAP_RATES, false);
+            boolean swapTraits = xo.getAttribute(SWAP_TRAITS, false);
+
+            CoercionMode mode = CoercionMode.parseMode(xo);
+            TreeModel treeModel = (TreeModel) xo.getChild(TreeModel.class);
+            ColourSamplerModel colourSamplerModel = (ColourSamplerModel) xo.getChild(ColourSamplerModel.class);
+            double weight = xo.getDoubleAttribute("weight");
+            double size = xo.getDoubleAttribute("size");
+            boolean gaussian = xo.getBooleanAttribute("gaussian");
+            return new ColouredSubtreeSlideOperator(treeModel, colourSamplerModel, weight, size, gaussian, swapRates, swapTraits, mode);
+        }
+
+        public String getParserDescription() {
+            return "An operator that slides a subtree.";
+        }
+
+        public Class getReturnType() {
+            return ColouredSubtreeSlideOperator.class;
+        }
+
+        public XMLSyntaxRule[] getSyntaxRules() {
+            return rules;
+        }
+
+        private XMLSyntaxRule[] rules = new XMLSyntaxRule[]{
+                AttributeRule.newDoubleRule("weight"),
+                AttributeRule.newDoubleRule("size"),
+                AttributeRule.newBooleanRule("gaussian"),
+                AttributeRule.newBooleanRule(SWAP_RATES, true),
+                AttributeRule.newBooleanRule(SWAP_TRAITS, true),
+                AttributeRule.newBooleanRule(AUTO_OPTIMIZE, true),
+                new ElementRule(TreeModel.class),
+                new ElementRule(ColourSamplerModel.class)
+        };
+    };
 
 }

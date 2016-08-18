@@ -26,7 +26,7 @@
 package dr.oldevomodel.substmodel;
 
 import dr.evolution.datatype.DataType;
-import dr.inference.model.BayesianStochasticSearchVariableSelection;
+import dr.inference.operators.BayesianStochasticSearchVariableSelection;
 import dr.inference.model.Parameter;
 import dr.inference.model.Variable;
 import dr.math.matrixAlgebra.Vector;

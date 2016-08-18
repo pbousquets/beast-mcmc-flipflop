@@ -35,6 +35,7 @@ import dr.evolution.datatype.DataType;
 import dr.inference.loggers.LogColumn;
 import dr.inference.loggers.NumberColumn;
 import dr.inference.model.*;
+import dr.inference.operators.BayesianStochasticSearchVariableSelection;
 import dr.math.matrixAlgebra.Matrix;
 import dr.math.matrixAlgebra.RobustEigenDecomposition;
 import dr.math.matrixAlgebra.RobustSingularValueDecomposition;

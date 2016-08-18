@@ -27,6 +27,7 @@ package dr.evomodel.substmodel;
 
 import dr.inference.model.*;
 import dr.evolution.datatype.DataType;
+import dr.inference.operators.BayesianStochasticSearchVariableSelection;
 
 import java.util.ArrayList;
 import java.util.List;

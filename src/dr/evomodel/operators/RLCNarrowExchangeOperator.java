@@ -25,7 +25,6 @@
 
 package dr.evomodel.operators;
 
-import dr.evolution.tree.MutableTree;
 import dr.evolution.tree.NodeRef;
 import dr.evomodel.tree.TreeModel;
 import dr.inference.operators.OperatorFailedException;
@@ -41,6 +40,9 @@ import java.util.List;
  * The narrow exchange is very similar to a rooted-tree
  * nearest-neighbour interchange but with the restriction
  * that node height must remain consistent.
+ *
+ * @author Alexei Drummond
+ * @author Marc A. Suchard
  */
 public class RLCNarrowExchangeOperator extends SimpleMCMCOperator {
 

@@ -31,7 +31,8 @@ import dr.app.beauti.types.ClockType;
 import dr.app.beauti.types.TreePriorType;
 import dr.app.beauti.util.XMLWriter;
 import dr.evolution.datatype.DataType;
-import dr.evomodel.operators.BitFlipInSubstitutionModelOperator;
+import dr.evomodelxml.microsatellite.MicrosatelliteUpDownOperatorParser;
+import dr.inference.operators.BitFlipInSubstitutionModelOperator;
 import dr.oldevomodel.substmodel.AbstractSubstitutionModel;
 import dr.evomodel.tree.TreeModel;
 import dr.evomodelxml.coalescent.GMRFSkyrideLikelihoodParser;
@@ -144,7 +145,7 @@ public class OperatorsGenerator extends Generator {
                 writeUpDownOperator(UpDownOperatorParser.UP_DOWN_OPERATOR, operator, writer);
                 break;
             case MICROSAT_UP_DOWN:
-                writeUpDownOperator(MicrosatUpDownOperatorParser.MICROSAT_UP_DOWN_OPERATOR, operator, writer);
+                writeUpDownOperator(MicrosatelliteUpDownOperatorParser.MICROSAT_UP_DOWN_OPERATOR, operator, writer);
                 break;
             case UP_DOWN_ALL_RATES_HEIGHTS:
                 writeUpDownOperatorAllRatesTrees(operator, writer);
