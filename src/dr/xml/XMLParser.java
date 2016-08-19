@@ -25,9 +25,7 @@
 
 package dr.xml;
 
-import dr.inference.model.Likelihood;
-import dr.inference.model.Model;
-import dr.inference.model.Parameter;
+import dr.inference.model.*;
 import dr.inferencexml.loggers.LoggerParser;
 import dr.util.*;
 import org.w3c.dom.*;
@@ -334,11 +332,23 @@ public class XMLParser {
                 }
 
                 if (obj instanceof Likelihood) {
-                    Likelihood.FULL_LIKELIHOOD_SET.add((Likelihood) obj);
-                } else if (obj instanceof Model) {
-                    Model.FULL_MODEL_SET.add((Model) obj);
-                } else if (obj instanceof Parameter) {
-                    Parameter.FULL_PARAMETER_SET.add((Parameter) obj);
+                    Likelihood.FULL_SET.add((Likelihood) obj);
+                }
+
+                if (obj instanceof Model) {
+                    Model.FULL_SET.add((Model) obj);
+                }
+
+                if (obj instanceof Parameter) {
+                    Parameter.FULL_SET.add((Parameter) obj);
+                }
+
+                if (obj instanceof Storable) {
+                    Storable.FULL_SET.add((Storable) obj);
+                }
+
+                if (obj instanceof Collectable) {
+                    Collectable.FULL_SET.add((Collectable) obj);
                 }
 
                 xo.setNativeObject(obj);

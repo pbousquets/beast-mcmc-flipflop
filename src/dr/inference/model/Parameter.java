@@ -38,7 +38,7 @@ import java.util.*;
  * @author Alexei Drummond
  * @version $Id: Parameter.java,v 1.22 2005/06/08 11:23:25 alexei Exp $
  */
-public interface Parameter extends Storeable, Statistic, Variable<Double> {
+public interface Parameter extends Statistic, Variable<Double> {
 
     /**
      * @param dim the index of the parameter dimension of interest
@@ -150,8 +150,8 @@ public interface Parameter extends Storeable, Statistic, Variable<Double> {
 
     boolean isUsed();
 
-    public final static Set<Parameter> FULL_PARAMETER_SET = new LinkedHashSet<Parameter>();
-    public final static Set<Parameter> CONNECTED_PARAMETER_SET = new LinkedHashSet<Parameter>();
+    public final static Set<Parameter> FULL_SET = new LinkedHashSet<Parameter>();
+    public final static Set<Parameter> CONNECTED_SET = new LinkedHashSet<Parameter>();
 
     /**
      * Abstract base class for parameters
@@ -159,12 +159,12 @@ public interface Parameter extends Storeable, Statistic, Variable<Double> {
     public abstract class Abstract extends Statistic.Abstract implements Parameter, Reportable {
 
         protected Abstract() {
-            FULL_PARAMETER_SET.add(this);
+            FULL_SET.add(this);
         }
 
         protected Abstract(final String name) {
             super(name);
-            FULL_PARAMETER_SET.add(this);
+            FULL_SET.add(this);
         }
 
         // **************************************************************
@@ -266,39 +266,6 @@ public interface Parameter extends Storeable, Statistic, Variable<Double> {
         }
 
         @Override
-        public final void storeModelState() {
-            if (isValid) {
-                storeValues();
-
-                isValid = false;
-            }
-        }
-
-        @Override
-        public final void restoreModelState() {
-            if (!isValid) {
-                restoreValues();
-
-                isValid = true;
-            }
-        }
-
-        @Override
-        public final void acceptModelState() {
-            throw new UnsupportedOperationException("AcceptModelState is not used for parameters");
-        }
-
-        @Override
-        public void saveModelState(Map<String, Object> stateMap) {
-            saveValues(stateMap);
-        }
-
-        @Override
-        public void loadModelState(Map<String, Object> stateMap) {
-            loadValues(stateMap);
-        }
-
-        @Override
         public final void adoptParameterValues(Parameter source) {
 
             adoptValues(source);
@@ -384,14 +351,6 @@ public interface Parameter extends Storeable, Statistic, Variable<Double> {
 
 // --------------------------------------------------------------------
 
-        protected abstract void storeValues();
-
-        protected abstract void restoreValues();
-
-        protected abstract void saveValues(Map<String, Object> stateMap);
-
-        protected abstract void loadValues(Map<String, Object> stateMap);
-
         protected abstract void adoptValues(Parameter source);
 
         public String toString() {
@@ -451,6 +410,14 @@ public interface Parameter extends Storeable, Statistic, Variable<Double> {
             throw new IllegalArgumentException();
         }
 
+        public boolean isValid() {
+            return isValid;
+        }
+
+        public void setValid(boolean valid) {
+            isValid = valid;
+        }
+
         private boolean isValid = true;
 
         private ArrayList<VariableListener> listeners;
@@ -462,7 +429,7 @@ public interface Parameter extends Storeable, Statistic, Variable<Double> {
     /**
      * A class that implements the Parameter interface.
      */
-    class Default extends Abstract {
+    final class Default extends Abstract implements Storable, Collectable {
 
         public Default(String id, int dimension) {
             this(dimension);
@@ -696,8 +663,27 @@ public interface Parameter extends Storeable, Statistic, Variable<Double> {
             fireParameterChangedEvent(-1, Parameter.ChangeType.ALL_VALUES_CHANGED);
         }
 
+        //********************************************************************
+        // STORABLE INTERFACE
+        //********************************************************************
+
         @Override
-        protected final void storeValues() {
+        public final void storeModelState() {
+            if (isValid()) {
+                storeValues();
+                setValid(false);
+            }
+        }
+
+        @Override
+        public final void restoreModelState() {
+            if (!isValid()) {
+                restoreValues();
+                setValid(true);
+            }
+        }
+
+        private void storeValues() {
             // no need to pay a price in a very common call for one-time rare usage
             //hasBeenStored = true;
             if (storedValues == null || storedValues.length != values.length) {
@@ -706,8 +692,7 @@ public interface Parameter extends Storeable, Statistic, Variable<Double> {
             System.arraycopy(values, 0, storedValues, 0, storedValues.length);
         }
 
-        @Override
-        protected final void restoreValues() {
+        private void restoreValues() {
 
             //swap the arrays
             double[] temp = storedValues;
@@ -720,15 +705,55 @@ public interface Parameter extends Storeable, Statistic, Variable<Double> {
         }
 
         @Override
-        protected void saveValues(Map<String, Object> stateMap) {
-            throw new UnsupportedOperationException("unsupported");
+        public final void acceptModelState() {
+            // nothing to do
+        }
+
+        //********************************************************************
+        // COLLECTABLE INTERFACE
+        //********************************************************************
+
+        @Override
+        public final void saveModelState(Map<String, Map<String, ? extends Object>> stateMap) {
+            List<Double> valueList = new ArrayList<Double>();
+            saveValues(valueList);
+
+            stateMap.put(getId(), Collections.singletonMap("values", valueList));
+
         }
 
         @Override
-        protected void loadValues(Map<String, Object> stateMap) {
-            throw new UnsupportedOperationException("unsupported");
+        public final void loadModelState(Map<String, Map<String, ? extends Object>> stateMap) {
+            Map<String, ? extends Object> valueMap = stateMap.get(getId());
+            if (valueMap == null) {
+                throw new IllegalArgumentException("State list for parameter with id, " + getId() + " not found.");
+            }
+            List<Double> valueList = (List<Double>)valueMap.get("values");
+            if (valueList == null) {
+                throw new IllegalArgumentException("Value list for parameter with id, " + getId() + " not found.");
+            }
+            loadValues(valueList);
         }
 
+        private void saveValues(List<Double> stateList) {
+            for (int i = 0; i < getDimension(); i++) {
+                stateList.add(getParameterValue(i));
+            }
+        }
+
+        private void loadValues(List<Double> stateList) {
+            if (getDimension() != stateList.size()) {
+                throw new IllegalArgumentException(
+                        "State list doesn't have the right dimension for parameter, " +
+                                getId() + ": " + stateList.size() + " instead of " + getDimension());
+            }
+            for (int i = 0; i < getDimension(); i++) {
+                setParameterValue(i, stateList.get(i));
+                i++;
+            }
+        }
+
+        @Override
         protected final void adoptValues(Parameter source) {
             // todo bug ? bounds not adopted?
 

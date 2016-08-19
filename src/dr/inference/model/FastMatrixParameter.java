@@ -71,22 +71,6 @@ public class FastMatrixParameter extends CompoundParameter implements MatrixPara
         }
 
         @Override
-        protected void storeValues() {
-            throw new RuntimeException("Do not call");
-        }
-
-        @Override
-        protected void restoreValues() {
-            throw new RuntimeException("Do not call");
-        }
-
-        @Override
-        protected void saveValues(Map<String, Object> stateMap) { throw new RuntimeException("Do not call"); }
-
-        @Override
-        protected void loadValues(Map<String, Object> stateMap) { throw new RuntimeException("Do not call"); }
-
-        @Override
         protected void adoptValues(Parameter source) {
             throw new RuntimeException("Do not call");
         }

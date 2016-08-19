@@ -29,22 +29,6 @@ public class ImmutableParameterParser extends AbstractXMLObjectParser {
                 return statistic.getDimension();
             }
 
-            @Override
-            protected void storeValues() {
-            }
-
-            @Override
-            protected void restoreValues() {
-            }
-
-            @Override
-            protected void saveValues(Map<String, Object> stateMap) {
-            }
-
-            @Override
-            protected void loadValues(Map<String, Object> stateMap) {
-            }
-
             public void setParameterValue(int dim, double value) {
                 throw new RuntimeException("Forbidden call to ImmutableParameter.");
             }

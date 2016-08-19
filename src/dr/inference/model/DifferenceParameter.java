@@ -44,34 +44,6 @@ public class DifferenceParameter extends Parameter.Abstract implements VariableL
         return paramList.get(0).getDimension();
     }
 
-    @Override
-    protected void storeValues() {
-        for (Parameter p : paramList) {
-            p.storeModelState();
-        }
-    }
-
-    @Override
-    protected void restoreValues() {
-        for (Parameter p : paramList) {
-            p.storeModelState();
-        }
-    }
-
-    @Override
-    protected void saveValues(Map<String, Object> stateMap) {
-        for (Parameter parameter : paramList) {
-            parameter.saveModelState(stateMap);
-        }
-    }
-
-    @Override
-    protected void loadValues(Map<String, Object> stateMap) {
-        for (Parameter parameter : paramList) {
-            parameter.loadModelState(stateMap);
-        }
-    }
-
     protected void adoptValues(Parameter source) {
         throw new RuntimeException("Not implemented");
     }

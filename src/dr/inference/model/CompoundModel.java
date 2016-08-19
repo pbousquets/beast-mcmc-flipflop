@@ -109,17 +109,13 @@ public class CompoundModel implements Model {
     }
 
     @Override
-    public void loadModelState(Map<String, Object> stateMap) {
-        for (Model model : models) {
-            model.saveModelState(stateMap);
-        }
+    public void saveModelState(Map<String, Map<String, ? extends Object>> stateMap) {
+        // do nothing
     }
 
     @Override
-    public void saveModelState(Map<String, Object> stateMap) {
-        for (Model model : models) {
-            model.loadModelState(stateMap);
-        }
+    public void loadModelState(Map<String, Map<String, ? extends Object>> stateMap) {
+        // do nothing
     }
 
     public boolean isValidState() {

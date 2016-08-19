@@ -82,7 +82,7 @@ public class MCMCParser extends AbstractXMLObjectParser {
         likelihood.setUsed();
 
         // check that all models, parameters and likelihoods are being used
-//        for (Likelihood l : Likelihood.FULL_LIKELIHOOD_SET) {
+//        for (Likelihood l : Likelihood.FULL_SET) {
 //            if (!l.isUsed()) {
 //                java.util.logging.Logger.getLogger("dr.inference").warning("Likelihood, " + l.getId() +
 //                        ", of class " + l.getClass().getName() + " is not being handled by the MCMC.");
@@ -94,7 +94,7 @@ public class MCMCParser extends AbstractXMLObjectParser {
 //                        ", of class " + m.getClass().getName() + " is not being handled by the MCMC.");
 //            }
 //        }
-//        for (Parameter p : Parameter.FULL_PARAMETER_SET) {
+//        for (Parameter p : Parameter.FULL_SET) {
 //            if (!p.isUsed()) {
 //                java.util.logging.Logger.getLogger("dr.inference").warning("Parameter, " + p.getId() +
 //                        ", of class " + p.getClass().getName() + " is not being handled by the MCMC.");

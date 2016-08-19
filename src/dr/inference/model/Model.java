@@ -39,7 +39,7 @@ import java.util.*;
  * @author Andrew Rambaut
  */
 
-public interface Model extends Storeable, Identifiable, Serializable {
+public interface Model extends Storable, Collectable, Identifiable, Serializable {
 
 	/**
 	 * Adds a listener that is notified when the this model changes.
@@ -153,8 +153,8 @@ public interface Model extends Storeable, Identifiable, Serializable {
 
 
     // set to store all created models
-    final static Set<Model> FULL_MODEL_SET = new HashSet<Model>();
-	final static Set<Model> CONNECTED_MODEL_SET = new HashSet<Model>();
+    final static Set<Model> FULL_SET = new HashSet<Model>();
+	final static Set<Model> CONNECTED_SET = new HashSet<Model>();
 
 }
 

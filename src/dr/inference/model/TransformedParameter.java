@@ -50,26 +50,6 @@ public class TransformedParameter extends Parameter.Abstract implements Variable
         return parameter.getDimension();
     }
 
-    @Override
-    protected void storeValues() {
-        parameter.storeModelState();
-    }
-
-    @Override
-    protected void restoreValues() {
-        parameter.restoreModelState();
-    }
-
-    @Override
-    protected void saveValues(Map<String, Object> stateMap) {
-        parameter.saveModelState(stateMap);
-    }
-
-    @Override
-    protected void loadValues(Map<String, Object> stateMap) {
-        parameter.loadModelState(stateMap);
-    }
-
     protected void adoptValues(Parameter source) {
         parameter.adoptParameterValues(source);
     }

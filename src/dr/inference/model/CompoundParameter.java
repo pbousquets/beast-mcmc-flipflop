@@ -228,34 +228,6 @@ public class CompoundParameter extends Parameter.Abstract implements VariableLis
 //        getParameter(column).setParameterValueNotifyChangedAll(row, val);
 //    }
 
-    @Override
-    protected void storeValues() {
-        for (Parameter parameter : uniqueParameters) {
-            parameter.storeModelState();
-        }
-    }
-
-    @Override
-    protected void restoreValues() {
-        for (Parameter parameter : uniqueParameters) {
-            parameter.restoreModelState();
-        }
-    }
-
-    @Override
-    protected void saveValues(Map<String, Object> stateMap) {
-        for (Parameter parameter : uniqueParameters) {
-            parameter.saveModelState(stateMap);
-        }
-    }
-
-    @Override
-    protected void loadValues(Map<String, Object> stateMap) {
-        for (Parameter parameter : uniqueParameters) {
-            parameter.loadModelState(stateMap);
-        }
-    }
-
     protected final void adoptValues(Parameter source) {
         // the parameters that make up a compound parameter will have
         // this function called on them individually so we don't need

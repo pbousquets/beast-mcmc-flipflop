@@ -46,9 +46,6 @@ public class MaskedParameter extends Parameter.Abstract implements VariableListe
         this.map = new int[parameter.getDimension()];
         this.inverseMap = new int[parameter.getDimension()];
 
-        this.storedMap = new int[parameter.getDimension()];
-        this.storedInverseMap = new int[parameter.getDimension()];
-
         for (int i = 0; i < map.length; i++) {
             map[i] = i;
             inverseMap[i] = i;
@@ -90,39 +87,6 @@ public class MaskedParameter extends Parameter.Abstract implements VariableListe
             throw new RuntimeException("Zero-dimensional parameter!");
         // TODO Need non-fatal mechanism to check for zero-dimensional parameters
         return length;
-    }
-
-    protected void storeValues() {
-        parameter.storeModelState();
-        maskParameter.storeModelState();
-
-        System.arraycopy(map, 0, storedMap, 0, map.length);
-        System.arraycopy(inverseMap, 0, storedInverseMap, 0, inverseMap.length);
-    }
-
-    protected void restoreValues() {
-        parameter.storeModelState();
-        maskParameter.storeModelState();
-
-        int[] tmp = storedMap;
-        storedMap = map;
-        map = tmp;
-
-        tmp = storedInverseMap;
-        storedInverseMap = inverseMap;
-        inverseMap = tmp;
-    }
-
-    @Override
-    protected void saveValues(Map<String, Object> stateMap) {
-        parameter.saveModelState(stateMap);
-        maskParameter.saveModelState(stateMap);
-    }
-
-    @Override
-    protected void loadValues(Map<String, Object> stateMap) {
-        parameter.loadModelState(stateMap);
-        maskParameter.loadModelState(stateMap);
     }
 
     protected void adoptValues(Parameter source) { throw new IllegalArgumentException("Not yet implemented"); }
@@ -205,9 +169,7 @@ public class MaskedParameter extends Parameter.Abstract implements VariableListe
     private int[] map;
     private int[] inverseMap;
 
-    private int[] storedMap;
-    private int[] storedInverseMap;
-
     private int length;
     private int equalValue;
+
 }

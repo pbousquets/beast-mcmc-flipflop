@@ -25,7 +25,7 @@
 
 package dr.inferencexml.model;
 
-import dr.inference.model.OneOnXPrior;
+import dr.inference.distribution.OneOnXPrior;
 import dr.inference.model.Statistic;
 import dr.xml.*;
 

@@ -1,7 +1,7 @@
 /*
- * OneOnXPrior.java
+ * OneOnX3Prior.java
  *
- * Copyright (c) 2002-2015 Alexei Drummond, Andrew Rambaut and Marc Suchard
+ * Copyright (c) 2002-2016 Alexei Drummond, Andrew Rambaut and Marc Suchard
  *
  * This file is part of BEAST.
  * See the NOTICE file distributed with this work for additional
@@ -23,23 +23,29 @@
  * Boston, MA  02110-1301  USA
  */
 
-package dr.inference.model;
+package dr.inference.distribution;
+
+import dr.inference.model.Likelihood;
+import dr.inference.model.Statistic;
 
 import java.util.ArrayList;
 
 /**
- * @author Alexei Drummond
+ * @author Chieh-Hsi Wu
+ *
+ * This an improper prior 1/(x_i^3) which is the Jeffrey's prior for parameters of Normal distribution
+ * (and Log-normal distribution?)
+ *
  */
+public class OneOnX3Prior extends Likelihood.Abstract {
 
-public class OneOnXPrior extends Likelihood.Abstract {
-
-    public OneOnXPrior() {
+    public OneOnX3Prior() {
 
         super(null);
     }
 
     /**
-     * Adds a statistic, this is the data for which the Prod_i (1/x_i) prior is calculated.
+     * Adds a statistic, this is the data for which the Prod_i (1/x_i^3) prior is calculated.
      *
      * @param data the statistic to compute density of
      */
@@ -68,7 +74,7 @@ public class OneOnXPrior extends Likelihood.Abstract {
 
         for (Statistic statistic : dataList) {
             for (int j = 0; j < statistic.getDimension(); j++) {
-                logL -= Math.log(statistic.getStatisticValue(j));
+                logL -= 3*Math.log(statistic.getStatisticValue(j));
             }
         }
         return logL;
@@ -76,11 +82,10 @@ public class OneOnXPrior extends Likelihood.Abstract {
 
 
     public String prettyName() {
-        String s = "OneOnX" + "(";
+        String s = "OneOnX3" + "(";
         for (Statistic statistic : dataList) {
             s = s + statistic.getStatisticName() + ",";
         }
         return s.substring(0, s.length() - 1) + ")";
     }
 }
-

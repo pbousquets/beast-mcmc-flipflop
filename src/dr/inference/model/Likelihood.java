@@ -221,7 +221,7 @@ public interface Likelihood extends Loggable, Identifiable {
 
 
     // set to store all created likelihoods
-    final static Set<Likelihood> FULL_LIKELIHOOD_SET = new HashSet<Likelihood>();
-	final static Set<Likelihood> CONNECTED_LIKELIHOOD_SET = new HashSet<Likelihood>();
+    final static Set<Likelihood> FULL_SET = new HashSet<Likelihood>();
+	final static Set<Likelihood> CONNECTED_SET = new HashSet<Likelihood>();
 
 }

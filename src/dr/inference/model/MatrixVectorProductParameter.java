@@ -49,28 +49,6 @@ public class MatrixVectorProductParameter extends Parameter.Abstract implements 
         throwError("setDimension()");
     }
 
-    protected void storeValues() {
-        matrix.storeModelState();
-        vector.storeModelState();
-    }
-
-    protected void restoreValues() {
-        matrix.restoreModelState();
-        vector.restoreModelState();
-    }
-
-    @Override
-    protected void saveValues(Map<String, Object> stateMap) {
-        matrix.saveModelState(stateMap);
-        vector.saveModelState(stateMap);
-    }
-
-    @Override
-    protected void loadValues(Map<String, Object> stateMap) {
-        matrix.loadModelState(stateMap);
-        vector.loadModelState(stateMap);
-    }
-
     protected void adoptValues(Parameter source) {
         throw new RuntimeException("Not implemented");
     }

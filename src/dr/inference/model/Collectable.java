@@ -1,5 +1,5 @@
 /*
- * Storeable.java
+ * Collectable.java
  *
  * Copyright (c) 2002-2016 Alexei Drummond, Andrew Rambaut and Marc Suchard
  *
@@ -25,7 +25,9 @@
 
 package dr.inference.model;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * ${CLASS_NAME}
@@ -39,32 +41,17 @@ import java.util.Map;
  * $LastChangedDate$
  * $LastChangedRevision$
  */
-public interface Storeable {
-    /**
-     * This function should be called to store the state of the
-     * entire model. This makes the model state invalid until either
-     * an acceptModelState or restoreModelState is called.
-     */
-    void storeModelState();
-
-    /**
-     * This function should be called to restore the state of the entire model.
-     */
-    void restoreModelState();
-
-    /**
-     * This function should be called to restore the state of the entire model.
-     */
-    void acceptModelState();
-
+public interface Collectable {
     /**
      * This function should be called to store the model state to a map
      */
-    void saveModelState(Map<String, Object> stateMap);
+    void saveModelState(Map<String, Map<String, ? extends Object>> stateMap);
 
     /**
      * This function should be called to load the model state from a map
      */
-    void loadModelState(Map<String, Object> stateMap);
+    void loadModelState(Map<String, Map<String, ? extends Object>> stateMap);
 
+    // set to store all created collectables
+    final static Set<Collectable> FULL_SET = new HashSet<Collectable>();
 }

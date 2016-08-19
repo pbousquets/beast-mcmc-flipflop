@@ -30,10 +30,12 @@ import dr.xml.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.util.Map;
+
 /**
  * @author Marc Suchard
  */
-public class DesignMatrix extends MatrixParameter {
+public class DesignMatrix extends MatrixParameter implements Storable {
     public static final String DESIGN_MATRIX = "designMatrix";
     public static final String ADD_INTERCEPT = "addIntercept";
     public static final String FORM = "form";
@@ -109,9 +111,8 @@ public class DesignMatrix extends MatrixParameter {
         }
     }
 
-    protected void storeValues() {
-        super.storeValues();
-
+    @Override
+    public void storeModelState() {
         if (dynamicStandardization) {
             if (storedStandardizationMean == null) {
                 storedStandardizationMean = new double[standardizationMean.length];
@@ -125,9 +126,8 @@ public class DesignMatrix extends MatrixParameter {
         }
     }
 
-    protected void restoreValues() {
-        super.restoreValues();
-
+    @Override
+    public void restoreModelState() {
         if (dynamicStandardization) {
             double[] tmp = standardizationMean;
             standardizationMean = storedStandardizationMean;
@@ -138,6 +138,15 @@ public class DesignMatrix extends MatrixParameter {
             storedStandardizationStDev = tmp;
         }
     }
+
+    @Override
+    public void acceptModelState() {
+        // nothing to do
+    }
+
+    //************************************************************************
+    //  Collectable implementation
+    //************************************************************************
 
     public DesignMatrix(String name, Parameter[] parameters, boolean dynamicStandardization) {
         super(name, parameters);
@@ -263,4 +272,5 @@ public class DesignMatrix extends MatrixParameter {
     private double[] standardizationStDev = null;
     private double[] storedStandardizationMean = null;
     private double[] storedStandardizationStDev = null;
+
 }

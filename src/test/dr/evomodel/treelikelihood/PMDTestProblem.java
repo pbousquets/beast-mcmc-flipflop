@@ -27,7 +27,7 @@ import dr.inference.mcmc.MCMC;
 import dr.inference.mcmc.MCMCOptions;
 import dr.inference.model.CompoundLikelihood;
 import dr.inference.model.Likelihood;
-import dr.inference.model.OneOnXPrior;
+import dr.inference.distribution.OneOnXPrior;
 import dr.inference.model.Parameter;
 import dr.inference.operators.*;
 import dr.inference.trace.ArrayTraceList;

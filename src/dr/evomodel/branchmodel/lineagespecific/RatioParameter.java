@@ -114,30 +114,6 @@ public class RatioParameter extends Parameter.Abstract implements
 	}
 
 	@Override
-	protected void storeValues() {
-		parameter1.storeModelState();
-		parameter2.storeModelState();
-	}
-
-	@Override
-	protected void restoreValues() {
-		parameter1.restoreModelState();
-		parameter2.restoreModelState();
-	}
-
-	@Override
-	protected void loadValues(Map<String, Object> stateMap) {
-		parameter1.saveModelState(stateMap);
-		parameter2.saveModelState(stateMap);
-	}
-
-	@Override
-	protected void saveValues(Map<String, Object> stateMap) {
-		parameter1.loadModelState(stateMap);
-		parameter2.loadModelState(stateMap);
-	}
-
-	@Override
 	protected void adoptValues(Parameter source) {
 		throw new RuntimeException("Not implemented");
 	}

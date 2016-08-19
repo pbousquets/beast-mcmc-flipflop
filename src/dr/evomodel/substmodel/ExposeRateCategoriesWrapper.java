@@ -48,26 +48,6 @@ public class ExposeRateCategoriesWrapper extends Parameter.Abstract implements M
     }
 
     @Override
-    protected void storeValues() {
-        // Do nothing
-    }
-
-    @Override
-    protected void restoreValues() {
-        // Do nothing
-    }
-
-    @Override
-    protected void saveValues(Map<String, Object> stateMap) {
-        // Do nothing
-    }
-
-    @Override
-    protected void loadValues(Map<String, Object> stateMap) {
-        // Do nothing
-    }
-
-    @Override
     protected void adoptValues(Parameter source) {
         // Do nothing
     }

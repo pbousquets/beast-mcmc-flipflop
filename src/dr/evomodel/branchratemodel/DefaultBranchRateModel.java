@@ -67,12 +67,12 @@ public final class DefaultBranchRateModel implements BranchRateModel {
     }
 
     @Override
-    public void saveModelState(Map<String, Object> stateMap) {
+    public void saveModelState(Map<String, Map<String, ? extends Object>> stateMap) {
         throw new UnsupportedOperationException("saveModelState not implemented");
     }
 
     @Override
-    public void loadModelState(Map<String, Object> stateMap) {
+    public void loadModelState(Map<String, Map<String, ? extends Object>> stateMap) {
         throw new UnsupportedOperationException("loadModelState not implemented");
     }
 

@@ -26,10 +26,7 @@
 package dr.inference.markovchain;
 
 import dr.evomodel.continuous.GibbsIndependentCoalescentOperator;
-import dr.inference.model.CompoundLikelihood;
-import dr.inference.model.Likelihood;
-import dr.inference.model.Model;
-import dr.inference.model.PathLikelihood;
+import dr.inference.model.*;
 import dr.inference.operators.*;
 
 import java.io.Serializable;
@@ -89,13 +86,26 @@ public final class MarkovChain implements Serializable {
         this.minOperatorCountForFullEvaluation = minOperatorCountForFullEvaluation;
         this.evaluationTestThreshold = evaluationTestThreshold;
 
-        Likelihood.CONNECTED_LIKELIHOOD_SET.add(this.jointDensity);
-        Likelihood.CONNECTED_LIKELIHOOD_SET.addAll(this.jointDensity.getLikelihoodSet());
+        Likelihood.CONNECTED_SET.add(this.jointDensity);
+        Likelihood.CONNECTED_SET.addAll(this.jointDensity.getLikelihoodSet());
 
-        for (Likelihood l : Likelihood.FULL_LIKELIHOOD_SET) {
-            if (!Likelihood.CONNECTED_LIKELIHOOD_SET.contains(l)) {
+        for (Likelihood l : Likelihood.FULL_SET) {
+            if (!Likelihood.CONNECTED_SET.contains(l)) {
                 System.err.println("WARNING: Likelihood component, " + l.getId() + ", created but not used in the MCMC");
             }
+        }
+
+        for (Parameter parameter : Parameter.FULL_SET) {
+            if (parameter instanceof Storable) {
+                Storable.FULL_SET.add((Storable) parameter);
+            }
+        }
+
+        for (Model model : Model.FULL_SET) {
+            if (!Model.CONNECTED_SET.contains(model)) {
+                System.err.println("WARNING: Model component, " + model.getId() + ", created but not used in the MCMC");
+            }
+            Storable.FULL_SET.add(model);
         }
 
         currentScore = evaluate(this.jointDensity);
@@ -194,8 +204,11 @@ public final class MarkovChain implements Serializable {
             // assert Profiler.startProfile("Store");
 
             // The current model is stored here in case the proposal fails
-            if (currentModel != null) {
-                currentModel.storeModelState();
+//            if (currentModel != null) {
+//                currentModel.storeModelState();
+//            }
+            for (Storable storable : Storable.FULL_SET) {
+                storable.storeModelState();
             }
 
             // assert Profiler.stopProfile("Store");
@@ -326,6 +339,10 @@ public final class MarkovChain implements Serializable {
 
                 mcmcOperator.accept(deviation);
 
+                for (Storable storable : Storable.FULL_SET) {
+                    storable.acceptModelState();
+                }
+
                 currentScore = score;
 
             } else {
@@ -338,7 +355,10 @@ public final class MarkovChain implements Serializable {
 
                 // assert Profiler.startProfile("Restore");
 
-                currentModel.restoreModelState();
+//                currentModel.restoreModelState();
+                for (Storable storable : Storable.FULL_SET) {
+                    storable.restoreModelState();
+                }
 
                 if (usingFullEvaluation) {
                     // This is a test that the state is correctly restored. The

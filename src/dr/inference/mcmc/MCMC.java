@@ -197,14 +197,14 @@ public class MCMC implements Identifiable, Spawnable, Loggable {
 
                 double lnL = mc.evaluate();
 
-                DebugUtils.writeStateToFile(new File("tmp.dump"), loadedState, lnL);
+                DebugUtils.writeStateToJSONFile(new File("tmp.dump"), loadedState, lnL);
 
                 if (lnL != savedLnL[0]) {
                         throw new RuntimeException("Dumped lnL does not match loaded state: stored lnL: " + savedLnL[0] +
                                 ", recomputed lnL: " + lnL + " (difference " + (savedLnL[0] - lnL) + ")");
                 }
 
-//                for (Likelihood likelihood : Likelihood.CONNECTED_LIKELIHOOD_SET) {
+//                for (Likelihood likelihood : Likelihood.CONNECTED_SET) {
 //                    System.err.println(likelihood.getId() + ": " + likelihood.getLogLikelihood());
 //                }
             }
@@ -236,8 +236,8 @@ public class MCMC implements Identifiable, Spawnable, Loggable {
                 double lnL1 = mc.getCurrentScore();
 
                 // Write the MarkovChain out and back in again...
-                DebugUtils.writeStateToFile(new File("beast.state"), currentState, mc.getCurrentScore());
-                DebugUtils.readStateFromFile(new File("beast.state"), null);
+                DebugUtils.writeStateToJSONFile(new File("beast.state"), currentState, mc.getCurrentScore());
+                DebugUtils.readStateFromJSONFile(new File("beast.state"), null);
 
                 double lnL2 = mc.evaluate();
 

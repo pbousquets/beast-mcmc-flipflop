@@ -124,32 +124,6 @@ public class JointParameter extends Parameter.Abstract implements VariableListen
         }
     }
 
-    protected void storeValues() {
-        for (Parameter parameter : parameters) {
-            parameter.storeModelState();
-        }
-    }
-
-    protected void restoreValues() {
-        for (Parameter parameter : parameters) {
-            parameter.restoreModelState();
-        }
-    }
-
-    @Override
-    protected void saveValues(Map<String, Object> stateMap) {
-        for (Parameter parameter : parameters) {
-            parameter.saveModelState(stateMap);
-        }
-    }
-
-    @Override
-    protected void loadValues(Map<String, Object> stateMap) {
-        for (Parameter parameter : parameters) {
-            parameter.loadModelState(stateMap);
-        }
-    }
-
     protected final void adoptValues(Parameter source) {
         // the parameters that make up a compound parameter will have
         // this function called on them individually so we don't need

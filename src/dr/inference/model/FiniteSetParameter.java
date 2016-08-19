@@ -33,24 +33,6 @@ import java.util.Map;
 
 public class FiniteSetParameter extends Parameter.Abstract implements VariableListener {
 
-    protected void storeValues() {
-        indicator.storeModelState();
-    }
-
-    protected void restoreValues() {
-        indicator.restoreModelState();
-    }
-
-    @Override
-    public void loadValues(Map<String, Object> stateMap) {
-        indicator.loadModelState(stateMap);
-    }
-
-    @Override
-    public void saveValues(Map<String, Object> stateMap) {
-        indicator.saveModelState(stateMap);
-    }
-
     protected void adoptValues(Parameter source) {
         //To change body of implemented methods use File | Settings | File Templates.
     }

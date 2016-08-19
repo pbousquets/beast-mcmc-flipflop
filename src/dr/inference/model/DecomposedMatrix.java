@@ -30,7 +30,7 @@ import dr.xml.*;
 /**
  * @author Marc A. Suchard
  */
-public class DecomposedMatrix extends MatrixParameter {
+public class DecomposedMatrix extends MatrixParameter implements Storable {
 
 	public static final String DIM = "dim";
 	public static final String MATRIX_PARAMETER = "decomposedMatrix";
@@ -79,25 +79,29 @@ public class DecomposedMatrix extends MatrixParameter {
 		return dim * dim;
 	}
 
-	protected void storeValues() {
-		super.storeValues();
+	@Override
+	public void storeModelState() {
 		for (int i = 0; i < dim; i++) {
 			System.arraycopy(matrix[i], 0, savedMatrix[i], 0, dim);
 		}
+	}
 
+	@Override
+	public void restoreModelState() {
+		for (int i = 0; i < dim; i++) {
+			System.arraycopy(savedMatrix[i], 0, matrix[i], 0, dim);
+		}
+	}
+
+	@Override
+	public void acceptModelState() {
+		// nothing to do
 	}
 
 	public double getParameterValue(int index) {
 		int x = index / dim;
 		int y = index - x * dim;
 		return matrix[x][y];
-	}
-
-	protected void restoreValues() {
-		super.restoreValues();
-		for (int i = 0; i < dim; i++) {
-			System.arraycopy(savedMatrix[i], 0, matrix[i], 0, dim);
-		}
 	}
 
 	public double getParameterValue(int row, int col) {

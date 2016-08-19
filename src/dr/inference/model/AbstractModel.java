@@ -30,6 +30,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -53,7 +54,12 @@ public abstract class AbstractModel implements Model, ModelListener, VariableLis
      * list then it does nothing.
      */
     public void addModel(Model model) {
-        Model.CONNECTED_MODEL_SET.add(model);
+        Model.CONNECTED_SET.add(model);
+        Model.FULL_SET.add(model);
+
+        Storable.FULL_SET.add(model);
+
+        Collectable.FULL_SET.add(model);
 
         if (!models.contains(model)) {
             models.add(model);
@@ -75,9 +81,8 @@ public abstract class AbstractModel implements Model, ModelListener, VariableLis
     }
 
     public final void addParameter(Parameter parameter) {
-        if (parameter instanceof Parameter) {
-            Parameter.CONNECTED_PARAMETER_SET.add((Parameter) parameter);
-        }
+        Parameter.CONNECTED_SET.add(parameter);
+        Parameter.FULL_SET.add(parameter);
 
         if (!parameters.contains(parameter)) {
             parameters.add(parameter);
@@ -85,7 +90,7 @@ public abstract class AbstractModel implements Model, ModelListener, VariableLis
         }
 
         // parameters are also statistics
-        if (parameter instanceof Statistic) addStatistic((Statistic) parameter);
+        addStatistic(parameter);
     }
 
     public final void removeParameter(Parameter parameter) {
@@ -93,7 +98,7 @@ public abstract class AbstractModel implements Model, ModelListener, VariableLis
         parameter.removeVariableListener(this);
 
         // parameters are also statistics
-        if (parameter instanceof Statistic) removeStatistic((Statistic) parameter);
+       removeStatistic(parameter);
     }
 
     /**
@@ -242,21 +247,13 @@ public abstract class AbstractModel implements Model, ModelListener, VariableLis
      */
     protected abstract void handleVariableChangedEvent(Variable variable, int index, Parameter.ChangeType type);
 
-    // **************************************************************
-    // Model IMPLEMENTATION
-    // **************************************************************
+    //********************************************************************
+    // STORABLE INTERFACE
+    //********************************************************************
 
     public final void storeModelState() {
         if (isValidState) {
             //System.out.println("STORE MODEL: " + getModelName() + "/" + getId());
-
-            for (Model m : models) {
-                m.storeModelState();
-            }
-
-            for (Parameter parameter : parameters) {
-                parameter.storeModelState();
-            }
 
             storeState();
             isValidState = false;
@@ -266,13 +263,6 @@ public abstract class AbstractModel implements Model, ModelListener, VariableLis
     public final void restoreModelState() {
         if (!isValidState) {
             //System.out.println("RESTORE MODEL: " + getModelName() + "/" + getId());
-
-            for (Parameter parameter : parameters) {
-                parameter.restoreModelState();
-            }
-            for (Model m : models) {
-                m.restoreModelState();
-            }
 
             restoreState();
             isValidState = true;
@@ -294,41 +284,41 @@ public abstract class AbstractModel implements Model, ModelListener, VariableLis
         }
     }
 
+    //********************************************************************
+    // COLLECTABLE INTERFACE
+    //********************************************************************
+
     @Override
-    public void saveModelState(Map<String, Object> stateMap) {
+    public void saveModelState(Map<String, Map<String, ? extends Object>> stateMap) {
         if (!isValidState) {
             //System.out.println("ACCEPT MODEL: " + getModelName() + "/" + getId());
 
-            for (Parameter parameter : parameters) {
-                parameter.saveModelState(stateMap);
-            }
-
-            for (Model m : models) {
-                m.saveModelState(stateMap);
-            }
-
-            saveState(stateMap);
+            Map<String, ? extends Object> valueMap = new HashMap<String, Object>();
+            saveState(valueMap);
+            stateMap.put(getId(), valueMap);
         }
     }
 
     @Override
-    public void loadModelState(Map<String, Object> stateMap) {
+    public void loadModelState(Map<String, Map<String, ? extends Object>> stateMap) {
         if (!isValidState) {
             //System.out.println("ACCEPT MODEL: " + getModelName() + "/" + getId());
 
-            for (Parameter parameter : parameters) {
-                parameter.saveModelState(stateMap);
+            Map<String, ? extends Object> valueMap = stateMap.get(getId());
+            if (valueMap == null) {
+                throw new IllegalArgumentException("State map for object with id, " + getId() + " not found.");
             }
+            loadState(valueMap);
 
-            for (Model m : models) {
-                m.saveModelState(stateMap);
-            }
-
-            loadState(stateMap);
+            listenerHelper.fireModelChanged(this);
 
             isValidState = true;
         }
     }
+
+    // **************************************************************
+    // Model IMPLEMENTATION
+    // **************************************************************
 
     public boolean isValidState() {
         return isValidState;
@@ -360,11 +350,11 @@ public abstract class AbstractModel implements Model, ModelListener, VariableLis
         // do nothing by default - override
     }
 
-    protected void saveState(Map<String, Object> stateMap) {
+    protected void saveState(Map<String, ? extends Object> stateMap) {
         throw new UnsupportedOperationException("must be overridden");
     }
 
-    protected void loadState(Map<String, Object> loadMap) {
+    protected void loadState(Map<String, ? extends Object> stateMap) {
         throw new UnsupportedOperationException("must be overridden");
     }
 

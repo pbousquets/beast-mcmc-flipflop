@@ -109,34 +109,6 @@ public class MatrixMatrixProduct extends MatrixParameter implements VariableList
         this.bounds = bounds;
     }
 
-    protected void storeValues() {
-        System.arraycopy(areValuesStored, 0, oldStoredValues, 0, areValuesStored.length);
-        left.storeModelState();
-        right.storeModelState();
-        inPlace.storeModelState();
-    }
-
-    protected void restoreValues() {
-        left.restoreModelState();
-        right.restoreModelState();
-        inPlace.restoreModelState();
-        areValuesStored=oldStoredValues;
-    }
-
-    @Override
-    protected void saveValues(Map<String, Object> stateMap) {
-        left.saveModelState(stateMap);
-        right.saveModelState(stateMap);
-        inPlace.saveModelState(stateMap);
-    }
-
-    @Override
-    protected void loadValues(Map<String, Object> stateMap) {
-        left.loadModelState(stateMap);
-        right.loadModelState(stateMap);
-        inPlace.loadModelState(stateMap);
-    }
-
     public double getParameterValue(int i, int j) {
         double sum = 0;
         if (columnMask.getParameterValue(j)!=0 && !areValuesStored[i][j]) {

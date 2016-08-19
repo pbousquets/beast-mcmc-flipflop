@@ -44,34 +44,6 @@ public class ProductParameter extends Parameter.Abstract implements VariableList
         return paramList.get(0).getDimension();
     }
 
-    @Override
-    protected void storeValues() {
-        for (Parameter p : paramList) {
-            p.storeModelState();
-        }
-    }
-
-    @Override
-    protected void restoreValues() {
-        for (Parameter p : paramList) {
-            p.restoreModelState();
-        }
-    }
-
-    @Override
-    protected void saveValues(Map<String, Object> stateMap) {
-        for (Parameter p : paramList) {
-            p.saveModelState(stateMap);
-        }
-    }
-
-    @Override
-    protected void loadValues(Map<String, Object> stateMap) {
-        for (Parameter p : paramList) {
-            p.loadModelState(stateMap);
-        }
-    }
-
     protected void adoptValues(Parameter source) {
         throw new RuntimeException("Not implemented");
     }

@@ -38,18 +38,19 @@ package dr.inference.mcmc;
  * $LastChangedRevision$
  */
 
+import com.google.gson.Gson;
 import dr.evolution.io.Importer;
 import dr.evolution.io.NewickImporter;
 import dr.evolution.tree.Tree;
 import dr.evomodel.tree.TreeModel;
+import dr.inference.model.Collectable;
 import dr.inference.model.Likelihood;
 import dr.inference.model.Model;
 import dr.inference.model.Parameter;
 import dr.math.MathUtils;
 
 import java.io.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class DebugUtils {
 
@@ -80,7 +81,7 @@ public class DebugUtils {
             out.print("lnL\t");
             out.println(lnL);
 
-            for (Parameter parameter : Parameter.CONNECTED_PARAMETER_SET) {
+            for (Parameter parameter : Parameter.CONNECTED_SET) {
                 out.print(parameter.getParameterName());
                 out.print("\t");
                 out.print(parameter.getDimension());
@@ -91,7 +92,7 @@ public class DebugUtils {
                 out.println();
             }
 
-            for (Model model : Model.CONNECTED_MODEL_SET) {
+            for (Model model : Model.CONNECTED_SET) {
                 if (model instanceof TreeModel) {
                     out.print(model.getModelName());
                     out.print("\t");
@@ -106,7 +107,7 @@ public class DebugUtils {
             return false;
         }
 
-//        for (Likelihood likelihood : Likelihood.CONNECTED_LIKELIHOOD_SET) {
+//        for (Likelihood likelihood : Likelihood.CONNECTED_SET) {
 //            System.err.println(likelihood.getId() + ": " + likelihood.getLogLikelihood());
 //        }
 
@@ -170,7 +171,7 @@ public class DebugUtils {
                 throw new RuntimeException("Unable to read lnL from state file");
             }
 
-            for (Parameter parameter : Parameter.CONNECTED_PARAMETER_SET) {
+            for (Parameter parameter : Parameter.FULL_SET) {
                 line = in.readLine();
                 fields = line.split("\t");
 //                if (!fields[0].equals(parameter.getParameterName())) {
@@ -197,7 +198,7 @@ public class DebugUtils {
             // load the tree models last as we get the node heights from the tree (not the parameters which
             // which may not be associated with the right node
             Set<String> expectedTreeModelNames = new HashSet<String>();
-            for (Model model : Model.CONNECTED_MODEL_SET) {
+            for (Model model : Model.FULL_SET) {
                 if (model instanceof TreeModel) {
                     expectedTreeModelNames.add(model.getModelName());
                 }
@@ -208,7 +209,7 @@ public class DebugUtils {
                 fields = line.split("\t");
                 boolean treeFound = false;
 
-                for (Model model : Model.CONNECTED_MODEL_SET) {
+                for (Model model : Model.FULL_SET) {
                     if (model instanceof TreeModel && fields[0].equals(model.getModelName())) {
                         treeFound = true;
                         NewickImporter importer = new NewickImporter(fields[1]);
@@ -240,7 +241,7 @@ public class DebugUtils {
 
             in.close();
             fileIn.close();
-            for (Likelihood likelihood : Likelihood.CONNECTED_LIKELIHOOD_SET) {
+            for (Likelihood likelihood : Likelihood.CONNECTED_SET) {
                 likelihood.makeDirty();
             }
         } catch (IOException ioe) {
@@ -252,5 +253,59 @@ public class DebugUtils {
         return state;
     }
 
+    /**
+     * Writes out the current state in a human readable format to help debugging.
+     * If it fails, then returns false but does not stop.
+     * @param file the file
+     * @param state the current state number
+     * @return success
+     */
+    public static boolean writeStateToJSONFile(File file, long state, double lnL) {
+
+        OutputStream fileOut = null;
+        try {
+            fileOut = new FileOutputStream(file);
+            PrintStream out = new PrintStream(fileOut);
+
+            int[] rngState = MathUtils.getRandomState();
+
+            Map<String, Map<String, ? extends Object>> stateMap = new HashMap<String, Map<String, ? extends Object>>();
+
+            for (Collectable collectable: Collectable.FULL_SET) {
+                collectable.saveModelState(stateMap);
+            }
+            Gson gson = new Gson();
+            String json = gson.toJson(stateMap);  // ==> json is [1,2,3,4,5]
+
+            out.println(json);
+
+            out.close();
+            fileOut.close();
+        } catch (IOException ioe) {
+            System.err.println("Unable to write file: " + ioe.getMessage());
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Attempts to read the current state from a state dump file. This should be a state
+     * dump created using the same XML file (some rudimentary checking of this is done).
+     * If it fails then it will throw a RuntimeException. If successful it will return the
+     * current state number.
+     * @param file the file
+     * @return the state number
+     */
+    public static long readStateFromJSONFile(File file, double[] lnL) {
+        long state = -1;
+
+        // Deserialization
+//        Type collectionType = new TypeToken<Collection<Integer>>(){}.getType();
+//        Collection<Integer> ints2 = gson.fromJson(json, collectionType);
+
+
+        return state;
+    }
 
 }

@@ -124,34 +124,6 @@ public class EqualityConstrainedParameter extends Parameter.Abstract implements 
         isLocked = false;
     }
 
-    @Override
-    protected void storeValues() {
-        for (Parameter parameter : uniqueParameters) {
-            parameter.storeModelState();
-        }
-    }
-
-    @Override
-    protected void restoreValues() {
-        for (Parameter parameter : uniqueParameters) {
-            parameter.restoreModelState();
-        }
-    }
-
-    @Override
-    protected void saveValues(Map<String, Object> stateMap) {
-        for (Parameter parameter : uniqueParameters) {
-            parameter.saveModelState(stateMap);
-        }
-    }
-
-    @Override
-    protected void loadValues(Map<String, Object> stateMap) {
-        for (Parameter parameter : uniqueParameters) {
-            parameter.loadModelState(stateMap);
-        }
-    }
-
     protected final void adoptValues(Parameter source) {
         // Do nothing
     }
