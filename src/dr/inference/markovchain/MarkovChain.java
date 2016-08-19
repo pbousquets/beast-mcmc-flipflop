@@ -96,6 +96,9 @@ public final class MarkovChain implements Serializable {
         }
 
         for (Parameter parameter : Parameter.FULL_SET) {
+            if (!Parameter.CONNECTED_SET.contains(parameter)) {
+                System.err.println("WARNING: Parameter, " + parameter.getId() + ", created but not used in the MCMC");
+            }
             if (parameter instanceof Storable) {
                 Storable.FULL_SET.add((Storable) parameter);
             }
