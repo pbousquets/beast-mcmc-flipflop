@@ -672,6 +672,8 @@ public interface Parameter extends Statistic, Variable<Double> {
             if (isValid()) {
                 storeValues();
                 setValid(false);
+            } else {
+                throw new IllegalArgumentException("Should not store parameter whilst it is in an invalid state.");
             }
         }
 
@@ -680,7 +682,14 @@ public interface Parameter extends Statistic, Variable<Double> {
             if (!isValid()) {
                 restoreValues();
                 setValid(true);
+            } else {
+                throw new IllegalArgumentException("Should not restore parameter without storing first.");
             }
+        }
+
+        @Override
+        public final void acceptModelState() {
+            setValid(true);
         }
 
         private void storeValues() {
@@ -693,20 +702,10 @@ public interface Parameter extends Statistic, Variable<Double> {
         }
 
         private void restoreValues() {
-
             //swap the arrays
             double[] temp = storedValues;
             storedValues = values;
             values = temp;
-
-            //if (storedValues != null) {
-            //	System.arraycopy(storedValues, 0, values, 0, values.length);
-            //} else throw new RuntimeException("restore called before store!");
-        }
-
-        @Override
-        public final void acceptModelState() {
-            // nothing to do
         }
 
         //********************************************************************

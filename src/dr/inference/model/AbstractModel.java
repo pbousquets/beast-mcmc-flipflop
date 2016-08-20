@@ -41,6 +41,8 @@ import java.util.Map;
  * @version $Id: AbstractModel.java,v 1.13 2006/08/17 15:30:08 rambaut Exp $
  */
 public abstract class AbstractModel implements Model, ModelListener, VariableListener, StatisticList, MPISerializable {
+    // turn on to print debug information
+    private final static boolean DEBUG = false;
 
     /**
      * @param name Model Name
@@ -98,7 +100,7 @@ public abstract class AbstractModel implements Model, ModelListener, VariableLis
         parameter.removeVariableListener(this);
 
         // parameters are also statistics
-       removeStatistic(parameter);
+        removeStatistic(parameter);
     }
 
     /**
@@ -253,34 +255,42 @@ public abstract class AbstractModel implements Model, ModelListener, VariableLis
 
     public final void storeModelState() {
         if (isValidState) {
-            //System.out.println("STORE MODEL: " + getModelName() + "/" + getId());
+            if (DEBUG) {
+                System.out.println("STORE MODEL: " + getModelName() + "/" + getId());
+            }
 
             storeState();
             isValidState = false;
+        } else {
+            throw new IllegalArgumentException("Should not store model state whilst it is in an invalid state.");
         }
     }
 
     public final void restoreModelState() {
         if (!isValidState) {
-            //System.out.println("RESTORE MODEL: " + getModelName() + "/" + getId());
+            if (DEBUG) {
+                System.out.println("RESTORE MODEL: " + getModelName() + "/" + getId());
+            }
 
             restoreState();
             isValidState = true;
 
             listenerHelper.fireModelRestored(this);
+        } else {
+            throw new IllegalArgumentException("Should not restore model state whilst it is in a valid state.");
         }
     }
 
     public final void acceptModelState() {
         if (!isValidState) {
-            //System.out.println("ACCEPT MODEL: " + getModelName() + "/" + getId());
-
-            for (Model m : models) {
-                m.acceptModelState();
+            if (DEBUG) {
+                System.out.println("ACCEPT MODEL: " + getModelName() + "/" + getId());
             }
 
             acceptState();
             isValidState = true;
+        } else {
+            throw new IllegalArgumentException("Should not accept model state whilst it is in a valid state.");
         }
     }
 
@@ -290,30 +300,30 @@ public abstract class AbstractModel implements Model, ModelListener, VariableLis
 
     @Override
     public void saveModelState(Map<String, Map<String, ? extends Object>> stateMap) {
-        if (!isValidState) {
+        if (isValidState) {
             //System.out.println("ACCEPT MODEL: " + getModelName() + "/" + getId());
 
             Map<String, ? extends Object> valueMap = new HashMap<String, Object>();
             saveState(valueMap);
             stateMap.put(getId(), valueMap);
+        } else {
+            throw new IllegalArgumentException("Should not save model state whilst it is in an invalid state.");
         }
     }
 
     @Override
     public void loadModelState(Map<String, Map<String, ? extends Object>> stateMap) {
-        if (!isValidState) {
-            //System.out.println("ACCEPT MODEL: " + getModelName() + "/" + getId());
+        //System.out.println("ACCEPT MODEL: " + getModelName() + "/" + getId());
 
-            Map<String, ? extends Object> valueMap = stateMap.get(getId());
-            if (valueMap == null) {
-                throw new IllegalArgumentException("State map for object with id, " + getId() + " not found.");
-            }
-            loadState(valueMap);
-
-            listenerHelper.fireModelChanged(this);
-
-            isValidState = true;
+        Map<String, ? extends Object> valueMap = stateMap.get(getId());
+        if (valueMap == null) {
+            throw new IllegalArgumentException("State map for object with id, " + getId() + " not found.");
         }
+        loadState(valueMap);
+
+        listenerHelper.fireModelChanged(this);
+
+        isValidState = true;
     }
 
     // **************************************************************
