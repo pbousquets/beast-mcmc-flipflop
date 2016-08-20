@@ -713,20 +713,21 @@ public interface Parameter extends Statistic, Variable<Double> {
         //********************************************************************
 
         @Override
-        public final void saveModelState(Map<String, Map<String, ? extends Object>> stateMap) {
+        public final void saveModelState(Map<String, Map<String, Object>> stateMap) {
             List<Double> valueList = new ArrayList<Double>();
             saveValues(valueList);
 
-            stateMap.put(getId(), Collections.singletonMap("values", valueList));
+            stateMap.put(getId(), Collections.singletonMap("values", (Object)valueList));
 
         }
 
         @Override
-        public final void loadModelState(Map<String, Map<String, ? extends Object>> stateMap) {
-            Map<String, ? extends Object> valueMap = stateMap.get(getId());
+        public final void loadModelState(Map<String, Map<String, Object>> stateMap) {
+            Map<String, ?> valueMap = stateMap.get(getId());
             if (valueMap == null) {
                 throw new IllegalArgumentException("State list for parameter with id, " + getId() + " not found.");
             }
+            // assume the value object is a list of doubles and type cast (ugly)
             List<Double> valueList = (List<Double>)valueMap.get("values");
             if (valueList == null) {
                 throw new IllegalArgumentException("Value list for parameter with id, " + getId() + " not found.");

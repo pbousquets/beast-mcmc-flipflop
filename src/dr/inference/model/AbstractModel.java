@@ -30,6 +30,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -294,51 +295,6 @@ public abstract class AbstractModel implements Model, ModelListener, VariableLis
         }
     }
 
-    //********************************************************************
-    // COLLECTABLE INTERFACE
-    //********************************************************************
-
-    @Override
-    public void saveModelState(Map<String, Map<String, ? extends Object>> stateMap) {
-        if (isValidState) {
-            //System.out.println("ACCEPT MODEL: " + getModelName() + "/" + getId());
-
-            Map<String, ? extends Object> valueMap = new HashMap<String, Object>();
-            saveState(valueMap);
-            stateMap.put(getId(), valueMap);
-        } else {
-            throw new IllegalArgumentException("Should not save model state whilst it is in an invalid state.");
-        }
-    }
-
-    @Override
-    public void loadModelState(Map<String, Map<String, ? extends Object>> stateMap) {
-        //System.out.println("ACCEPT MODEL: " + getModelName() + "/" + getId());
-
-        Map<String, ? extends Object> valueMap = stateMap.get(getId());
-        if (valueMap == null) {
-            throw new IllegalArgumentException("State map for object with id, " + getId() + " not found.");
-        }
-        loadState(valueMap);
-
-        listenerHelper.fireModelChanged(this);
-
-        isValidState = true;
-    }
-
-    // **************************************************************
-    // Model IMPLEMENTATION
-    // **************************************************************
-
-    public boolean isValidState() {
-        return isValidState;
-    }
-
-    public final String getModelName() {
-        return name;
-    }
-
-
     /**
      * Additional state information, outside of the sub-model is stored by this call.
      */
@@ -360,12 +316,56 @@ public abstract class AbstractModel implements Model, ModelListener, VariableLis
         // do nothing by default - override
     }
 
-    protected void saveState(Map<String, ? extends Object> stateMap) {
-        throw new UnsupportedOperationException("must be overridden");
+    //********************************************************************
+    // COLLECTABLE INTERFACE
+    //********************************************************************
+
+    @Override
+    public void saveModelState(Map<String, Map<String, Object>> stateMap) {
+        if (isValidState) {
+            //System.out.println("ACCEPT MODEL: " + getModelName() + "/" + getId());
+
+            Map<String, Object> valueMap = new HashMap<String, Object>();
+            saveState(valueMap);
+            stateMap.put(getId(), valueMap);
+        } else {
+            throw new IllegalArgumentException("Should not save model state whilst it is in an invalid state.");
+        }
     }
 
-    protected void loadState(Map<String, ? extends Object> stateMap) {
-        throw new UnsupportedOperationException("must be overridden");
+    @Override
+    public void loadModelState(Map<String, Map<String, Object>> stateMap) {
+        //System.out.println("ACCEPT MODEL: " + getModelName() + "/" + getId());
+
+        Map<String, Object> valueMap = stateMap.get(getId());
+        if (valueMap == null) {
+            throw new IllegalArgumentException("State map for object with id, " + getId() + " not found.");
+        }
+        loadState(valueMap);
+
+        listenerHelper.fireModelChanged(this);
+
+        isValidState = true;
+    }
+
+    protected void saveState(Map<String, Object> stateMap) {
+        // throw new UnsupportedOperationException("must be overridden");
+    }
+
+    protected void loadState(Map<String, Object> stateMap) {
+        // throw new UnsupportedOperationException("must be overridden");
+    }
+
+    // **************************************************************
+    // Model IMPLEMENTATION
+    // **************************************************************
+
+    public boolean isValidState() {
+        return isValidState;
+    }
+
+    public final String getModelName() {
+        return name;
     }
 
     // **************************************************************

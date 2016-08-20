@@ -592,44 +592,18 @@ public class TreeModel extends AbstractModel implements MultivariateTraitTree, C
      */
     protected void storeState() {
 
-        copyNodeStructure(storedNodes);
+        storeNodeStructure();
         storedRootNumber = root.getNumber();
-
     }
-
-    /**
-     * Restore the stored state
-     */
-    protected void restoreState() {
-
-        Node[] tmp = storedNodes;
-        storedNodes = nodes;
-        nodes = tmp;
-
-        root = nodes[storedRootNumber];
-    }
-
-    /**
-     * accept the stored state
-     */
-    protected void acceptState() {
-    } // nothing to do
 
     /**
      * Copies the node connections from this TreeModel's nodes array to the
-     * destination array. Basically it connects up the nodes in destination
-     * in the same way as this TreeModel is set up. This method is package
-     * private.
+     * storedNodes array.
      */
-    void copyNodeStructure(Node[] destination) {
-
-        if (nodes.length != destination.length) {
-            throw new IllegalArgumentException("Node arrays are of different lengths");
-        }
-
-        for (int i = 0, n = nodes.length; i < n; i++) {
+    private void storeNodeStructure() {
+        for (int i = 0; i < nodes.length; i++) {
             Node node0 = nodes[i];
-            Node node1 = destination[i];
+            Node node1 = storedNodes[i];
 
             // the parameter values are automatically stored and restored
             // just need to keep the links
@@ -655,6 +629,69 @@ public class TreeModel extends AbstractModel implements MultivariateTraitTree, C
                 node1.rightChild = null;
             }
         }
+    }
+
+    /**
+     * Restore the stored state
+     */
+    protected void restoreState() {
+
+        // swap the stored node array back...
+        Node[] tmp = storedNodes;
+        storedNodes = nodes;
+        nodes = tmp;
+
+        root = nodes[storedRootNumber];
+    }
+
+    /**
+     * Accept the stored state
+     */
+    protected void acceptState() {
+        // nothing to do
+    }
+
+    // **************************************************************
+    // Collectable IMPLEMENTATION
+    // **************************************************************
+
+    private static String TREE_KEY = "tree";
+    /**
+     * Create an array of parent links to store tree structure (heights
+     * and other parameters will be stored automatically).
+     * @param stateMap
+     */
+    @Override
+    protected void saveState(Map<String, Object> stateMap) {
+        List<Integer> parents = new ArrayList<Integer>();
+
+        for (int i = 0; i < nodes.length; i++) {
+            if (nodes[i].parent != null) {
+                parents.add(nodes[i].parent.getNumber());
+            } else {
+                parents.add(-1);
+            }
+        }
+        stateMap.put(TREE_KEY, parents);
+    }
+
+    @Override
+    protected void loadState(Map<String, Object> stateMap) {
+        // assume the value object is a list of ints and type cast (ugly)
+        List<Integer> parents = (List<Integer>)stateMap.get(TREE_KEY);
+
+//        for (int i = 0; i < nodes.length; i++) {
+//            int n = parents.get(i);
+//
+//            if (n == -1) {
+//                nodes[i].parent = null;
+//                root = nodes[i];
+//            } else {
+//                nodes[i].parent = nodes[n];
+//                nodes[n].leftChild
+//            }
+//        }
+
     }
 
     /**

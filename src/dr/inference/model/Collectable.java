@@ -44,14 +44,16 @@ import java.util.Set;
 public interface Collectable {
     /**
      * This function should be called to store the model state to a map
+     * @param stateMap
      */
-    void saveModelState(Map<String, Map<String, ? extends Object>> stateMap);
+    void saveModelState(Map<String, Map<String, Object>> stateMap);
 
     /**
      * This function should be called to load the model state from a map
+     * @param stateMap
      */
-    void loadModelState(Map<String, Map<String, ? extends Object>> stateMap);
+    void loadModelState(Map<String, Map<String, Object>> stateMap);
 
     // set to store all created collectables
-    final static Set<Collectable> FULL_SET = new HashSet<Collectable>();
+    Set<Collectable> FULL_SET = new HashSet<Collectable>();
 }

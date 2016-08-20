@@ -109,12 +109,12 @@ public class CompoundModel implements Model {
     }
 
     @Override
-    public void saveModelState(Map<String, Map<String, ? extends Object>> stateMap) {
+    public void saveModelState(Map<String, Map<String, Object>> stateMap) {
         // do nothing
     }
 
     @Override
-    public void loadModelState(Map<String, Map<String, ? extends Object>> stateMap) {
+    public void loadModelState(Map<String, Map<String, Object>> stateMap) {
         // do nothing
     }
 
