@@ -47,7 +47,7 @@ public final class MarkovChain implements Serializable {
 
 
     private final static boolean DEBUG = false;
-    private final static boolean PROFILE = true;
+    private final static boolean PROFILE = false;
 
     public static final double EVALUATION_TEST_THRESHOLD = 1e-1;
 

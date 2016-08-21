@@ -104,8 +104,8 @@ class MersenneTwisterFast implements Serializable {
 	// a good initial seed (of int size, though stored in a long)
 	private static final long GOOD_SEED = 4357;
 
-	private double nextNextGaussian;
-	private boolean haveNextNextGaussian;
+	private double nextGaussian;
+	private boolean haveNextGaussian;
 
 	// The following can be accessed externally by the static accessor methods which
 	// inforce synchronization
@@ -153,7 +153,7 @@ class MersenneTwisterFast implements Serializable {
 			throw new IllegalArgumentException("Non zero random seed required.");
 		}
 		initializationSeed = seed;
-		haveNextNextGaussian = false;
+		haveNextGaussian = false;
 
 		mt = new int[N];
 
@@ -260,10 +260,11 @@ class MersenneTwisterFast implements Serializable {
 	}
 
 	public final double nextGaussian() {
-		if (haveNextNextGaussian) {
-			haveNextNextGaussian = false;
-			return nextNextGaussian;
-		} else {
+        // removed nextGaussian
+//		if (haveNextGaussian) {
+//			haveNextGaussian = false;
+//			return nextGaussian;
+//		} else {
 			double v1, v2, s;
 			do {
 				/* derived from nextDouble documentation in jdk 1.2 docs, see top */
@@ -273,10 +274,10 @@ class MersenneTwisterFast implements Serializable {
 			} while (s >= 1);
 
 			double multiplier = Math.sqrt(-2 * Math.log(s) / s);
-			nextNextGaussian = v2 * multiplier;
-			haveNextNextGaussian = true;
+//			nextGaussian = v2 * multiplier;
+//			haveNextGaussian = true;
 			return v1 * multiplier;
-		}
+//		}
 	}
 
 	public final float nextFloat() {
@@ -531,16 +532,18 @@ class MersenneTwisterFast implements Serializable {
 	}
 
 	public int[] getRandomState() {
-		int[] state = new int[mt.length + 1];
-		state[0] = mti;
-		System.arraycopy(mt, 0, state, 1, mt.length);
+		int[] state = new int[mt.length + 2];
+		state[0] = (int)initializationSeed;
+		state[1] = mti;
+		System.arraycopy(mt, 0, state, 2, mt.length);
 
 		return state;
 	}
 
 	public void setRandomState(int[] rngState) {
-		mti = rngState[0];
-		System.arraycopy(rngState, 1, mt, 0, mt.length);
+		initializationSeed = rngState[0];
+		mti = rngState[1];
+		System.arraycopy(rngState, 2, mt, 0, mt.length);
 	}
 
 }

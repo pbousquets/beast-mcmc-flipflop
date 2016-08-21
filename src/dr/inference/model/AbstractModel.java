@@ -87,6 +87,10 @@ public abstract class AbstractModel implements Model, ModelListener, VariableLis
         Parameter.CONNECTED_SET.add(parameter);
         Parameter.FULL_SET.add(parameter);
 
+        if (parameter instanceof Collectable) {
+            Collectable.FULL_SET.add((Collectable) parameter);
+        }
+
         if (!parameters.contains(parameter)) {
             parameters.add(parameter);
             parameter.addVariableListener(this);
@@ -255,44 +259,38 @@ public abstract class AbstractModel implements Model, ModelListener, VariableLis
     //********************************************************************
 
     public final void storeModelState() {
-        if (isValidState) {
-            if (DEBUG) {
-                System.out.println("STORE MODEL: " + getModelName() + "/" + getId());
-            }
+        assert(isValidState());
 
-            storeState();
-            isValidState = false;
-        } else {
-            throw new IllegalArgumentException("Should not store model state whilst it is in an invalid state.");
+        if (DEBUG) {
+            System.out.println("STORE MODEL: " + getModelName() + "/" + getId());
         }
+
+        storeState();
+        isValidState = false;
     }
 
     public final void restoreModelState() {
-        if (!isValidState) {
-            if (DEBUG) {
-                System.out.println("RESTORE MODEL: " + getModelName() + "/" + getId());
-            }
+        assert(!isValidState());
 
-            restoreState();
-            isValidState = true;
-
-            listenerHelper.fireModelRestored(this);
-        } else {
-            throw new IllegalArgumentException("Should not restore model state whilst it is in a valid state.");
+        if (DEBUG) {
+            System.out.println("RESTORE MODEL: " + getModelName() + "/" + getId());
         }
+
+        restoreState();
+        isValidState = true;
+
+        listenerHelper.fireModelRestored(this);
     }
 
     public final void acceptModelState() {
-        if (!isValidState) {
-            if (DEBUG) {
-                System.out.println("ACCEPT MODEL: " + getModelName() + "/" + getId());
-            }
+        assert(!isValidState());
 
-            acceptState();
-            isValidState = true;
-        } else {
-            throw new IllegalArgumentException("Should not accept model state whilst it is in a valid state.");
+        if (DEBUG) {
+            System.out.println("ACCEPT MODEL: " + getModelName() + "/" + getId());
         }
+
+        acceptState();
+        isValidState = true;
     }
 
     /**
@@ -322,33 +320,41 @@ public abstract class AbstractModel implements Model, ModelListener, VariableLis
 
     @Override
     public void saveModelState(Map<String, Map<String, Object>> stateMap) {
-        if (isValidState) {
-            //System.out.println("ACCEPT MODEL: " + getModelName() + "/" + getId());
+        assert(isValidState());
 
-            Map<String, Object> valueMap = new HashMap<String, Object>();
-            saveState(valueMap);
-            stateMap.put(getId(), valueMap);
-        } else {
-            throw new IllegalArgumentException("Should not save model state whilst it is in an invalid state.");
+        if (getId() == null) {
+            return; // can't store without an id.
         }
+
+        Map<String, Object> valueMap = new HashMap<String, Object>();
+        saveState(valueMap);
+
+        assert !stateMap.containsKey(getId());
+
+        if (valueMap.size() > 0) {
+            stateMap.put(getId(), valueMap);
+        }
+
     }
 
     @Override
     public void loadModelState(Map<String, Map<String, Object>> stateMap) {
-        //System.out.println("ACCEPT MODEL: " + getModelName() + "/" + getId());
+        assert(isValidState());
+
+        if (getId() == null) {
+            return; // can't restore without an id.
+        }
 
         Map<String, Object> valueMap = stateMap.get(getId());
-        if (valueMap == null) {
-            throw new IllegalArgumentException("State map for object with id, " + getId() + " not found.");
+        if (valueMap != null) {
+            loadState(valueMap);
         }
-        loadState(valueMap);
 
         listenerHelper.fireModelChanged(this);
-
-        isValidState = true;
     }
 
     protected void saveState(Map<String, Object> stateMap) {
+        System.err.println(this.getModelName() + " (" + this.getId() + ") not saved");
         // throw new UnsupportedOperationException("must be overridden");
     }
 

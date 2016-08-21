@@ -94,7 +94,7 @@ public class GeneralSubstitutionModelTest extends TraceCorrelationAssert {
         operator.setWeight(1.0);
         schedule.addOperator(operator);
 
-        Parameter rootHeight = treeModel.getRootHeightParameter();
+        Parameter rootHeight = treeModel.createNodeHeightsParameter(true, false, false);
         rootHeight.setId(TREE_HEIGHT);         
         operator = new ScaleOperator(rootHeight, 0.5);
         operator.setWeight(1.0);

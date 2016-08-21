@@ -118,6 +118,7 @@ public class TreeModel extends AbstractModel implements MultivariateTraitTree, C
                 storedNodes[i] = new Node();
                 storedNodes[i].taxon = node.taxon;
                 storedNodes[i].number = i;
+                storedNodes[i].heightParameter = node.heightParameter;
 
                 i++;
             } else {
@@ -126,6 +127,7 @@ public class TreeModel extends AbstractModel implements MultivariateTraitTree, C
                 nodes[j] = node;
                 storedNodes[j] = new Node();
                 storedNodes[j].number = j;
+                storedNodes[j].heightParameter = node.heightParameter;
 
                 j++;
             }
@@ -511,12 +513,12 @@ public class TreeModel extends AbstractModel implements MultivariateTraitTree, C
         throw new RuntimeException("Unimplemented");
     }
 
-    private Node oldRoot;
+    //private Node oldRoot;
 
     public boolean beginTreeEdit() {
         if (inEdit) throw new RuntimeException("Alreading in edit transaction mode!");
 
-        oldRoot = root;
+//        oldRoot = root;
 
         inEdit = true;
 
@@ -528,9 +530,10 @@ public class TreeModel extends AbstractModel implements MultivariateTraitTree, C
 
         inEdit = false;
 
-        if (root != oldRoot) {
-            swapParameterObjects(oldRoot, root);
-        }
+        // using a wrapper rootHeightParameter rather than swapping it around...
+//        if (root != oldRoot) {
+//            swapParameterObjects(oldRoot, root);
+//        }
 
         if (TEST_NODE_BOUNDS) {
             try {
@@ -656,6 +659,7 @@ public class TreeModel extends AbstractModel implements MultivariateTraitTree, C
     // **************************************************************
 
     private static String TREE_KEY = "tree";
+
     /**
      * Create an array of parent links to store tree structure (heights
      * and other parameters will be stored automatically).
@@ -663,35 +667,34 @@ public class TreeModel extends AbstractModel implements MultivariateTraitTree, C
      */
     @Override
     protected void saveState(Map<String, Object> stateMap) {
-        List<Integer> parents = new ArrayList<Integer>();
+        Map<Integer, List<Number>> nodeMap = new LinkedHashMap<Integer, List<Number>>();
 
         for (int i = 0; i < nodes.length; i++) {
-            if (nodes[i].parent != null) {
-                parents.add(nodes[i].parent.getNumber());
-            } else {
-                parents.add(-1);
-            }
+            List<Number> nodeList = new ArrayList<Number>();
+            nodeList.add(nodes[i].parent != null ? nodes[i].parent.getNumber() : -1);
+            nodeList.add(nodes[i].leftChild != null ? nodes[i].leftChild.getNumber() : -1);
+            nodeList.add(nodes[i].rightChild != null ? nodes[i].rightChild.getNumber() : -1);
+            nodeMap.put(nodes[i].getNumber(), nodeList);
         }
-        stateMap.put(TREE_KEY, parents);
+        stateMap.put(TREE_KEY, nodeMap);
     }
 
     @Override
     protected void loadState(Map<String, Object> stateMap) {
-        // assume the value object is a list of ints and type cast (ugly)
-        List<Integer> parents = (List<Integer>)stateMap.get(TREE_KEY);
+        Map<String, List<Number>> nodeMap = (Map<String, List<Number>>)stateMap.get(TREE_KEY);
 
-//        for (int i = 0; i < nodes.length; i++) {
-//            int n = parents.get(i);
-//
-//            if (n == -1) {
-//                nodes[i].parent = null;
-//                root = nodes[i];
-//            } else {
-//                nodes[i].parent = nodes[n];
-//                nodes[n].leftChild
-//            }
-//        }
-
+        if (nodeMap.keySet().size() != nodes.length) {
+            throw new IllegalArgumentException("Node list in state map is not the same length as number of nodes in the tree");
+        }
+        for (int i = 0; i < nodes.length; i++) {
+            List<Number> nodeList = nodeMap.get(Integer.toString(i));
+            nodes[i].parent = (nodeList.get(0).intValue() >= 0 ? nodes[nodeList.get(0).intValue()] : null);
+            if (nodes[i].parent == null) {
+                root = nodes[i];
+            }
+            nodes[i].leftChild = (nodeList.get(1).intValue() >= 0 ? nodes[nodeList.get(1).intValue()] : null);
+            nodes[i].rightChild = (nodeList.get(2).intValue() >= 0 ? nodes[nodeList.get(2).intValue()] : null);
+        }
     }
 
     /**
@@ -919,6 +922,10 @@ public class TreeModel extends AbstractModel implements MultivariateTraitTree, C
      */
     public void setId(String id) {
         this.id = id;
+        for (Node node : nodes) {
+            node.heightParameter.setId(TreeModel.this.getId() + "." + node.getNumber());
+        }
+
     }
 
     // **************************************************************
@@ -1027,7 +1034,7 @@ public class TreeModel extends AbstractModel implements MultivariateTraitTree, C
      */
     public Parameter getRootHeightParameter() {
 
-        return root.heightParameter;
+        return rootHeightParameter;
     }
 
     /**
@@ -1041,10 +1048,12 @@ public class TreeModel extends AbstractModel implements MultivariateTraitTree, C
 
         CompoundParameter parameter = new CompoundParameter("nodeHeights(" + getId() + ")");
 
-        for (int i = externalNodeCount; i < nodeCount; i++) {
-            if ((rootNode && nodes[i] == root) || (internalNodes && nodes[i] != root)) {
-                parameter.addParameter(nodes[i].heightParameter);
-            }
+        if (rootNode) {
+            parameter.addParameter(getRootHeightParameter());
+        }
+
+        if (internalNodes) {
+            parameter.addParameter(internalHeightsParameter);
         }
 
         if (leafNodes) {
@@ -1156,57 +1165,57 @@ public class TreeModel extends AbstractModel implements MultivariateTraitTree, C
      * This method is used to ensure that root node of the tree
      * always has the same parameter object.
      */
-    private void swapParameterObjects(Node n1, Node n2) {
-
-        double height1 = n1.getHeight();
-        double height2 = n2.getHeight();
-
-        double rate1 = 1.0, rate2 = 1.0;
-
-        if (hasRates) {
-            rate1 = n1.getRate();
-            rate2 = n2.getRate();
-        }
-
-        // swap all trait parameters
-
-        if (hasTraits) {
-            Map<String, Parameter> traits1 = new HashMap<String, Parameter>();
-            Map<String, Parameter> traits2 = new HashMap<String, Parameter>();
-
-            traits1.putAll(n1.traitParameters);
-            traits2.putAll(n2.traitParameters);
-
-            Map<String, Parameter> temp = n1.traitParameters;
-            n1.traitParameters = n2.traitParameters;
-            n2.traitParameters = temp;
-
-            for (Map.Entry<String, Parameter> entry : traits1.entrySet()) {
-                n1.traitParameters.get(entry.getKey()).setParameterValueQuietly(0, entry.getValue().getParameterValue(0));
-            }
-            for (Map.Entry<String, Parameter> entry : traits2.entrySet()) {
-                n2.traitParameters.get(entry.getKey()).setParameterValueQuietly(0, entry.getValue().getParameterValue(0));
-            }
-        }
-
-        Parameter temp = n1.heightParameter;
-        n1.heightParameter = n2.heightParameter;
-        n2.heightParameter = temp;
-
-        if (hasRates) {
-            temp = n1.rateParameter;
-            n1.rateParameter = n2.rateParameter;
-            n2.rateParameter = temp;
-        }
-
-        n1.heightParameter.setParameterValueQuietly(0, height1);
-        n2.heightParameter.setParameterValueQuietly(0, height2);
-
-        if (hasRates) {
-            n1.rateParameter.setParameterValueQuietly(0, rate1);
-            n2.rateParameter.setParameterValueQuietly(0, rate2);
-        }
-    }
+//    private void swapParameterObjects(Node n1, Node n2) {
+//
+//        double height1 = n1.getHeight();
+//        double height2 = n2.getHeight();
+//
+//        double rate1 = 1.0, rate2 = 1.0;
+//
+//        if (hasRates) {
+//            rate1 = n1.getRate();
+//            rate2 = n2.getRate();
+//        }
+//
+//        // swap all trait parameters
+//
+//        if (hasTraits) {
+//            Map<String, Parameter> traits1 = new HashMap<String, Parameter>();
+//            Map<String, Parameter> traits2 = new HashMap<String, Parameter>();
+//
+//            traits1.putAll(n1.traitParameters);
+//            traits2.putAll(n2.traitParameters);
+//
+//            Map<String, Parameter> temp = n1.traitParameters;
+//            n1.traitParameters = n2.traitParameters;
+//            n2.traitParameters = temp;
+//
+//            for (Map.Entry<String, Parameter> entry : traits1.entrySet()) {
+//                n1.traitParameters.get(entry.getKey()).setParameterValueQuietly(0, entry.getValue().getParameterValue(0));
+//            }
+//            for (Map.Entry<String, Parameter> entry : traits2.entrySet()) {
+//                n2.traitParameters.get(entry.getKey()).setParameterValueQuietly(0, entry.getValue().getParameterValue(0));
+//            }
+//        }
+//
+//        Parameter temp = n1.heightParameter;
+//        n1.heightParameter = n2.heightParameter;
+//        n2.heightParameter = temp;
+//
+//        if (hasRates) {
+//            temp = n1.rateParameter;
+//            n1.rateParameter = n2.rateParameter;
+//            n2.rateParameter = temp;
+//        }
+//
+//        n1.heightParameter.setParameterValueQuietly(0, height1);
+//        n2.heightParameter.setParameterValueQuietly(0, height2);
+//
+//        if (hasRates) {
+//            n1.rateParameter.setParameterValueQuietly(0, rate1);
+//            n2.rateParameter.setParameterValueQuietly(0, rate2);
+//        }
+//    }
 
     // **************************************************************
     // Private inner classes
@@ -1214,13 +1223,13 @@ public class TreeModel extends AbstractModel implements MultivariateTraitTree, C
 
     public class Node implements NodeRef {
 
-        public Node parent;
-        public Node leftChild, rightChild;
-        private int number;
-        public Parameter heightParameter;
-        public Parameter rateParameter = null;
+        Node parent;
+        Node leftChild, rightChild;
+        int number;
+        Parameter heightParameter;
+        Parameter rateParameter = null;
         //public Parameter traitParameter = null;
-        public Taxon taxon = null;
+        Taxon taxon = null;
 
         Map<String, Parameter> traitParameters = new HashMap<String, Parameter>();
 
@@ -1239,12 +1248,12 @@ public class TreeModel extends AbstractModel implements MultivariateTraitTree, C
             parent = null;
             leftChild = rightChild = null;
 
+            number = node.getNumber();
+
             heightParameter = new Parameter.Default(tree.getNodeHeight(node));
             addParameter(heightParameter);
 
-            number = node.getNumber();
             taxon = tree.getNodeTaxon(node);
-            heightParameter.setId("" + number);
             for (int i = 0; i < tree.getChildCount(node); i++) {
                 addChild(new Node(tree, tree.getChild(node, i)));
             }
@@ -1355,6 +1364,10 @@ public class TreeModel extends AbstractModel implements MultivariateTraitTree, C
 
         public void setNumber(int n) {
             number = n;
+        }
+
+        public Taxon getTaxon() {
+            return taxon;
         }
 
         /**
@@ -1493,8 +1506,136 @@ public class TreeModel extends AbstractModel implements MultivariateTraitTree, C
     // Private members
     // ***********************************************************************
 
+    private Parameter rootHeightParameter = new Parameter.Abstract() {
+        @Override
+        protected void adoptValues(Parameter source) {
+            throw new UnsupportedOperationException("not implemented");
+        }
 
-    /**
+        @Override
+        public double getParameterValue(int dim) {
+            return root.heightParameter.getParameterValue(dim);
+        }
+
+        @Override
+        public void setParameterValue(int dim, double value) {
+            root.heightParameter.setParameterValue(dim, value);
+        }
+
+        @Override
+        public void setParameterValueQuietly(int dim, double value) {
+            root.heightParameter.setParameterValueQuietly(dim, value);
+        }
+
+        @Override
+        public void setParameterValueNotifyChangedAll(int dim, double value) {
+            root.heightParameter.setParameterValueNotifyChangedAll(dim, value);
+        }
+
+        @Override
+        public String getParameterName() {
+            return root.heightParameter.getParameterName();
+        }
+
+        @Override
+        public void addBounds(Bounds<Double> bounds) {
+            throw new UnsupportedOperationException("not implemented");
+        }
+
+        @Override
+        public Bounds<Double> getBounds() {
+            return root.heightParameter.getBounds();
+        }
+
+        @Override
+        public void addDimension(int index, double value) {
+            throw new UnsupportedOperationException("not implemented");
+        }
+
+        @Override
+        public double removeDimension(int index) {
+            throw new UnsupportedOperationException("not implemented");
+        }
+    };
+
+    private Parameter internalHeightsParameter = new Parameter.Abstract() {
+        @Override
+        protected void adoptValues(Parameter source) {
+            throw new UnsupportedOperationException("not implemented");
+        }
+
+        @Override
+        public int getDimension() {
+            return internalNodeCount - 1;
+        }
+
+        @Override
+        public double getParameterValue(int dim) {
+            return getHeightParameter(dim).getParameterValue(0);
+        }
+
+        @Override
+        public void setParameterValue(int dim, double value) {
+            getHeightParameter(dim).setParameterValue(0, value);
+        }
+
+        @Override
+        public void setParameterValueQuietly(int dim, double value) {
+            getHeightParameter(dim).setParameterValueQuietly(0, value);
+        }
+
+        @Override
+        public void setParameterValueNotifyChangedAll(int dim, double value) {
+            getHeightParameter(dim).setParameterValueNotifyChangedAll(0, value);
+        }
+
+        @Override
+        public String getParameterName() {
+            return null;
+        }
+
+        @Override
+        public void addBounds(Bounds<Double> bounds) {
+            throw new UnsupportedOperationException("not implemented");
+        }
+
+        @Override
+        public Bounds<Double> getBounds() {
+            return new Bounds<Double>() {
+                @Override
+                public Double getUpperLimit(int dimension) {
+                    return getHeightParameter(dimension).getBounds().getUpperLimit(0);
+                }
+
+                @Override
+                public Double getLowerLimit(int dimension) {
+                    return getHeightParameter(dimension).getBounds().getLowerLimit(0);
+                }
+
+                @Override
+                public int getBoundsDimension() {
+                    return internalNodeCount - 1;
+                }
+            };
+        }
+
+        @Override
+        public void addDimension(int index, double value) {
+            throw new UnsupportedOperationException("not implemented");
+        }
+
+        @Override
+        public double removeDimension(int index) {
+            throw new UnsupportedOperationException("not implemented");
+        }
+
+        private Parameter getHeightParameter(int dim) {
+            int n = dim + externalNodeCount;
+            return nodes[(n >= root.getNumber() ? n + 1 : n)].heightParameter;
+        }
+    };
+
+        /**
      * root node
      */
     private Node root = null;

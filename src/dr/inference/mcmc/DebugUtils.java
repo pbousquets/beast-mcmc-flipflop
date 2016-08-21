@@ -42,22 +42,16 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonWriter;
-import dr.evolution.io.Importer;
-import dr.evolution.io.NewickImporter;
-import dr.evolution.tree.Tree;
-import dr.evomodel.tree.TreeModel;
 import dr.inference.model.Collectable;
 import dr.inference.model.Likelihood;
-import dr.inference.model.Model;
-import dr.inference.model.Parameter;
 import dr.math.MathUtils;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.*;
 
 public class DebugUtils {
+    private final static boolean FIXED_FILE_NAME = true;
 
 //    /**
 //     * Writes out the current state in a human readable format to help debugging.
@@ -265,7 +259,11 @@ public class DebugUtils {
      * @param state the current state number
      * @return success
      */
-    public static boolean writeStateToJSONFile(File file, long state, double lnL) {
+    public static boolean writeStateToFile(File file, long state, double lnL) {
+
+        if (FIXED_FILE_NAME) {
+            file = new File("debug.json");
+        }
 
         try {
             JsonWriter writer = new JsonWriter(new FileWriter(file));
@@ -273,10 +271,15 @@ public class DebugUtils {
 
             Map<String, Map<String, Object>> stateMap = new LinkedHashMap<String, Map<String, Object>>();
 
-            int[] rngState = MathUtils.getRandomState();
             Map<String, Object> settingsMap = new HashMap<String, Object>();
 
-            settingsMap.put("rng", Arrays.asList(rngState));
+            int[] rngState = MathUtils.getRandomState();
+            List<Number> rngList = new ArrayList<Number>();
+            for (int i : rngState) {
+                rngList.add(i);
+            }
+
+            settingsMap.put("rng", rngList);
             settingsMap.put("state", state);
             settingsMap.put("lnL", lnL);
 
@@ -306,7 +309,11 @@ public class DebugUtils {
      * @param file the file
      * @return the state number
      */
-    public static long readStateFromJSONFile(File file, double[] lnL) {
+    public static long readStateFromFile(File file, double[] lnL) {
+
+        if (FIXED_FILE_NAME) {
+            file = new File("debug.json");
+        }
 
         long state;
 
@@ -329,20 +336,22 @@ public class DebugUtils {
                 List<Integer> rngStateList = ((List<Integer>) settingsMap.get("rng"));
                 rngState = new int[rngStateList.size()];
                 int i = 0;
-                for (Integer e : rngStateList) {
-                    rngState[i++] = e;
+                for (Object e : rngStateList) {
+                    rngState[i++] = ((Number)e).intValue();
                 }
             }
 
             if (!settingsMap.containsKey("state")) {
                 throw new RuntimeException("Unable to read state number from state file");
             }
-            state = (Long)settingsMap.get("state");
+            state = ((Number)settingsMap.get("state")).longValue();
 
-            if (!settingsMap.containsKey("lnL")) {
-                throw new RuntimeException("Unable to read lnL from state file");
+            if (lnL != null) {
+                if (!settingsMap.containsKey("lnL")) {
+                    throw new RuntimeException("Unable to read lnL from state file");
+                }
+                lnL[0] = ((Number) settingsMap.get("lnL")).doubleValue();
             }
-            lnL[0] = (Double)settingsMap.get("lnL");
 
             if (rngState != null) {
                 MathUtils.setRandomState(rngState);

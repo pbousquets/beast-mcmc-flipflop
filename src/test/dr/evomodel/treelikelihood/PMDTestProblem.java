@@ -120,7 +120,7 @@ public class PMDTestProblem extends TraceCorrelationAssert {
         operator.setWeight(3.0);
         schedule.addOperator(operator);
 
-        Parameter rootHeight = treeModel.getRootHeightParameter();
+        Parameter rootHeight = treeModel.createNodeHeightsParameter(true, false, false);
         rootHeight.setId(TREE_HEIGHT);
         operator = new ScaleOperator(rootHeight, 0.75);
         operator.setWeight(3.0);

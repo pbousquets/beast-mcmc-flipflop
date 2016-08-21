@@ -573,7 +573,7 @@ public class PartitionedTreeModel extends TreeModel {
     private AbstractCase[] prepareExternalNodeMap(AbstractCase[] map){
         for(int i=0; i< getExternalNodeCount(); i++){
             TreeModel.Node currentExternalNode = (TreeModel.Node) getExternalNode(i);
-            Taxon currentTaxon = currentExternalNode.taxon;
+            Taxon currentTaxon = currentExternalNode.getTaxon();
             for(AbstractCase thisCase : outbreak.getCases()){
                 if(thisCase.wasEverInfected()) {
                     for (Taxon caseTaxon : thisCase.getAssociatedTaxa()) {

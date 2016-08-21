@@ -84,7 +84,7 @@ public class MCMCTest extends TraceCorrelationAssert {
 //        Parameter rootParameter = treeModel.createNodeHeightsParameter(true, false, false);
 //        ScaleOperator scaleOperator = new ScaleOperator(rootParameter, 0.75, CoercionMode.COERCION_ON, 1.0);
 
-        Parameter rootHeight = treeModel.getRootHeightParameter();
+        Parameter rootHeight = treeModel.createNodeHeightsParameter(true, false, false);
         rootHeight.setId(TREE_HEIGHT);
         operator = new ScaleOperator(rootHeight, 0.5);
         operator.setWeight(1.0);

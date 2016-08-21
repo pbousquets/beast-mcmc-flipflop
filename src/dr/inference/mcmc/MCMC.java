@@ -109,9 +109,6 @@ public class MCMC implements Identifiable, Spawnable, Loggable {
         this.loggers = loggers;
         this.schedule = schedule;
 
-        //initialize transients
-        currentState = 0;
-
         for(MarkovChainDelegate delegate : delegates) {
             delegate.setup(options, schedule, mc);
         }
@@ -177,7 +174,6 @@ public class MCMC implements Identifiable, Spawnable, Loggable {
     public void chain() {
 
         stopping = false;
-        currentState = 0;
 
         timer.start();
 
@@ -197,7 +193,7 @@ public class MCMC implements Identifiable, Spawnable, Loggable {
 
                 double lnL = mc.evaluate();
 
-                DebugUtils.writeStateToJSONFile(new File("tmp.dump"), loadedState, lnL);
+//                DebugUtils.writeStateToFile(new File("tmp.dump"), loadedState, lnL);
 
                 if (lnL != savedLnL[0]) {
                         throw new RuntimeException("Dumped lnL does not match loaded state: stored lnL: " + savedLnL[0] +
@@ -215,7 +211,7 @@ public class MCMC implements Identifiable, Spawnable, Loggable {
                 mc.addMarkovChainDelegate(delegate);
             }
 
-            long chainLength = getChainLength();
+            long chainLength = getChainLength() - mc.getCurrentLength();
 
             final long coercionDelay = getCoercionDelay();
 
@@ -236,8 +232,8 @@ public class MCMC implements Identifiable, Spawnable, Loggable {
                 double lnL1 = mc.getCurrentScore();
 
                 // Write the MarkovChain out and back in again...
-                DebugUtils.writeStateToJSONFile(new File("beast.state"), currentState, mc.getCurrentScore());
-                DebugUtils.readStateFromJSONFile(new File("beast.state"), null);
+                DebugUtils.writeStateToFile(new File("beast.state"), mc.getCurrentLength(), mc.getCurrentScore());
+                DebugUtils.readStateFromFile(new File("beast.state"), null);
 
                 double lnL2 = mc.evaluate();
 
@@ -299,9 +295,6 @@ public class MCMC implements Identifiable, Spawnable, Loggable {
          * Called to update the current model keepEvery states.
          */
         public void currentState(long state, Model currentModel) {
-
-            currentState = state;
-
             if (loggers != null) {
                 for (Logger logger : loggers) {
                     logger.log(state);
@@ -313,18 +306,16 @@ public class MCMC implements Identifiable, Spawnable, Loggable {
          * Called when a new new best posterior state is found.
          */
         public void bestState(long state, Model bestModel) {
-            currentState = state;
+            // do nothing
         }
 
         /**
          * cleans up when the chain finishes (possibly early).
          */
         public void finished(long chainLength) {
-            currentState = chainLength;
-
             if (loggers != null) {
                 for (Logger logger : loggers) {
-                    logger.log(currentState);
+                    logger.log(chainLength);
                     logger.stopLogging();
                 }
             }
@@ -471,29 +462,6 @@ public class MCMC implements Identifiable, Spawnable, Loggable {
         return options.getChainLength();
     }
 
-    // TRANSIENT PUBLIC METHODS *****************************************
-
-    /**
-     * @return the current state of the MCMC analysis.
-     */
-    public final long getCurrentState() {
-        return currentState;
-    }
-
-    /**
-     * @return the progress (0 to 1) of the MCMC analysis.
-     */
-    public final double getProgress() {
-        return (double) currentState / (double) options.getChainLength();
-    }
-
-    /**
-     * @return true if this MCMC is currently adapting the operators.
-     */
-    public final boolean isAdapting() {
-        return isAdapting;
-    }
-
     /**
      * Requests that the MCMC chain stop prematurely.
      */
@@ -561,14 +529,10 @@ public class MCMC implements Identifiable, Spawnable, Loggable {
 
     private String dumpStateFile = null;
 
-    //private FileLogger operatorLogger = null;
-    protected final boolean isAdapting = true;
     protected boolean stopping = false;
     protected boolean showOperatorAnalysis = true;
     protected File operatorAnalysisFile = null;
     protected final dr.util.Timer timer = new dr.util.Timer();
-    protected long currentState = 0;
-    //private int stepsPerReport = 1000;
     protected final NumberFormatter formatter = new NumberFormatter(8);
 
     /**

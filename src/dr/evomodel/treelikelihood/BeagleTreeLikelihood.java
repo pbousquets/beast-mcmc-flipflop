@@ -761,6 +761,16 @@ public class BeagleTreeLikelihood extends AbstractSinglePartitionTreeLikelihood 
 
     }
 
+    @Override
+    protected void saveState(Map<String, Object> stateMap) {
+
+    }
+
+    @Override
+    protected void loadState(Map<String, Object> stateMap) {
+        makeDirty();
+    }
+
 //    int marcCount = 0;
     // **************************************************************
     // Likelihood IMPLEMENTATION

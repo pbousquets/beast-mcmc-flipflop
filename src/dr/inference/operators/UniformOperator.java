@@ -67,6 +67,13 @@ public class UniformOperator extends SimpleMCMCOperator {
         final Bounds<Double> bounds = parameter.getBounds();
         final double lower = (lowerBound == null ? bounds.getLowerLimit(index) : Math.max(bounds.getLowerLimit(index), lowerBound));
         final double upper = (upperBound == null ? bounds.getUpperLimit(index) : Math.min(bounds.getUpperLimit(index), upperBound));
+
+        if (Double.isInfinite(upper - lower)) {
+            double tmp = bounds.getUpperLimit(index);
+            System.out.println(tmp);
+        }
+        assert !Double.isInfinite(upper - lower) : "Bounds of parameter cannot be infinite for UniformOperator";
+
         final double newValue = (MathUtils.nextDouble() * (upper - lower)) + lower;
 
         parameter.setParameterValue(index, newValue);

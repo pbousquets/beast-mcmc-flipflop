@@ -63,7 +63,7 @@ public class DebugChainListener implements MarkovChainListener {
         if (state == writeState || (isRepeating && state > 0 && (state % writeState == 0))) {
             String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(Calendar.getInstance().getTime());
 
-            DebugUtils.writeStateToJSONFile(new File("beast_debug_" + timeStamp), state, mcmc.getMarkovChain().getCurrentScore());
+            DebugUtils.writeStateToFile(new File("beast_debug_" + timeStamp), state, mcmc.getMarkovChain().getCurrentScore());
         }
     }
 

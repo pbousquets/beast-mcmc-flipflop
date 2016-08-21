@@ -48,12 +48,12 @@ import java.util.List;
  */
 public class GTR extends BaseSubstitutionModel implements Citable {
 
-    private Variable<Double> rateACVariable = null;
-    private Variable<Double> rateAGVariable = null;
-    private Variable<Double> rateATVariable = null;
-    private Variable<Double> rateCGVariable = null;
-    private Variable<Double> rateCTVariable = null;
-    private Variable<Double> rateGTVariable = null;
+    private Parameter rateACVariable = null;
+    private Parameter rateAGVariable = null;
+    private Parameter rateATVariable = null;
+    private Parameter rateCGVariable = null;
+    private Parameter rateCTVariable = null;
+    private Parameter rateGTVariable = null;
 
     /**
      * @param rateACVariable rate of A<->C substitutions
