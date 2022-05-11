@@ -153,6 +153,12 @@ public class TaxaFilteredSitePatterns implements PatternList {
     }
 
     @Override
+    public int getPatternIndex(int siteIndex){
+        // Not implemented yet
+        return -1;
+    }
+
+    @Override
     public List<Taxon> asList() {
         List<Taxon> taxa = new ArrayList<Taxon>();
         for (int i = 0, n = getTaxonCount(); i < n; i++) {
