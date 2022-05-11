@@ -52,6 +52,8 @@ public class SitePatterns implements SiteList, dr.util.XHTMLable {
      */
     protected SiteList siteList = null;
 
+    protected Parameter partitionCat;
+
     /**
      * number of sites
      */
@@ -164,6 +166,21 @@ public class SitePatterns implements SiteList, dr.util.XHTMLable {
      */
     public SitePatterns(SiteList siteList) {
         this(siteList, -1, -1, 1, true, true);
+    }
+
+    /**
+     * Constructor
+     */
+    // Remove this from SitePatternsParser, and we can get rid of it as well as the setPatterns(siteAssignInd) method
+    public SitePatterns(SiteList siteList, Parameter siteAssignInd, Parameter partitionCat) {
+        this.strip = false;
+        this.siteList = siteList;
+        //this.siteAssignInd = siteAssignInd;
+        this.partitionCat = partitionCat;
+        //setPatterns(siteList, siteAssignInd, partitionCat);
+        // Is this necessary?
+        setPatterns(siteAssignInd);
+        System.exit(0);
     }
 
     /**
@@ -302,6 +319,78 @@ public class SitePatterns implements SiteList, dr.util.XHTMLable {
                 sitePatternIndices[site] = -1;
             }
             site++;
+        }
+    }
+
+    // Is this needed?
+    // public void setPatterns(SiteList siteList, Parameter siteAssignInd, Parameter partitionCat) {
+    public void setPatterns(Parameter siteAssignInd){
+        System.err.println("New setPatterns GETs CALLED!!");
+        //this.siteList = siteList;
+        //this.siteAssignInd = siteAssignInd;
+        //this.from = from;
+        // this.to = to;
+        // this.every = every;
+
+        if (siteList == null) {
+            return;
+        }
+
+        //if (from <= -1)
+        //    from = 0;
+
+        //if (to <= -1)
+        //    to = siteList.getSiteCount() - 1;
+
+        //if (every <= 0)
+        //    every = 1;
+
+        //siteCount = ((to - from) / every) + 1;
+        siteCount = siteList.getSiteCount();
+
+        patternCount = 0;
+
+        patterns = new int[siteCount][];
+
+        sitePatternIndices = new int[siteCount];
+        weights = new double[siteCount];
+
+        invariantCount = 0;
+
+        uncertainSites = siteList.areUncertain();
+
+        if (uncertainSites) {
+            uncertainPatterns = new double[siteCount][][];
+        }
+
+
+        int site = 0;
+        int counter = 0;
+        // try for(int i : siteAssignInd.getParameterValue(i)==partitionCat.getParameterValue(0)){
+        // Don't want to iterate through all sites more than once
+        for (int i = 0; i < siteCount; i++) {
+
+            if(siteAssignInd.getParameterValue(i)==partitionCat.getParameterValue(0)) {
+                int[] pattern = siteList.getSitePattern(i);
+                double[][] probs = null;
+
+                if (uncertainSites) {
+                    probs = siteList.getUncertainSitePattern(i);
+                }
+
+                if (!strip || !isInvariant(pattern) ||
+                        (!isGapped(pattern) &&
+                                !isAmbiguous(pattern) &&
+                                !isUnknown(pattern))) {
+
+                    sitePatternIndices[site] = addPattern(pattern, probs);
+
+                } else {
+                    sitePatternIndices[site] = -1;
+                }
+                site++;
+                counter++;
+            }
         }
     }
 

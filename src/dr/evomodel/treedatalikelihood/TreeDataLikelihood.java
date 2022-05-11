@@ -211,11 +211,23 @@ public final class TreeDataLikelihood extends AbstractModelLikelihood implements
             }
         } else if (model == likelihoodDelegate) {
 
-            if (index == -1) {
+            if(object instanceof Parameter){
+                //System.err.println("object == siteAssignInd");
                 updateAllNodes();
-            } else {
-                updateNode(treeModel.getNode(index));
+                likelihoodKnown = false;
+            }else {
+                if (index == -1) {
+                    updateAllNodes();
+                } else {
+                    updateNode(treeModel.getNode(index));
+                }
             }
+
+            //if (index == -1) {
+            //    updateAllNodes();
+            //} else {
+            //    updateNode(treeModel.getNode(index));
+            //}
 
         } else if (model == branchRateModel) {
 

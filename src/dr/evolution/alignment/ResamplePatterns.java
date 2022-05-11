@@ -136,6 +136,15 @@ public abstract class ResamplePatterns implements PatternList, dr.util.XHTMLable
 		return weights;
 	}
 
+	//public void setPatterns(Parameter siteAssignInd){
+		// Doesn't do anything yet
+	//}
+
+	public int getPatternIndex(int siteIndex){
+		// Not implemented yet
+		return -1;
+	}
+
 	/**
 	 * @return the DataType of this siteList
 	 */

@@ -171,6 +171,10 @@ public class TreeTraitNormalDistributionModel extends AbstractModel implements P
         return distribution.logPdf(x);
     }
 
+    public int getDimension(){
+        return dim;
+    }
+
     // *****************************************************************
     // Interface DensityModel
     // *****************************************************************

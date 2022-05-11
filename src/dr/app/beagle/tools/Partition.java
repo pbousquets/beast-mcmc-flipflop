@@ -194,6 +194,8 @@ public class Partition {
 
 	public void simulatePartition() {
 
+		System.exit(-8);
+
 		try {
 
 			NodeRef root = treeModel.getRoot();

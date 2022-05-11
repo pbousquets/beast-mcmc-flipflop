@@ -72,6 +72,9 @@ public class ArbitraryBranchRates extends AbstractBranchRateModel implements Cit
             addModel((Model)transform);
         }
 
+        System.out.println("setRates: " + setRates);
+        System.exit(0);
+
         if (setRates) {
             final double value = transform.center();
             for (int i = 0; i < rateParameter.getDimension(); i++) {

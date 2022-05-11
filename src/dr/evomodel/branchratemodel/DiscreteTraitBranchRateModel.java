@@ -277,6 +277,8 @@ public class DiscreteTraitBranchRateModel extends AbstractBranchRateModel {
 
     public double getBranchRate(final Tree tree, final NodeRef node) {
 
+        System.exit(-9);
+
         if (CACHING_RATES) {
             if (!rateKnown[node.getNumber()]) {
                 rates[node.getNumber()] = getRawBranchRate(tree, node);

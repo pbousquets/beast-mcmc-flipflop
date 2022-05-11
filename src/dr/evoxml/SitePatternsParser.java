@@ -50,7 +50,8 @@ public class SitePatternsParser extends AbstractXMLObjectParser {
     public static final String STRIP = "strip";
     public static final String UNIQUE = "unique";
     public static final String CONSTANT_PATTERNS = "constantPatterns";
-
+    public static final String SITE_ASSIGN_IND = "siteAssignInd";
+    public static final String PARTITION_CAT = "partitionCategory";
 
     public String getParserName() {
         return PATTERNS;
@@ -109,7 +110,17 @@ public class SitePatternsParser extends AbstractXMLObjectParser {
             throw new XMLParseException("illegal 'to' attribute in patterns element (selected attribute = " + to + " vs. actual site count = " + alignment.getSiteCount() + ")");
         }
 
-        SitePatterns patterns = new SitePatterns(alignment, taxa, from, to, every, strip, unique, constantPatternCounts);
+        //SitePatterns patterns = new SitePatterns(alignment, taxa, from, to, every, strip, unique, constantPatternCounts);
+
+        SitePatterns patterns = null;
+        // SitePatterns should not need SITE_ASSIGN_IND
+        if (xo.hasChildNamed(SITE_ASSIGN_IND)) {
+            Parameter indicators = (Parameter) xo.getElementFirstChild(SITE_ASSIGN_IND);
+            Parameter cat = (Parameter) xo.getElementFirstChild(PARTITION_CAT);
+            patterns = new SitePatterns(alignment, indicators, cat);
+        }else {
+            patterns = new SitePatterns(alignment, taxa, from, to, every, strip, unique, constantPatternCounts);
+        }
 
         int f = from + 1;
         int t = to + 1; // fixed a *display* error by adding + 1 for consistency with f = from + 1
@@ -145,6 +156,10 @@ public class SitePatternsParser extends AbstractXMLObjectParser {
             new ElementRule(TAXON_LIST,
                     new XMLSyntaxRule[]{new ElementRule(TaxonList.class)}, true),
             new ElementRule(CONSTANT_PATTERNS,
+                    new XMLSyntaxRule[]{new ElementRule(Parameter.class)}, true),
+            new ElementRule(SITE_ASSIGN_IND,
+                    new XMLSyntaxRule[]{new ElementRule(Parameter.class)}, true),
+            new ElementRule(PARTITION_CAT,
                     new XMLSyntaxRule[]{new ElementRule(Parameter.class)}, true),
             new ElementRule(Alignment.class),
             AttributeRule.newBooleanRule(STRIP, true, "Strip out completely ambiguous sites"),

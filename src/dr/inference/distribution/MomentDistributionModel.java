@@ -207,6 +207,8 @@ public class MomentDistributionModel extends AbstractModelLikelihood implements 
             return 0;
     }
 
+    public int getDimension(){return mean.getSize();}
+
     @Override
     public Model getModel() {
         return this;

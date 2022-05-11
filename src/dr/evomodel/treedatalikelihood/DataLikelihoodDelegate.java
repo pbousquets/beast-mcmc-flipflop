@@ -49,6 +49,8 @@ public interface DataLikelihoodDelegate extends ProcessOnTreeDelegate, Model, Pr
     double calculateLikelihood(List<BranchOperation> branchOperations, List<NodeOperation> nodeOperations,
                                int rootNodeNumber) throws LikelihoodException;
 
+    double[] getSiteLogLikelihoods();
+
     int getTraitCount();
 
     int getTraitDim();

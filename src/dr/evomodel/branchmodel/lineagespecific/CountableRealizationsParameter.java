@@ -36,50 +36,50 @@ import dr.inference.model.VariableListener;
 /**
  * @author Marc Suchard
  * @author Filip Bielejec
- * 
+ *
  */
 @SuppressWarnings("serial")
 public class CountableRealizationsParameter extends Parameter.Abstract implements VariableListener {
 
-	private final Parameter categoriesParameter;
-	private final CompoundParameter uniquelyRealizedParameters;
-	
-	
-	private final int dim;
-	private final int realizationCount;
+    private final Parameter categoriesParameter;
+    private final CompoundParameter uniquelyRealizedParameters;
 
-	private final int uniqueRealizationCount;
-	
+
+    private final int dim;
+    private final int realizationCount;
+
+    private final int uniqueRealizationCount;
+
     private final LinkedList<Parameter> paramList;
     private Bounds<Double> bounds = null;
-	
+
     public CountableRealizationsParameter(Parameter categoriesParameter, //
-    		 CompoundParameter uniquelyRealizedParameters //
-    		) {
-    	
-    	this.categoriesParameter = categoriesParameter;
-    	this.uniquelyRealizedParameters = uniquelyRealizedParameters;
-    	
-    	dim = uniquelyRealizedParameters.getParameter(0).getDimension();
-    	// TODO Make sure all parameters have same dimension
-    	
-    	realizationCount = categoriesParameter.getDimension();
-    	
-    	paramList = new LinkedList<Parameter>();
-    	paramList.add(categoriesParameter);
-    	paramList.add(uniquelyRealizedParameters);
-    	
+                                          CompoundParameter uniquelyRealizedParameters //
+    ) {
+
+        this.categoriesParameter = categoriesParameter;
+        this.uniquelyRealizedParameters = uniquelyRealizedParameters;
+
+        dim = uniquelyRealizedParameters.getParameter(0).getDimension();
+        // TODO Make sure all parameters have same dimension
+
+        realizationCount = categoriesParameter.getDimension();
+
+        paramList = new LinkedList<Parameter>();
+        paramList.add(categoriesParameter);
+        paramList.add(uniquelyRealizedParameters);
+
 //        this.paramList = parameter;
 //        for (Parameter p : paramList) {
 //            p.addVariableListener(this);
 //        }
-    	
-    	uniqueRealizationCount = uniquelyRealizedParameters.getDimension();
-    
+
+        uniqueRealizationCount = uniquelyRealizedParameters.getDimension();
+
     }//END: Constructor
 
     public int getDimension() {
-    	return dim * realizationCount; //  paramList.get(0).getDimension(); // Unwritten contract
+        return dim * realizationCount; //  paramList.get(0).getDimension(); // Unwritten contract
     }
 
     protected void storeValues() {
@@ -105,26 +105,55 @@ public class CountableRealizationsParameter extends Parameter.Abstract implement
     }
 
     public double getParameterValue(int index) {
-    	
+
 //    	int whichCategoryIndex = index % dim; // TODO Maybe?
 //    	int whichDimIndex = index - whichCategoryIndex * dim; // TODO Maybe?
 //    	Parameter param = uniquelyRealizedParameters.getParameter((int) categoriesParameter.getParameterValue(whichCategoryIndex));
 //    	return param.getParameterValue(whichDimIndex);     
-    	
-    	int whichCategoryIndex = categoriesParameter.getValue(index).intValue();//
-    	int whichDimIndex = 0;
-    	
-    	Parameter param = uniquelyRealizedParameters.getParameter(whichCategoryIndex);
-    	
-    	return param.getParameterValue(whichDimIndex);     
+
+        int whichCategoryIndex = categoriesParameter.getValue(index).intValue();//
+        int whichDimIndex = 0;
+
+        Parameter param = uniquelyRealizedParameters.getParameter(whichCategoryIndex);
+
+        return param.getParameterValue(whichDimIndex);
     }//END: getParameterValue
 
-	public void setParameterValue(int dim, double value) {
+    public double[] getAllParameterValues(int index) {
 
-		int whichCategoryIndex = (int) categoriesParameter.getParameterValue(dim);
-		uniquelyRealizedParameters.setParameterValue(whichCategoryIndex, value);
+        int whichCategoryIndex = categoriesParameter.getValue(index).intValue();//
 
-	}//END: setParameterValue
+        Parameter param = uniquelyRealizedParameters.getParameter(whichCategoryIndex);
+        double[] returnVal = new double[param.getSize()];
+
+        for(int i = 0; i < param.getSize(); i++){
+            returnVal[i] = param.getParameterValue(i);
+        }
+
+        return returnVal;
+    }
+
+    public void setParameterValue(int dim, double value) {
+
+        int whichCategoryIndex = (int) categoriesParameter.getParameterValue(dim);
+        uniquelyRealizedParameters.setParameterValue(whichCategoryIndex, value);
+
+    }//END: setParameterValue
+
+    public void setParameterValue(int dim, double[] value) {
+
+        int whichCategoryIndex = (int) categoriesParameter.getParameterValue(dim);
+
+        if(uniquelyRealizedParameters.getParameter(whichCategoryIndex).getSize() != value.length){
+            throw new RuntimeException("parameter and array with parameter values must have same dimension");
+        }
+
+        for(int i = 0; i < value.length; i++){
+            uniquelyRealizedParameters.getParameter(whichCategoryIndex).setParameterValue(i,value[i]);
+        }
+        //uniquelyRealizedParameters.setParameterValue(whichCategoryIndex, value);
+
+    }//END: setParameterValue
 
     public void setParameterValueQuietly(int dim, double value) {
         throw new RuntimeException("Not implemented");

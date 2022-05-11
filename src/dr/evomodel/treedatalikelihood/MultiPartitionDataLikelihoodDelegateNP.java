@@ -1,28 +1,3 @@
-/*
- * MultiPartitionDataLikelihoodDelegate.java
- *
- * Copyright (c) 2002-2017 Alexei Drummond, Andrew Rambaut and Marc Suchard
- *
- * This file is part of BEAST.
- * See the NOTICE file distributed with this work for additional
- * information regarding copyright ownership and licensing.
- *
- * BEAST is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- *  BEAST is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with BEAST; if not, write to the
- * Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
- * Boston, MA  02110-1301  USA
- */
-
 package dr.evomodel.treedatalikelihood;
 
 import beagle.*;
@@ -42,29 +17,41 @@ import dr.util.Citation;
 import dr.util.CommonCitations;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
+//begin fix attempt
 import static dr.evomodel.treedatalikelihood.BeagleFunctionality.*;
+//end fix attempt
 
-/**
- * MultiPartitionDataLikelihoodDelegate
- *
- * A DataLikelihoodDelegate that uses BEAGLE 3 to allow for parallelization across multiple data partitions
- *
- * @author Andrew Rambaut
- * @author Marc Suchard
- * @author Guy Baele
- * @version $Id$
- */
-
-public class MultiPartitionDataLikelihoodDelegate extends AbstractModel implements DataLikelihoodDelegate, Citable {
+public class MultiPartitionDataLikelihoodDelegateNP extends AbstractModel implements DataLikelihoodDelegate, Citable {
 
     private static final boolean COUNT_CALCULATIONS = true; // keep a cumulative total of number of computations
 
     private static final boolean RESCALING_OFF = false; // a debugging switch
     private static final boolean DEBUG = false;
+
+    // begin fix attempt
+    /*
+    public static boolean IS_MULTI_PARTITION_COMPATIBLE() {
+        int[] versionNumbers = BeagleInfo.getVersionNumbers();
+        return versionNumbers.length != 0 && versionNumbers[0] >= 3;
+    }
+
+    public static boolean IS_THREAD_COUNT_COMPATIBLE() {
+        int[] versionNumbers = BeagleInfo.getVersionNumbers();
+        return versionNumbers.length != 0 && versionNumbers[0] >= 3 && versionNumbers[1] >= 1;
+    }
+
+    public static boolean IS_ODD_STATE_SSE_FIXED() {
+        // SSE for odd state counts fixed in BEAGLE 3.1.3
+        int[] versionNumbers = BeagleInfo.getVersionNumbers();
+        return versionNumbers.length != 0 && versionNumbers[0] >= 3 && versionNumbers[1] >= 1 && versionNumbers[2] >= 3;
+    }
+    */
+    // end fix attempt
 
     public static boolean IS_MULTI_PARTITION_RECOMMENDED() {
         if (!IS_MULTI_PARTITION_COMPATIBLE()) {
@@ -165,16 +152,19 @@ public class MultiPartitionDataLikelihoodDelegate extends AbstractModel implemen
      * @param siteRateModels A list of siteRateModels for each partition
      * @param useAmbiguities Whether to respect state ambiguities in data
      */
-    public MultiPartitionDataLikelihoodDelegate(Tree tree,
-                                                List<PatternList> patternLists,
-                                                List<BranchModel> branchModels,
-                                                List<SiteRateModel> siteRateModels,
-                                                boolean useAmbiguities,
-                                                PartialsRescalingScheme rescalingScheme,
-                                                boolean delayRescalingUntilUnderflow)
-                                                  throws DelegateTypeException {
+    public MultiPartitionDataLikelihoodDelegateNP(Tree tree,
+                                                  // rewrite in terms of siteLists
+                                                  List<PatternList> patternLists,
+                                                  List<BranchModel> branchModels,
+                                                  List<SiteRateModel> siteRateModels,
+                                                  boolean useAmbiguities,
+                                                  PartialsRescalingScheme rescalingScheme,
+                                                  boolean delayRescalingUntilUnderflow,
+                                                  Parameter siteAssignInd,
+                                                  List<Parameter> polyaPartitionCat)
+            throws DelegateTypeException {
 
-        super("MultiPartitionDataLikelihoodDelegate");
+        super("MultiPartitionDataLikelihoodDelegateNP");
         final Logger logger = Logger.getLogger("dr.evomodel");
 
         setId(patternLists.get(0).getId());
@@ -182,6 +172,12 @@ public class MultiPartitionDataLikelihoodDelegate extends AbstractModel implemen
         this.patternLists = patternLists;
         this.dataType = patternLists.get(0).getDataType();
         stateCount = dataType.getStateCount();
+
+        //begin new
+        this.siteAssignInd = siteAssignInd;
+        this.polyaPartitionCat = polyaPartitionCat;
+        addVariable(siteAssignInd);
+        //end new
 
         partitionCount = patternLists.size();
         patternCounts = new int[partitionCount];
@@ -473,13 +469,17 @@ public class MultiPartitionDataLikelihoodDelegate extends AbstractModel implemen
             ResourceDetails resourceDetails = null;
 
             long instanceFlags = instanceDetails.getFlags();
-            System.out.println("instanceFlags: " + instanceFlags);
-            System.out.println("BeagleFlag.FRAMEWORK_CPU.getMASK(): " + BeagleFlag.FRAMEWORK_CPU.getMask());
+            // begin fix attempt (the following has been uncommented)
+            /*
             if ((instanceFlags & BeagleFlag.FRAMEWORK_CPU.getMask()) != 0) {
+                System.out.println("instanceFlags: " + instanceFlags);
+                System.out.println("BeagleFlag.FRAMEWORK_CPU.getMASK(): " + BeagleFlag.FRAMEWORK_CPU.getMask());
+                //System.err.println("This is where we ended");
+                //System.exit(0);
                 throw new DelegateTypeException();
-            }
-
-            logger.info("\nUsing Multi-Partition Data Likelihood Delegate with BEAGLE 3 multi-partition extensions");
+            }*/
+            // end fix attempt
+            logger.info("\nUsing Multi-Partition Data Likelihood Delegate NP with BEAGLE 3 multi-partition extensions");
 
             for (BranchModel branchModel : this.branchModels) {
                 addModel(branchModel);
@@ -520,6 +520,9 @@ public class MultiPartitionDataLikelihoodDelegate extends AbstractModel implemen
             patternPartitions = new int[totalPatternCount];
             patternWeights = new double[totalPatternCount];
 
+            // begin new
+
+            /*
             int j = 0;
             k = 0;
             for (PatternList patternList : patternLists) {
@@ -530,7 +533,63 @@ public class MultiPartitionDataLikelihoodDelegate extends AbstractModel implemen
                     k++;
                 }
                 j++;
+            } */
+
+
+            //need to implement function to get patternweights for each category
+            //need to find way to map sites to patterns to get appropriate likelihoods
+
+            /*
+            int j = 0;
+            k = 0;
+            for (PatternList patternList : patternLists){
+                //System.err.println("patternLists.size(): " + patternLists.size());
+                for (int i = 0; i < patternList.getPatternCount(); i++){
+                    patternPartitions[k] = j;
+                    if(siteAssignInd.getParameterValue(i) == polyaPartitionCat.get(j).getParameterValue(0)){
+                        patternWeights[k] = 1.0;
+                    }else{
+                        patternWeights[k] = 0.0;
+                    }
+                    k++;
+                }
+                j++;
             }
+
+            storedPatternWeights = new double[patternWeights.length];
+            */
+
+
+            //begin newer
+
+
+            int j = 0;
+            k = 0;
+            for (PatternList patternList : patternLists){
+                for (int i = 0; i < patternList.getPatternCount(); i++){
+                    patternPartitions[k] = j;
+                    k++;
+                }
+                j++;
+            }
+
+            // First, set all patternWeights to 0.0
+            Arrays.fill(patternWeights, 0.0);
+
+            for(int i = 0; i < siteAssignInd.getSize(); i++){
+                int partitionCat = (int) siteAssignInd.getParameterValue(i);
+                // line below should actually not depend on partitionCat
+                int patternIndex = patternLists.get(partitionCat).getPatternIndex(i);
+                // patternCounts[partitionCat] should actually be the same for all partitionCat values
+                int pwIndex = partitionCat*patternCounts[partitionCat] + patternIndex;
+                patternWeights[pwIndex] = patternWeights[pwIndex] + 1;
+            }
+
+            storedPatternWeights = new double[patternWeights.length];
+
+            //end newer
+
+            // end new
 
             logger.info("  " + (useAmbiguities ? "Using" : "Ignoring") + " ambiguities in tree likelihood.");
             String patternCountString = "" + patternLists.get(0).getPatternCount();
@@ -646,6 +705,47 @@ public class MultiPartitionDataLikelihoodDelegate extends AbstractModel implemen
         }
     }
 
+    // begin fix attempt
+
+    /*
+    private static List<Integer> parseSystemPropertyIntegerArray(String propertyName) {
+        List<Integer> order = new ArrayList<Integer>();
+        String r = System.getProperty(propertyName);
+        if (r != null) {
+            String[] parts = r.split(",");
+            for (String part : parts) {
+                try {
+                    int n = Integer.parseInt(part.trim());
+                    order.add(n);
+                } catch (NumberFormatException nfe) {
+                    System.err.println("Invalid entry '" + part + "' in " + propertyName);
+                }
+            }
+        }
+        return order;
+    }
+
+    private static List<String> parseSystemPropertyStringArray(String propertyName) {
+
+        List<String> order = new ArrayList<String>();
+
+        String r = System.getProperty(propertyName);
+        if (r != null) {
+            String[] parts = r.split(",");
+            for (String part : parts) {
+                try {
+                    String s = part.trim();
+                    order.add(s);
+                } catch (NumberFormatException nfe) {
+                    System.err.println("Invalid entry '" + part + "' in " + propertyName);
+                }
+            }
+        }
+        return order;
+    }
+    */
+    // End fix attempt
+
     private int getScaleBufferCount() {
         return internalNodeCount + 1;
     }
@@ -742,6 +842,12 @@ public class MultiPartitionDataLikelihoodDelegate extends AbstractModel implemen
      */
     @Override
     public double calculateLikelihood(List<BranchOperation> branchOperations, List<NodeOperation> nodeOperations, int rootNodeNumber) throws LikelihoodException {
+
+        //begin new stuff
+        //setPatternWeightsInd(siteAssignInd);
+        setAllPatternWeights(siteAssignInd);
+        beagle.setPatternWeights(patternWeights);
+        //end new stuff
 
         boolean throwLikelihoodRescalingException = false;
         if (!initialEvaluation) {
@@ -994,6 +1100,7 @@ public class MultiPartitionDataLikelihoodDelegate extends AbstractModel implemen
             }
         }
 
+
         beagle.updatePartialsByPartition(operations, operationCount);
 
         if (COUNT_CALCULATIONS) {
@@ -1200,14 +1307,88 @@ public class MultiPartitionDataLikelihoodDelegate extends AbstractModel implemen
             logL += l;
         }
 
+        //System.err.println("logL from datalikelihooddelegate: " + logL);
+
         return logL;
     }
 
     public double[] getSiteLogLikelihoods(){
+        //System.err.println("getSiteLogLikelihoods() got called");
         double[] patternLogLikelihoods = new double[totalPatternCount];
         beagle.getSiteLogLikelihoods(patternLogLikelihoods);
+        /*
+        for(int i =0 ; i< totalPatternCount; i++){
+            System.err.println("i: " + i + " patternLogLikelihoods[i]: " + patternLogLikelihoods[i]);
+        }
+        */
         return patternLogLikelihoods;
     }
+
+    // begin new stuff
+
+    private void setAllPatternWeightsOld(Parameter siteAssignInd){
+        //System.err.println("setAllPatternWeights got called!!!");
+        int j = 0;
+        int k = 0;
+        // double counter = 0;
+        // double siteAssignIndSum = 0;
+        for (PatternList patternList : patternLists){
+            for (int i = 0; i < patternList.getPatternCount(); i++){
+                //patternPartitions[k] = j;
+                if(siteAssignInd.getParameterValue(i) == polyaPartitionCat.get(j).getParameterValue(0)){
+                    patternWeights[k] = 1.0;
+                }else{
+                    patternWeights[k] = 0.0;
+                }
+                // counter = counter + patternWeights[k];
+                k++;
+            }
+            j++;
+        }
+        // for(int m = 0; m < siteAssignInd.getSize(); m++){
+        //     siteAssignIndSum = siteAssignIndSum + siteAssignInd.getParameterValue(m);
+        // }
+        //System.err.println("counter: " + counter + " siteAssignIndSum: " + siteAssignIndSum);
+        //System.err.println("patternWeights.length: " + patternWeights.length);
+        // for(int i =0 ; i< totalPatternCount/2; i++){
+        //     System.err.println("i: " + i + " patternWeights[i]: " + patternWeights[i] + " patternWeights[i+15]: " + patternWeights[i+15]);
+        // }
+    }
+
+
+    private void setAllPatternWeights(Parameter siteAssignInd){
+        // First, set all patternWeights to 0.0
+        Arrays.fill(patternWeights, 0.0);
+
+        // Don't need patternListsNotUnique
+        for(int i = 0; i < siteAssignInd.getSize(); i++){
+            int partitionCat = (int) siteAssignInd.getParameterValue(i);
+            // line below doesn't actually depend on partitionCat since each patternList is for same sites
+            int patternIndex = patternLists.get(partitionCat).getPatternIndex(i);
+            // System.err.println("patternCounts: " + patternCounts[partitionCat] +
+            //         " patternIndex: " + patternIndex + " partitionCat: " + partitionCat);
+            // patternCounts[partitionCat] is actually the same for each partitionCat
+            int pwIndex = partitionCat*patternCounts[partitionCat] + patternIndex;
+            // System.err.println("pwIndex: " + pwIndex);
+            // System.err.println("patternWeights.length: " + patternWeights.length);
+            patternWeights[pwIndex] = patternWeights[pwIndex] + 1;
+        }
+    }
+
+    /*
+    private void setPatternWeightsInd(Parameter siteAssignInd){
+        synchronized (siteAssignInd) {
+            for (int i = 0; i < patternWeights.length; i++) {
+                if (siteAssignInd.getParameterValue(i) == polyaPartitionCat.getParameterValue(0)) {
+                    patternWeights[i] = 1.0;
+                } else {
+                    patternWeights[i] = 0.0;
+                }
+            }
+        }
+    } */
+
+    // end new stuff
 
     /*public void getPartials(int number, double[] partials) {
         int cumulativeBufferIndex = Beagle.NONE;
@@ -1221,12 +1402,15 @@ public class MultiPartitionDataLikelihoodDelegate extends AbstractModel implemen
 
     @Override
     public void makeDirty() {
+        //System.err.println("makeDirty() got called");
         updateSiteRateModels();
         updateSubstitutionModels();
     }
 
+
     @Override
     protected void handleModelChangedEvent(Model model, Object object, int index) {
+        //System.err.println("HandleModelChangedEvent");
         if (model instanceof SiteRateModel) {
             updateSiteRateModel((SiteRateModel)model);
         } else if (model instanceof BranchModel) {
@@ -1238,7 +1422,19 @@ public class MultiPartitionDataLikelihoodDelegate extends AbstractModel implemen
 
     @Override
     protected void handleVariableChangedEvent(Variable variable, int index, Parameter.ChangeType type) {
-
+        // System.err.println("HandleVariableChangedEvent");
+        if(variable == siteAssignInd) {
+            /*
+            System.out.println("siteAssignInd changed in " + this.getModelName());
+            for (int i = 0; i < siteAssignInd.getDimension(); i++) {
+                System.out.print(siteAssignInd.getParameterValue(i) + " ");
+            }
+            System.out.println();
+            */
+            //setPatternWeightsInd(siteAssignInd);
+            setAllPatternWeights(siteAssignInd);
+            beagle.setPatternWeights(patternWeights);
+        }
     }
 
     /**
@@ -1246,6 +1442,18 @@ public class MultiPartitionDataLikelihoodDelegate extends AbstractModel implemen
      */
     @Override
     public void storeState() {
+
+        //begin new stuff
+        System.arraycopy(patternWeights, 0, storedPatternWeights, 0, patternWeights.length);
+        /*
+        System.out.println(this.getModelName() + ": ");
+        for(int i =0; i < patternWeights.length; i++){
+            System.out.println(patternWeights[i] + " ");
+        }
+        System.out.println();
+        */
+        //end new stuff
+
         for (int i = 0; i < partitionCount; i++) {
             partialBufferHelper[i].storeState();
             categoryRateBufferHelper[i].storeState();
@@ -1273,6 +1481,18 @@ public class MultiPartitionDataLikelihoodDelegate extends AbstractModel implemen
     @Override
     public void restoreState() {
 
+        //begin new stuff, check if we need this
+        for (int i = 0; i < partitionCount; i++) {
+            updateSubstitutionModels[i] = true;
+            updateSiteRateModels[i] = true;
+        }
+
+        // Swap pointers
+        double[] temp = patternWeights;
+        patternWeights = storedPatternWeights;
+        storedPatternWeights = temp;
+        //end new stuff
+
         for (int i = 0; i < partitionCount; i++) {
             partialBufferHelper[i].restoreState();
             categoryRateBufferHelper[i].restoreState();
@@ -1299,7 +1519,7 @@ public class MultiPartitionDataLikelihoodDelegate extends AbstractModel implemen
 
     @Override
     public void setCallback(TreeDataLikelihood treeDataLikelihood) {
-        // Do nothing
+        // Callback not necessary
     }
 
     @Override
@@ -1340,12 +1560,12 @@ public class MultiPartitionDataLikelihoodDelegate extends AbstractModel implemen
 
     @Override
     public String getDescription() {
-        return "BEAGLE likelihood calculation library";
+        return "Using BEAGLE likelihood calculation library";
     }
 
     @Override
     public List<Citation> getCitations() {
-        return Collections.singletonList(CommonCitations.AYRES_2019_BEAGLE);
+        return Collections.singletonList(CommonCitations.AYRES_2012_BEAGLE);
     }
 
     // **************************************************************
@@ -1407,7 +1627,13 @@ public class MultiPartitionDataLikelihoodDelegate extends AbstractModel implemen
     /**
      * the pattern weights across all patterns
      */
-    private final double[] patternWeights;
+    private double[] patternWeights;
+
+    private double[] storedPatternWeights;
+
+    private Parameter siteAssignInd;
+
+    private final List<Parameter> polyaPartitionCat;
 
     /**
      * The partition for each pattern
@@ -1417,7 +1643,7 @@ public class MultiPartitionDataLikelihoodDelegate extends AbstractModel implemen
     /**
      * the number of patterns for each partition
      */
-    private final int[] patternCounts;
+    public final int[] patternCounts;
 
     /**
      * total number of patterns across all partitions
@@ -1474,4 +1700,5 @@ public class MultiPartitionDataLikelihoodDelegate extends AbstractModel implemen
      * Flag to take into account the first likelihood evaluation when initiating the MCMC chain
      */
     private boolean initialEvaluation = true;
+
 }

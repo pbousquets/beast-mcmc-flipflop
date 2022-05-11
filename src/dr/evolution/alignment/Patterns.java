@@ -431,6 +431,15 @@ public class Patterns implements PatternList {
         return patterns[patternIndex];
     }
 
+    //public void setPatterns(Parameter siteAssignInd){
+    // Doesn't do anything yet
+    //}
+
+    public int getPatternIndex(int siteIndex){
+        // Not implemented yet
+        return -1;
+    }
+
     @Override
     public double[][] getUncertainPattern(int patternIndex) {
         throw new UnsupportedOperationException("uncertain patterns not implemented yet");

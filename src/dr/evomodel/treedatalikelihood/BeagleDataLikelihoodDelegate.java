@@ -932,6 +932,12 @@ public class BeagleDataLikelihoodDelegate extends AbstractModel implements DataL
         return logL;
     }
 
+    public double[] getSiteLogLikelihoods(){
+        double[] patternLogLikelihoods = new double[patternCount];
+        beagle.getSiteLogLikelihoods(patternLogLikelihoods);
+        return patternLogLikelihoods;
+    }
+
     public void getPartials(int number, double[] partials) {
         int cumulativeBufferIndex = Beagle.NONE;
         /* No need to rescale partials */

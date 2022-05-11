@@ -810,6 +810,10 @@ public class ContinuousDataLikelihoodDelegate extends AbstractModel implements D
         return logL;
     }
 
+    public double[] getSiteLogLikelihoods(){
+        throw new RuntimeException("getSiteLogLikelihoods() not implemented");
+    }
+
     public final int getActiveNodeIndex(final int index) {
         return partialBufferHelper.getOffsetIndex(index);
     }
