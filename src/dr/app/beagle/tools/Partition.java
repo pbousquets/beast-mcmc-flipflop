@@ -194,8 +194,6 @@ public class Partition {
 
 	public void simulatePartition() {
 
-		System.exit(-8);
-
 		try {
 
 			NodeRef root = treeModel.getRoot();
@@ -601,7 +599,6 @@ public class Partition {
 	// ///////////////
 
 	public void printSequences() {
-		System.out.println("partition " + partitionNumber);
 		Utils.printMap(alignmentMap);
 	}// END: printSequences
 
