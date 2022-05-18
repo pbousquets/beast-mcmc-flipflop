@@ -469,7 +469,8 @@ public class MultiPartitionDataLikelihoodDelegateNP extends AbstractModel implem
             ResourceDetails resourceDetails = null;
 
             long instanceFlags = instanceDetails.getFlags();
-            // begin fix attempt (the following has been uncommented)
+            // begin fix attempt
+            // NEED TO CHECK THIS. Should NOT be commented out
             /*
             if ((instanceFlags & BeagleFlag.FRAMEWORK_CPU.getMask()) != 0) {
                 System.out.println("instanceFlags: " + instanceFlags);

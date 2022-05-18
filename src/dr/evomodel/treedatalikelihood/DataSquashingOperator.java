@@ -1238,11 +1238,11 @@ public class DataSquashingOperator extends SimpleMCMCOperator {
             }
         }
 
-        double forwardRatio = hRatio;
+        //double forwardRatio = hRatio;
 
         //System.err.println("hRatio for forward move: " + Math.exp(-forwardRatio));
 
-        double proposedll = tdl.getLogLikelihood();
+        //double proposedll = tdl.getLogLikelihood();
         //System.err.println("proposedll: " + proposedll);
 
 
