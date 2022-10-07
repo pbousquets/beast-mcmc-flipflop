@@ -1,0 +1,40 @@
+<?xml version="1.0" standalone="yes"?>
+<beast>
+
+    <!-- The list of taxa to be analysed (can also include dates/ages).          -->
+    <taxa id="taxa">
+        <taxon id="S1">
+            <date value="60.0" direction="forwards" units="years"/>
+        </taxon>
+        <taxon id="S2">
+            <date value="60.0" direction="forwards" units="years"/>
+        </taxon>
+        <taxon id="S3">
+            <date value="60.0" direction="forwards" units="years"/>
+        </taxon>
+        <taxon id="S3_2">
+            <date value="60.0" direction="forwards" units="years"/>
+        </taxon>
+    </taxa>
+
+    <allelefractions id="alignment" dataType="AlleleFraction">
+        <afsequence>
+            <taxon idref="S1"/>
+            0.1,0.1,0.2,0.7,1,1,0.5,0.7,1,1,0.7
+        </afsequence>
+        <afsequence>
+            <taxon idref="S2"/>
+            0.1,0.1,0.1,0.7,1,1,0.3,0.7,1,1,0.75
+        </afsequence>
+        <afsequence>
+            <taxon idref="S3"/>
+            0.1,0,0.23,0.5,1,1,0.55,0.6,0.55,0.34,0.71
+        </afsequence>
+        <afsequence>
+            <taxon idref="S3_2"/>
+            0.1,0,0.2,0.5,1,1,0.5,0.5,0.55,0.34,0.7
+        </afsequence>
+    </allelefractions>
+
+
+</beast>
