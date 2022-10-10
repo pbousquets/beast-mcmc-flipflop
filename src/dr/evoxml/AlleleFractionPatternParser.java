@@ -63,6 +63,7 @@ public class AlleleFractionPatternParser extends AbstractXMLObjectParser {
         try {
             for (int i = 0; i < sites.length; i++) {
                 pattern[i] = Integer.parseInt(sites[i]);
+                checkRange(pattern[i], 0, 100);
             }
         } catch (NumberFormatException nfe) {
             throw new XMLParseException("Unable to parse AF data: " + nfe.getMessage()); //TODO: change these excepctions?
@@ -71,7 +72,7 @@ public class AlleleFractionPatternParser extends AbstractXMLObjectParser {
         }
 
         Patterns allelefractionPat = new Patterns(allelefraction, taxonList); // Create Pattern object
-            allelefractionPat.addPattern(pattern); //TODO: DOESNT WORK. New class needed! -- Feeds the pattern with the AF sequences
+            allelefractionPat.addPattern(pattern); // Feeds the pattern with the AF sequences
             allelefractionPat.setId((String)xo.getAttribute(ID));  //Provide the Taxon ID to this object
 
         if(xo.getAttribute(PRINT_DETAILS,true)){
@@ -117,11 +118,16 @@ public class AlleleFractionPatternParser extends AbstractXMLObjectParser {
             new StringAttributeRule(ID, "the name of the character"),
             AttributeRule.newBooleanRule(PRINT_DETAILS, true),
             AttributeRule.newBooleanRule(PRINT_AF_PATTERN_CONTENT, true)
-
     };
 
     public String getParserDescription() {
         return "This element represents an allele frequency pattern.";
+    }
+
+    public static void checkRange(int value, int min, int max) {
+        if (value < min || value > max) {
+            throw new java.lang.RuntimeException(String.format("Allele frequencies are expected to be in range [%d-%d]", min, max));
+        }
     }
 
     public Class getReturnType() {
