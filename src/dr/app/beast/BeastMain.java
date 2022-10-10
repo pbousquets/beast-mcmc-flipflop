@@ -164,6 +164,13 @@ public class BeastMain {
                 MCMC[] chains = new MCMC[chainCount];
                 MCMCMCOptions options = new MCMCMCOptions(chainTemperatures, swapChainsEvery);
 
+                // DM: Get the current allow.overwrite status. Overwrite will be forced temporarily when the hot chains initiate their parsers, otherwise they fail.
+                String overwrite_bkp = "false";
+                if (System.getProperty("log.allow.overwrite") != null){
+                    overwrite_bkp=System.getProperty("log.allow.overwrite");
+                }
+                // DM
+
                 Logger.getLogger("dr.apps.beast").info("Starting cold chain plus hot chains with temperatures: ");
                 for (int i = 1; i < chainTemperatures.length; i++) {
                     Logger.getLogger("dr.apps.beast").info("Hot Chain " + i + ": " + chainTemperatures[i]);
@@ -187,7 +194,22 @@ public class BeastMain {
                     // turn off all messages for subsequent reads of the file (they will be the same as the
                     // first time).
                     messageHandler.setLevel(Level.OFF);
+
+                    // DM: turn off the overwrite protection since the same output will be checked by all hot chains
+                    System.setProperty("log.allow.overwrite", "true");
+
                     parser = new BeastParser(new String[]{fileName}, additionalParsers, verbose, parserWarning, strictXML);
+
+                    // DM: Hot chains also need to add plugin parsers
+                    for (String pluginName : PluginLoader.getAvailablePlugins()) {
+                        Plugin plugin = PluginLoader.loadPlugin(pluginName);
+                        if (plugin != null) {
+                            Set<XMLObjectParser> parserSet = plugin.getParsers();
+                            for (XMLObjectParser pluginParser : parserSet) {
+                                parser.addXMLObjectParser(pluginParser);
+                            }
+                        }
+                    }
 
                     chains[i] = (MCMC) parser.parse(fileReader, MCMC.class);
                     if (chains[i] == null) {
@@ -199,6 +221,8 @@ public class BeastMain {
                 // restart messages
                 messageHandler.setLevel(Level.ALL);
 
+                // DM: restart allow.overwrite status
+                System.setProperty("log.allow.overwrite", overwrite_bkp);
                 MCMCMC mc3 = new MCMCMC(chains, options);
                 Thread thread = new Thread(mc3);
                 thread.start();
@@ -794,7 +818,7 @@ public class BeastMain {
             BeastMPI.Finalize();
         }
 
-        if (!window) {
+        if (!useMC3 && !window) { // DM: with MC3 the main thread gets here and terminates all threads prematurely
             System.exit(0);
         }
     }
