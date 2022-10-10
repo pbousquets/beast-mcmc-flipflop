@@ -1,3 +1,5 @@
+.idea
+release/
 *.iml
 *.ipr
 *.iws
