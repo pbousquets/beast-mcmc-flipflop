@@ -128,8 +128,7 @@ public class AlleleFractionPatternParser extends AbstractXMLObjectParser {
                             DataType.getRegisteredDataTypeNames(), false),
                     new ElementRule(DataType.class)
             ),
-            new ElementRule(AFSEQUENCE,
-                    AFsequence.class,
+            new ElementRule(AFsequence.class,
                     "A string of numbers representing the AFs",
                     1, Integer.MAX_VALUE)
     };

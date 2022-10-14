@@ -50,8 +50,20 @@ public class AFsequence implements Identifiable, Attributable {
     }
 
     public AFsequence(String sequenceString){ // Create the sequence object
+        setSequenceString(sequenceString);
+        this.taxon = getTaxon();
+    }
+
+    public int getLength() {return this.sequenceLength; }
+
+    public void setTaxon(Taxon taxon) {
+        this.taxon = taxon;
+    }
+
+    public void setSequenceString(String sequenceString) {
         this.sequenceString = sequenceString;
         String[] split_sequence = sequenceString.split(",");
+        this.sequence = new double[split_sequence.length];
 
         for (int i = 0; i < split_sequence.length; i++) {
             double value = Double.parseDouble(split_sequence[i]);
@@ -60,13 +72,6 @@ public class AFsequence implements Identifiable, Attributable {
         }
 
         this.sequenceLength = split_sequence.length;
-        this.taxon = getTaxon();
-    }
-
-    public int getLength() {return this.sequenceLength; }
-
-    public void setTaxon(Taxon taxon) {
-        this.taxon = taxon;
     }
 
     public double[] getSequence(){ return this.sequence; }

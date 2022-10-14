@@ -56,7 +56,7 @@ public class AFalignment extends AFsequence {
         }
 
         if (alignment_length != sequence.getLength()) {
-            throw new java.lang.RuntimeException(String.format("Different sites found among the taxa. Please, check that all have the same amount of sites"));
+            throw new java.lang.RuntimeException(String.format("Different sites found among the taxa. Please, check that all of them have the same amount of sites"));
         }
 
         ntaxa++;
