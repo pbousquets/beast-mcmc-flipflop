@@ -28,7 +28,10 @@ package dr.evoxml;
 import dr.xml.*;
 import dr.evolution.util.Taxa;
 import dr.evolution.datatype.AlleleFraction;
-import dr.evolution.alignment.Patterns;
+import dr.evolution.alignment.AFalignment;
+import dr.evolution.datatype.DataType;
+import dr.evoxml.util.DataTypeUtils;
+import dr.evolution.sequence.AFsequence;
 import java.util.logging.Logger;
 
 /**
@@ -39,100 +42,96 @@ import java.util.logging.Logger;
  */
 public class AlleleFractionPatternParser extends AbstractXMLObjectParser {
 
-    public static final String ALLELEFRACTIONS = "allelefractions"; //Rerference to main XML class
-    public static final String AF_SEQ = "afsequence"; //Reference to the sequences
-    public static final String PRINT_DETAILS = "printDetails";
-    public static final String PRINT_AF_PATTERN_CONTENT = "printAFPatContent";
-
-    public static final String ID ="id"; //Reference to the ALLELEFRACTION set ID
-
-    public static final int COUNT_INCREMENT = 100; // TODO: Dunno what it does
+    public static final String ALLELEFRACTIONS = "afalignment"; //Reference to main XML class
+    public static final String AFSEQUENCE = "afseq";
 
     public String getParserName() {
         return ALLELEFRACTIONS;
     }
 
+    public static final String ID = "id"; //Reference to the ALLELEFRACTION ID
+
     public Object parseXMLObject(XMLObject xo) throws XMLParseException {
 
-        Taxa taxonList = (Taxa)xo.getChild(Taxa.class); // Retrieve the taxon id
+        AFalignment alignment = new AFalignment();
 
-        AlleleFraction allelefraction = (AlleleFraction)xo.getChild(AlleleFraction.class);
+        final DataType dataType = DataTypeUtils.getDataType(xo);
 
-        String[] sites = ((String) xo.getElementFirstChild(AF_SEQ)).split(","); // split the sequences
-        int[] pattern = new int [sites.length];
-        try {
-            for (int i = 0; i < sites.length; i++) {
-                pattern[i] = Integer.parseInt(sites[i]);
-                checkRange(pattern[i], 0, 100);
+        if (dataType == null) {
+            throw new XMLParseException("dataType attribute expected for alignment element");
+        }
+
+        //alignment.setDataType(dataType); //TODO
+
+        for (int i = 0; i < xo.getChildCount(); i++) {
+            final Object child = xo.getChild(i);
+
+            if (child instanceof AFsequence) {
+                alignment.addSequence((AFsequence) child); //
+            } else if (child instanceof DataType) {
+                // already dealt with (the exception above)
+            } else {
+                throw new XMLParseException("Unknown child element found in alignment");
             }
-        } catch (NumberFormatException nfe) {
-            throw new XMLParseException("Unable to parse AF data: " + nfe.getMessage()); //TODO: change these excepctions?
-        } catch (IllegalArgumentException iae) {
-            throw new XMLParseException("Unable to parse AF data: " + iae.getMessage());
         }
 
-        Patterns allelefractionPat = new Patterns(allelefraction, taxonList); // Create Pattern object
-            allelefractionPat.addPattern(pattern); // Feeds the pattern with the AF sequences
-            allelefractionPat.setId((String)xo.getAttribute(ID));  //Provide the Taxon ID to this object
+        final Logger logger = Logger.getLogger("dr.evoxml");
+        logger.info("Read alignment" + (xo.hasAttribute(XMLParser.ID) ? ": " + xo.getId() : "") +
+                "\n  Sequences = " + alignment.getAFSequenceCount() +
+                "\n      Sites = " + alignment.getAFSiteCount());
 
-        if(xo.getAttribute(PRINT_DETAILS,true)){
-            printDetails(allelefractionPat);
-        }
-
-        if(xo.getAttribute(PRINT_AF_PATTERN_CONTENT,true)){
-            printAFContent(allelefractionPat);
-        }
-
-        return allelefractionPat;
-
+        return alignment;
     }
 
-    public static void printDetails(Patterns allelefractionPat){
-        Logger.getLogger("dr.evoxml").info(
-                "    Locus name: "+allelefractionPat.getId()+
-                        "\n    Number of Taxa: "+allelefractionPat.getPattern(0).length);
+
+    /**
+     * @return the taxon for this sequences.
+     */
+
+    public String getParserDescription() {
+        return "This element represents an allele frequency alignment.";
     }
 
-    public static void printAFContent(Patterns allelefractionPat){
-        Logger.getLogger("dr.evoxml").info(
-                "    Locus name: "+ allelefractionPat.getId());
-        int[] pat = allelefractionPat.getPattern(0);
-        for(int i = 0; i < pat.length; i++){
-            Logger.getLogger("dr.evoxml").info("    Taxon: "+allelefractionPat.getTaxon(i)+" "+"state: "+pat[i]);
-        }
-        Logger.getLogger("dr.evoxml").info("\n");
+    public Class getReturnType() {
+        return AFalignment.class;
     }
 
+    public String getExample() {
+
+        return //TODO: check the datatype
+                "<!-- An alignment of three short DNA sequences -->\n" +
+                        "<afalignment missing=\"-?\" dataType=\"AlleleFrequencies\">\n" +
+                        "  <afsequence>\n" +
+                        "    <taxon idref=\"taxon1\"/>\n" +
+                        "    0.1,0.2,0,1\n" +
+                        "  </afsequence>\n" +
+                        "  <afsequence>\n" +
+                        "    <taxon idref=\"taxon2\"/>\n" +
+                        "    0.11,0.2,0,1\n" +
+                        "  </afsequence>\n" +
+                        "  <afsequence>\n" +
+                        "    <taxon idref=\"taxon3\"/>\n" +
+                        "    0.24,0.2,0,1\n" +
+                        "  </afsequence>\n" +
+                        "</afalignment>\n";
+    }
 
     public XMLSyntaxRule[] getSyntaxRules() {
         return rules;
     }
 
-    private XMLSyntaxRule[] rules = new XMLSyntaxRule[]{
-            new ElementRule(Taxa.class),
-            new ElementRule(AlleleFraction.class),
-            new ElementRule(AF_SEQ,new XMLSyntaxRule[]{
-                    new ElementRule(String.class,
-                            "A string of numbers representing the allele frequencies in a taxa",
-                            "0,10,40,100")},false),
-            new StringAttributeRule(ID, "the name of the character"),
-            AttributeRule.newBooleanRule(PRINT_DETAILS, true),
-            AttributeRule.newBooleanRule(PRINT_AF_PATTERN_CONTENT, true)
+    private final XMLSyntaxRule[] rules = {
+            new XORRule(
+                    new StringAttributeRule(
+                            DataType.DATA_TYPE,
+                            "The data type",
+                            DataType.getRegisteredDataTypeNames(), false),
+                    new ElementRule(DataType.class)
+            ),
+            new ElementRule(AFSEQUENCE,
+                    AFsequence.class,
+                    "A string of numbers representing the AFs",
+                    1, Integer.MAX_VALUE)
     };
-
-    public String getParserDescription() {
-        return "This element represents an allele frequency pattern.";
-    }
-
-    public static void checkRange(int value, int min, int max) {
-        if (value < min || value > max) {
-            throw new java.lang.RuntimeException(String.format("Allele frequencies are expected to be in range [%d-%d]", min, max));
-        }
-    }
-
-    public Class getReturnType() {
-        return Patterns.class;
-    }
-
-
 }
+
