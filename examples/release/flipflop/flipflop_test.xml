@@ -17,7 +17,7 @@
         </taxon>
     </taxa>
 
-    <afalignment id="alignment" dataType="allele_fraction">
+    <afalignment id="alignment">
         <afsequence>
             <taxon idref="S1"/>
             0.1,0.1,0.2,0.7,0.1,0.1,0.5,0.7,0.1,0.1,0.7

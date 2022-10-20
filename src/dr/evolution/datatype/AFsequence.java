@@ -23,38 +23,37 @@
  * Boston, MA  02110-1301  USA
  */
 
-package dr.evolution.sequence;
-
-import dr.evolution.datatype.DataType;
+package dr.evolution.datatype;
+import java.util.ArrayList;
+import dr.evolution.util.Taxa;
 import dr.evolution.util.Taxon;
-import dr.util.Attributable;
-import dr.util.Identifiable;
-
-import java.util.Iterator;
 
 /**
- * A simple class to use Allele frequencies sequences rather than nucleotides.
- *
  * @author Pablo Bousquets
+ *
+ * Allele frequency data type
  */
-@SuppressWarnings("serial")
-public class AFsequence implements Identifiable, Attributable {
+public class AFsequence extends DataType {
 
+    public static final String DESCRIPTION = "afsequence";
+    public static int UNKNOWN_STATE_LENGTH = -1;
     public double[] sequence;
     public String sequenceString;
     public Taxon taxon;
 
     private int sequenceLength = 0;
 
-    public AFsequence(){
-    }
+    private String name;
+
+    public static final AFsequence INSTANCE = new AFsequence();
+
+    public AFsequence() {}
 
     public AFsequence(String sequenceString){ // Create the sequence object
         setSequenceString(sequenceString);
         this.taxon = getTaxon();
+        this.sequenceLength = sequence.length;
     }
-
-    public int getLength() {return this.sequenceLength; }
 
     public void setTaxon(Taxon taxon) {
         this.taxon = taxon;
@@ -67,11 +66,9 @@ public class AFsequence implements Identifiable, Attributable {
 
         for (int i = 0; i < split_sequence.length; i++) {
             double value = Double.parseDouble(split_sequence[i]);
-            checkRange(value,0,1);
+            checkRange(value, 0, 1);
             this.sequence[i] = value;
         }
-
-        this.sequenceLength = split_sequence.length;
     }
 
     public double[] getSequence(){ return this.sequence; }
@@ -89,58 +86,31 @@ public class AFsequence implements Identifiable, Attributable {
         return taxon;
     }
 
-    /**
-     * Set the DataType of the sequences.
-     */
-    public void setDataType(DataType dataType) {
-        this.dataType = dataType;
+    public int getLength() {return this.sequenceLength; }
+
+
+    @Override
+    public char[] getValidChars() {
+        return null;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 
     /**
-     * Set the DataType of the sequences.
+     * @return the description of the data type
      */
-    public DataType guessDataType() {
-        return DataType.guessDataType(sequenceString.toString());
+    public String getDescription() {
+        return DESCRIPTION;
     }
 
-
-    // **************************************************************
-    // Attributable IMPLEMENTATION
-    // **************************************************************
-
-    private Attributable.AttributeHelper attributes = null;
-
-    /**
-     * Sets an named attribute for this object.
-     *
-     * @param name  the name of the attribute.
-     * @param value the new value of the attribute.
-     */
-    public void setAttribute(String name, Object value) {
-        if (attributes == null)
-            attributes = new Attributable.AttributeHelper();
-        attributes.setAttribute(name, value);
-    }
-
-    /**
-     * @param name the name of the attribute of interest.
-     * @return an object representing the named attributed for this object.
-     */
-    public Object getAttribute(String name) {
-        if (attributes == null)
-            return null;
-        else
-            return attributes.getAttribute(name);
-    }
-
-    /**
-     * @return an iterator of the attributes that this object has.
-     */
-    public Iterator<String> getAttributeNames() {
-        if (attributes == null)
-            return null;
-        else
-            return attributes.getAttributeNames();
+    public int getType(){
+        return AF_SEQ;
     }
 
     // **************************************************************
@@ -149,24 +119,16 @@ public class AFsequence implements Identifiable, Attributable {
 
     protected String id = null;
 
-    /**
-     * @return the id.
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * Sets the id.
-     */
     public void setId(String id) {
         this.id = id;
     }
 
-    // **************************************************************
-    // INSTANCE VARIABLES
-    // **************************************************************
+}
 
-    protected DataType dataType = null;
 
-}// END: class
+
+

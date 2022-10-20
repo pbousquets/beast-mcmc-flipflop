@@ -26,7 +26,7 @@
 package dr.evoxml;
 
 import dr.evolution.datatype.*;
-import dr.evolution.sequence.AFsequence;
+import dr.evolution.datatype.AFsequence;
 import dr.evolution.util.Taxon;
 import dr.xml.*;
 
@@ -75,10 +75,6 @@ public class AFsequenceParser extends AbstractXMLObjectParser {
 
         if (sequenceString.length() == 0) {
             throw new XMLParseException("Sequence data missing from sequence element!");
-        }
-
-        if (dataType != null) {
-            sequence.setDataType(dataType);
         }
 
         if (sequenceString == null) {

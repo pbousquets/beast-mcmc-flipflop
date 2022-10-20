@@ -27,12 +27,14 @@ package dr.evoxml;
 
 import dr.xml.*;
 import dr.evolution.util.Taxa;
-import dr.evolution.datatype.AlleleFraction;
-import dr.evolution.alignment.AFalignment;
+import dr.evolution.datatype.AFsequence;
 import dr.evolution.datatype.DataType;
 import dr.evoxml.util.DataTypeUtils;
-import dr.evolution.sequence.AFsequence;
+import dr.evolution.alignment.DoublePatterns;
+import dr.evolution.alignment.AFPatternList;
 import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * @author Pablo Bousquets
@@ -51,56 +53,48 @@ public class AlleleFractionPatternParser extends AbstractXMLObjectParser {
 
     public static final String ID = "id"; //Reference to the ALLELEFRACTION ID
 
+    public static final int COUNT_INCREMENT = 100;
+
     public Object parseXMLObject(XMLObject xo) throws XMLParseException {
 
-        AFalignment alignment = new AFalignment();
-
-        final DataType dataType = DataTypeUtils.getDataType(xo);
-
-        if (dataType == null) {
-            throw new XMLParseException("dataType attribute expected for alignment element");
-        }
-
-        //alignment.setDataType(dataType); //TODO
+        DoublePatterns patterns = new DoublePatterns();
+        Taxa taxonList = new Taxa();
+        ArrayList<AFsequence> seqlist = new ArrayList<AFsequence>();
 
         for (int i = 0; i < xo.getChildCount(); i++) {
             final Object child = xo.getChild(i);
 
             if (child instanceof AFsequence) {
-                alignment.addSequence((AFsequence) child); //
-            } else if (child instanceof DataType) {
-                // already dealt with (the exception above)
+                taxonList.addTaxon(((AFsequence) child).getTaxon());
+                patterns.addPattern(((AFsequence) child).getSequence());
             } else {
                 throw new XMLParseException("Unknown child element found in alignment");
             }
         }
 
+        patterns.setTaxon(taxonList);
+
         final Logger logger = Logger.getLogger("dr.evoxml");
-        logger.info("Read alignment" + (xo.hasAttribute(XMLParser.ID) ? ": " + xo.getId() : "") +
-                "\n  Sequences = " + alignment.getAFSequenceCount() +
-                "\n      Sites = " + alignment.getAFSiteCount());
+        logger.info("Site patterns '" + xo.getId() + "' created:");
+        logger.info("  - Taxa count = " + patterns.getTaxonCount());
+        logger.info("  - Site count = " + patterns.getPatternLength());
 
-        return alignment;
+        return patterns;
     }
-
-
-    /**
-     * @return the taxon for this sequences.
-     */
 
     public String getParserDescription() {
         return "This element represents an allele frequency alignment.";
     }
 
     public Class getReturnType() {
-        return AFalignment.class;
+        return AFPatternList.class;
     }
 
     public String getExample() {
 
-        return //TODO: check the datatype
+        return
                 "<!-- An alignment of three short DNA sequences -->\n" +
-                        "<afalignment missing=\"-?\" dataType=\"AlleleFrequencies\">\n" +
+                        "<afalignment id = \"alignment\">" +
                         "  <afsequence>\n" +
                         "    <taxon idref=\"taxon1\"/>\n" +
                         "    0.1,0.2,0,1\n" +
@@ -121,13 +115,6 @@ public class AlleleFractionPatternParser extends AbstractXMLObjectParser {
     }
 
     private final XMLSyntaxRule[] rules = {
-            new XORRule(
-                    new StringAttributeRule(
-                            DataType.DATA_TYPE,
-                            "The data type",
-                            DataType.getRegisteredDataTypeNames(), false),
-                    new ElementRule(DataType.class)
-            ),
             new ElementRule(AFsequence.class,
                     "A string of numbers representing the AFs",
                     1, Integer.MAX_VALUE)
