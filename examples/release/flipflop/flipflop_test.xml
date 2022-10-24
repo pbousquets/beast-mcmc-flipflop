@@ -35,4 +35,20 @@
             0,0.1,0.1,0.7,0.1,0.1,0.6,0.17,0.21,0.1,0.7
         </afsequence>
     </afalignment>
+
+    <AFsequenceErrorModel id="errorModel" type="transitions">
+        <stemCells>
+            <parameter id="errorModel.stemCells" value="4" lower="0.0" upper="100.0"/>
+        </stemCells>
+        <deltaOffset>
+            <parameter id="errorModel.deltaOffset" value="4.0E-7" lower="0.0" upper="100.0"/>
+        </deltaOffset>
+        <etaOffset>
+            <parameter id="errorModel.etaOffset" value="4.0E-7" lower="0.0" upper="100.0"/>
+        </etaOffset>
+        <kappaScale>
+            <parameter id="errorModel.kappaScale" value="4.0E-7" lower="0.0" upper="100.0"/>
+        </kappaScale>
+    </AFsequenceErrorModel>
+
 </beast>
