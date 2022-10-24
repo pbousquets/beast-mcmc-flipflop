@@ -50,12 +50,8 @@ public class FlipFlopErrorModel extends TipStatesModel implements Citable {
                               Parameter kappaParameter) {
         super(FlipFlopErrorModelParser.AFSEQUENCE_ERROR_MODEL, includeTaxa, excludeTaxa);
 
-        if (stemCellParameter != null) {
-            this.stemCellParameter = stemCellParameter;
-            addVariable(this.stemCellParameter);
-        } else {
-            this.stemCellParameter = null; //TODO: CANT BE NULL
-        }
+        this.stemCellParameter = stemCellParameter; //No need to evaluate if is null, already done in parser
+        addVariable(this.stemCellParameter);
 
         if (deltaParameter != null) {
             this.deltaParameter = deltaParameter;

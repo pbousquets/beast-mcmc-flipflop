@@ -70,6 +70,9 @@ public class FlipFlopErrorModelParser extends AbstractXMLObjectParser {
         Parameter stemCellParameter = null;
         if (xo.hasChildNamed(STEM_CELLS)) {
             stemCellParameter = (Parameter) xo.getElementFirstChild(STEM_CELLS);
+            if ((stemCellParameter.getParameterValue(0)) % 1 != 0){
+                throw new XMLParseException("The stem cell parameter must be an integer. Current value: " + stemCellParameter.getParameterValue(0));
+            }
         }
 
         TaxonList includeTaxa = null;
@@ -85,7 +88,7 @@ public class FlipFlopErrorModelParser extends AbstractXMLObjectParser {
 
         FlipFlopErrorModel afModel = new FlipFlopErrorModel(includeTaxa, excludeTaxa, stemCellParameter, deltaParameter, etaParameter, kappaParameter);
 
-        Logger.getLogger("dr.evomodel").info("Using allele frequency sequence error model."); //TODO: show parameters in use
+        Logger.getLogger("dr.evomodel").info("Using allele frequency sequence error model with " + (int) stemCellParameter.getParameterValue(0) + " stem cells");
 
         return afModel;
     }
@@ -107,7 +110,7 @@ public class FlipFlopErrorModelParser extends AbstractXMLObjectParser {
     }
 
     private final XMLSyntaxRule[] rules = {
-            new ElementRule(STEM_CELLS, Parameter.class, "Number of stem cells", true),
+            new ElementRule(STEM_CELLS, Parameter.class, "Number of stem cells"),
             new ElementRule(DELTA_OFFSET, Parameter.class, "Delta prior, regarding the error model", true),
             new ElementRule(ETA_OFFSET, Parameter.class, "Eta prior, regarding the error model", true),
             new ElementRule(KAPPA_SCALE, Parameter.class, "Kappa prior, regarding the scale parameter of the AF peak", true),
