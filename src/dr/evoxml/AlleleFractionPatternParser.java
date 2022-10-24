@@ -71,8 +71,8 @@ public class AlleleFractionPatternParser extends AbstractXMLObjectParser {
         }
 
         Patterns patterns = new Patterns(new AFsequence(), taxonlist);
-        int[] current_pattern = new int[seqlist.size()];
         for (int site = 0; site < (seqlist.get(0)).length; site++){
+            int[] current_pattern = new int[seqlist.size()];
             for (int seq_index = 0; seq_index < seqlist.size(); seq_index++){
                 current_pattern[seq_index] = seqlist.get(seq_index)[site];
             }
@@ -83,7 +83,7 @@ public class AlleleFractionPatternParser extends AbstractXMLObjectParser {
         final Logger logger = Logger.getLogger("dr.evoxml");
         logger.info("Site patterns '" + xo.getId() + "' created:");
         logger.info("  - Taxa count = " + patterns.getTaxonCount());
-        logger.info("  - Site count = " + patterns.getPatternLength());
+        logger.info("  - Site count = " + patterns.getPatternCount());
 
         return patterns;
     }
