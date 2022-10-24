@@ -29,10 +29,10 @@ import dr.xml.*;
 import dr.evolution.util.Taxa;
 import dr.evolution.datatype.AFsequence;
 import dr.evolution.datatype.DataType;
-import dr.evoxml.util.DataTypeUtils;
-import dr.evolution.alignment.DoublePatterns;
-import dr.evolution.alignment.AFPatternList;
+import dr.evolution.alignment.Patterns;
+import dr.evolution.alignment.SiteList;
 import java.util.logging.Logger;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -56,23 +56,29 @@ public class AlleleFractionPatternParser extends AbstractXMLObjectParser {
     public static final int COUNT_INCREMENT = 100;
 
     public Object parseXMLObject(XMLObject xo) throws XMLParseException {
-
-        DoublePatterns patterns = new DoublePatterns();
-        Taxa taxonList = new Taxa();
-        ArrayList<AFsequence> seqlist = new ArrayList<AFsequence>();
+        List<int[]> seqlist = new ArrayList<int[]>();
+        Taxa taxonlist = new Taxa();
 
         for (int i = 0; i < xo.getChildCount(); i++) {
             final Object child = xo.getChild(i);
 
             if (child instanceof AFsequence) {
-                taxonList.addTaxon(((AFsequence) child).getTaxon());
-                patterns.addPattern(((AFsequence) child).getSequence());
+                taxonlist.addTaxon(((AFsequence) child).getTaxon());
+                seqlist.add(((AFsequence) child).getSequence());
             } else {
                 throw new XMLParseException("Unknown child element found in alignment");
             }
         }
 
-        patterns.setTaxon(taxonList);
+        Patterns patterns = new Patterns(new AFsequence(), taxonlist);
+        int[] current_pattern = new int[seqlist.size()];
+        for (int site = 0; site < (seqlist.get(0)).length; site++){
+            for (int seq_index = 0; seq_index < seqlist.size(); seq_index++){
+                current_pattern[seq_index] = seqlist.get(seq_index)[site];
+            }
+            patterns.addPattern(current_pattern);
+        }
+        patterns.setId((String)xo.getAttribute(ID));
 
         final Logger logger = Logger.getLogger("dr.evoxml");
         logger.info("Site patterns '" + xo.getId() + "' created:");
@@ -87,7 +93,7 @@ public class AlleleFractionPatternParser extends AbstractXMLObjectParser {
     }
 
     public Class getReturnType() {
-        return AFPatternList.class;
+        return Patterns.class;
     }
 
     public String getExample() {

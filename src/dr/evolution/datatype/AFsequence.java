@@ -37,7 +37,7 @@ public class AFsequence extends DataType {
 
     public static final String DESCRIPTION = "afsequence";
     public static int UNKNOWN_STATE_LENGTH = -1;
-    public double[] sequence;
+    public int[] sequence;
     public String sequenceString;
     public Taxon taxon;
 
@@ -62,16 +62,16 @@ public class AFsequence extends DataType {
     public void setSequenceString(String sequenceString) {
         this.sequenceString = sequenceString;
         String[] split_sequence = sequenceString.split(",");
-        this.sequence = new double[split_sequence.length];
+        this.sequence = new int[split_sequence.length];
 
         for (int i = 0; i < split_sequence.length; i++) {
             double value = Double.parseDouble(split_sequence[i]);
             checkRange(value, 0, 1);
-            this.sequence[i] = value;
+            this.sequence[i] = (int) (100*value);
         }
     }
 
-    public double[] getSequence(){ return this.sequence; }
+    public int[] getSequence(){ return this.sequence; }
 
     public void checkRange(double value, int min, int max) {
         if (value < min || value > max) {
