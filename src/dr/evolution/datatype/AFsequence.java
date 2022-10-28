@@ -27,6 +27,7 @@ package dr.evolution.datatype;
 import java.util.ArrayList;
 import dr.evolution.util.Taxa;
 import dr.evolution.util.Taxon;
+import dr.util.FlipFlopUtils;
 
 /**
  * @author Pablo Bousquets
@@ -62,13 +63,13 @@ public class AFsequence extends DataType {
     public void setSequenceString(String sequenceString) {
         this.sequenceString = sequenceString;
         String[] split_sequence = sequenceString.split(",");
-        this.sequence = new int[split_sequence.length];
-
+        double[] double_seq = new double[split_sequence.length];
         for (int i = 0; i < split_sequence.length; i++) {
             double value = Double.parseDouble(split_sequence[i]);
             checkRange(value, 0, 1);
-            this.sequence[i] = (int) (100*value);
+            double_seq[i] = value;
         }
+        this.sequence = FlipFlopUtils.mapDoubleRangeToInt(double_seq, 0, 1, 200); //TODO: parametize the precision?
     }
 
     public int[] getSequence(){ return this.sequence; }
