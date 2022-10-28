@@ -252,6 +252,26 @@
     </target>
 
     <!-- JUnit test -->
+    <target name="junit_flipflop">
+        <mkdir dir="${report}"/>
+        <junit printsummary="yes">
+            <classpath>
+                <path refid="classpath"/>
+                <path location="${build}"/>
+            </classpath>
+
+            <formatter type="xml"/>
+
+            <batchtest fork="yes" todir="${report}">
+                <fileset dir="${src}">
+                    <include name="test/dr/evomodel/flipflop/**/Test*.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+        <echo message="JUnit test finished."/>
+    </target>
+
+    <!-- JUnit test -->
     <target name="junit">
         <mkdir dir="${report}"/>
         <junit printsummary="yes">
