@@ -121,7 +121,7 @@ public class FlipFlopErrorModel extends TipStatesModel implements Citable {
             transformed_alpha[state] = beta[state] * kappa;
             transformed_beta[state] =  (1 - beta[state]) * kappa;
         }
-
+        
         //Loop through each of the possible Z=2S+1 peaks and calculate the log-pdf of the nth beta value in y[N] for the zth beta distribution
         int N = double_states.length; //number of sites: y.len in the original function
         int Z = transformed_alpha.length; //number of states: alpha.len in the original function
