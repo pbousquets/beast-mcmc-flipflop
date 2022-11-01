@@ -26,6 +26,7 @@
 package dr.evomodel.treelikelihood;
 
 import dr.evolution.util.TaxonList;
+import dr.math.GammaFunction;
 import dr.evomodelxml.treelikelihood.FlipFlopErrorModelParser;
 import dr.inference.model.Parameter;
 import dr.util.Author;
@@ -71,6 +72,8 @@ public class FlipFlopErrorModel extends TipStatesModel implements Citable {
         } else {
             this.kappaParameter = null;
         }
+
+        this.stateCount = 2 * (int) stemCellParameter.getParameterValue(0) + 1;
     }
 
     /*
@@ -93,13 +96,18 @@ public class FlipFlopErrorModel extends TipStatesModel implements Citable {
 
     @Override
     public void getTipPartials(int nodeIndex, double[] partials) {
+        /* Note: the partials are generated in the abstracttreelikelihood class as:
+            double[] partials = new double[patternCount * stateCount];
+         */
+
         int[] states = this.states[nodeIndex];
+        double[] double_states = FlipFlopUtils.remapDigitized(states, 200); // Turn the states into the 0,1 original range
+
         double delta = deltaParameter.getParameterValue(0);
         double eta = etaParameter.getParameterValue(0);
         double kappa = kappaParameter.getParameterValue(0);
-        int cells = (int) stemCellParameter.getParameterValue(0);
 
-        int total_states = 2 * cells + 1;
+        int total_states = this.stateCount;
         double[] ideal_beta = new double [total_states];
         double[] beta = new double [total_states];
         double[] transformed_alpha = new double [total_states];
@@ -113,10 +121,24 @@ public class FlipFlopErrorModel extends TipStatesModel implements Citable {
             transformed_alpha[state] = beta[state] * kappa;
             transformed_beta[state] =  (1 - beta[state]) * kappa;
         }
+        
+        //Loop through each of the possible Z=2S+1 peaks and calculate the log-pdf of the nth beta value in y[N] for the zth beta distribution
+        int N = double_states.length; //number of sites: y.len in the original function
+        int Z = transformed_alpha.length; //number of states: alpha.len in the original function
+        double lgamma_alpha;
+        double lgamma_beta;
+        double lgamma_alphaplusbeta;
 
-        //Compute log(p(y|z))
-        double[] double_states = FlipFlopUtils.remapDigitized(states, 200); // Turn the states into the 0,1 original range
-        partials = FlipFlopUtils.beta_lpdf(double_states, transformed_alpha, transformed_beta); //Format: partials per site per state: [site1state1,site1state2,site1state3,...,site2state1,site2state2,site2state3,...]
+        for (int z = 0; z < Z; z++) {  //Precompute the log-gamma constants. Iterate through states
+            lgamma_alpha = GammaFunction.lnGamma(transformed_alpha[z]);
+            lgamma_beta = GammaFunction.lnGamma(transformed_beta[z]);
+            lgamma_alphaplusbeta = GammaFunction.lnGamma(transformed_alpha[z] + transformed_beta[z]);
+
+            for (int n = 0; n < N; n++) { //Calculate the log pdf of the beta distribution for the nth dataproint drawn from the zth peak. Iterate through sites
+                //Partials format is partials per site per state: [site1state1,site1state2,site1state3,...,site2state1,site2state2,site2state3,...]
+                partials[n * Z + z] = ((transformed_alpha[z] - 1) * Math.log(double_states[n]) + (transformed_beta[z] - 1) * StrictMath.log1p(-double_states[n]) - lgamma_alpha - lgamma_beta + lgamma_alphaplusbeta);
+            }
+        }
     }
 
     private final Parameter stemCellParameter;
