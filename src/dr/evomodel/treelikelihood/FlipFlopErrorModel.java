@@ -126,7 +126,8 @@ public class FlipFlopErrorModel extends TipStatesModel implements Citable {
 
     @Override
     protected void taxaChanged(){
-        throw new RuntimeException("Unexpected behaviour. taxaChanged method has been activated, but it shouldn't.");
+        //DM TODO: Actually, this method is expected to be called by setTree at initialization. At this point I think it does not need to do anything else. TO CHECK IN THE FUTURE
+        //throw new RuntimeException("Unexpected behaviour. taxaChanged method has been activated, but it shouldn't.");
     }
 
     @Override

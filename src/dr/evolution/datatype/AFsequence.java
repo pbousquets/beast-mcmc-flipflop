@@ -50,6 +50,8 @@ public class AFsequence extends DataType {
 
     public AFsequence() {}
 
+    public AFsequence(int nStates) { this.stateCount=nStates;}; // DM This is for the test only. We'll need to either require a parameter that indicates this or to add a method to modify this. A proper state count it is needed for the initialization of the tipStatesModel, and probably more things down the road
+
     public AFsequence(String sequenceString){ // Create the sequence object
         setSequenceString(sequenceString);
         this.taxon = getTaxon();
