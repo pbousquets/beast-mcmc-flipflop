@@ -192,7 +192,7 @@ public class TestFlipFlopErrorModel extends TestCase {
                 patterns.addPattern(current_pattern);
             }
 
-            //We will simulate a tree here. We only need the tree for the super(FlipFlopErrorModel) to set the tip partials properly and we do not really care about anything else
+            //We will simulate a tree here. We only need the tree for the super(FlipFlopErrorModel) to set the tip partials properly, and we do not really care about anything else
             CoalescentSimulator simulator = new CoalescentSimulator();
             DemographicModel constantPop = new ConstantPopulationModel(new Parameter.Default(50.0), dr.evolution.util.Units.Type.YEARS);
             Tree theTree=simulator.simulateTree(taxonlist,constantPop);
