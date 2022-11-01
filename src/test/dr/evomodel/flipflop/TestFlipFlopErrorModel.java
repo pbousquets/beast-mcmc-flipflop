@@ -171,14 +171,14 @@ public class TestFlipFlopErrorModel extends TestCase {
             int Ntips = test.getNtips();
             int Nstates = test.getNstates();
 
-            // Create PatternList to be able to use the FlipFlopErrorModel
+            // Create PatternList to be able to use the FlipFlopErrorModel. Just adding C to each tip's number (short for Crypt)
             //Taxa
             Taxa taxonlist = new Taxa();
             for (int iTip=0;iTip<Ntips;iTip++){
                 taxonlist.addTaxon(new Taxon("C" + String.valueOf(iTip)));
             }
 
-            //Pattern
+            //Pattern. Only tried with one pattern
             Patterns patterns = new Patterns(new AFsequence(Nstates), taxonlist);
             List<int[]> seqlist = new ArrayList<int[]>();
             for (int iTip=0;iTip<Ntips;iTip++) {
@@ -192,20 +192,22 @@ public class TestFlipFlopErrorModel extends TestCase {
                 patterns.addPattern(current_pattern);
             }
 
-            //We will simulate a tree here. We only need the tree for the super(FlipFlopErrorModel) to set the tip partials properly, and we do not really care about anything else
+            //Tree simulation. We do not care about the simulation parameters, we just need a tree object with the proper number of external nodes (tips) for the super(FlipFlopErrorModel) to initalize the tip states properly.
+            // We do not care about anything else
             CoalescentSimulator simulator = new CoalescentSimulator();
             DemographicModel constantPop = new ConstantPopulationModel(new Parameter.Default(50.0), dr.evolution.util.Units.Type.YEARS);
             Tree theTree=simulator.simulateTree(taxonlist,constantPop);
 
             //Creating the error model
             FlipFlopErrorModel errorModel= new FlipFlopErrorModel(taxonlist, new Taxa() ,new Parameter.Default(cells), new Parameter.Default(delta),new Parameter.Default(eta),new Parameter.Default(kappa));
-            errorModel.setTree(theTree);
 
             //Initializing the error model
+            errorModel.setTree(theTree);
             for (int iTip=0;iTip<Ntips;iTip++) {
                 errorModel.setStates(patterns,iTip,iTip,patterns.getTaxonId(iTip));
             }
 
+            //Using the model to get partials and testing the results against our expectations
             for (int iTip=0;iTip<Ntips;iTip++){
                 double [] expectedPartials = test.getExpectedResult(iTip);
                 double [] calculatedPartials = new double [Nstates];
