@@ -114,7 +114,7 @@ public class FlipFlopErrorModel extends TipStatesModel implements Citable {
         double[] transformed_beta = new double [total_states];
 
         for (int state = 0; state < total_states; state ++){
-            ideal_beta[state] = state/total_states; // We'll have 0/N methylated alleles, 1/N allele, 2/N alleles, ... N/N methylated alleles (considering here N = total alleles)
+            ideal_beta[state] = ((double) state) / (total_states - 1); // We'll have 0/N methylated alleles, 1/N allele, 2/N alleles, ... N/N methylated alleles (considering here N = total alleles)
             beta[state] = (eta - delta) * ideal_beta[state] + delta; // Rescale the expected peaks to linear scale
 
             //Convert mean/dispersion parameterization of a beta distribution
@@ -148,7 +148,8 @@ public class FlipFlopErrorModel extends TipStatesModel implements Citable {
 
     @Override
     protected void taxaChanged(){
-        throw new RuntimeException("Unexpected behaviour. taxaChanged method has been activated, but it shouldn't.");
+        //DM TODO: Actually, this method is expected to be called by setTree at initialization. At this point I think it does not need to do anything else. TO CHECK IN THE FUTURE
+        //throw new RuntimeException("Unexpected behaviour. taxaChanged method has been activated, but it shouldn't.");
     }
 
     @Override
