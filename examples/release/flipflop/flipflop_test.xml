@@ -34,11 +34,14 @@
             <taxon idref="S3_2"/>
             0,0.1,0.1,0.7,0.1,0.1,0.6,0.17,0.21,0.1,0.7
         </afsequence>
+        <states>
+            <parameter id="alignment.states" value="11"/>
+        </states>
     </afalignment>
 
     <AFsequenceErrorModel id="errorModel" type="transitions">
         <stemCells>
-            <parameter id="errorModel.stemCells" value="4" lower="0.0" upper="100.0"/>
+            <parameter id="errorModel.stemCells" value="5"/>
         </stemCells>
         <deltaOffset>
             <parameter id="errorModel.deltaOffset" value="4.0E-7" lower="0.0" upper="100.0"/>

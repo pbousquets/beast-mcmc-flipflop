@@ -53,10 +53,17 @@ public class AFsequence extends DataType {
     public AFsequence(int nStates) { this.stateCount=nStates;}; // DM TODO: I implemented this quick fix for the test only. A proper state count it is needed for the initialization of the tipStatesModel, and probably more things down the road.
     //DM TODO: We'll probably want to add a required parameter in AFSequence's XML parser with this information, and use a similar constructor. Alternatively, it would be better to modify the setStates method of the abstract super(), but it is final, so we can't. This would complicate things if we wanted to use the BEAST app without modification.
 
-    public AFsequence(String sequenceString){ // Create the sequence object
+    public AFsequence(String sequenceString){
         setSequenceString(sequenceString);
         this.taxon = getTaxon();
         this.sequenceLength = sequence.length;
+    }
+
+    public AFsequence(String sequenceString, int nStates){
+        setSequenceString(sequenceString);
+        this.taxon = getTaxon();
+        this.sequenceLength = sequence.length;
+        this.stateCount=nStates;
     }
 
     public void setTaxon(Taxon taxon) {
@@ -75,6 +82,9 @@ public class AFsequence extends DataType {
         this.sequence = FlipFlopUtils.mapDoubleRangeToInt(double_seq, 0, 1, 200); //TODO: parametize the precision?
     }
 
+    public void setStateCount(int nStates){
+        this.stateCount=nStates;
+    }
     public int[] getSequence(){ return this.sequence; }
 
     public void checkRange(double value, int min, int max) {
@@ -91,6 +101,14 @@ public class AFsequence extends DataType {
     }
 
     public int getLength() {return this.sequenceLength; }
+
+
+    /**
+     * @return the stateCount.
+     */
+    public int getStateCount(){
+        return stateCount;
+    }
 
 
     @Override

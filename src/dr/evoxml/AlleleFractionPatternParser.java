@@ -31,6 +31,7 @@ import dr.evolution.datatype.AFsequence;
 import dr.evolution.datatype.DataType;
 import dr.evolution.alignment.Patterns;
 import dr.evolution.alignment.SiteList;
+import dr.inference.model.Parameter;
 import java.util.logging.Logger;
 import java.util.List;
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ import java.util.Arrays;
 public class AlleleFractionPatternParser extends AbstractXMLObjectParser {
 
     public static final String ALLELEFRACTIONS = "afalignment"; //Reference to main XML class
-    public static final String AFSEQUENCE = "afseq";
+    public static final String STATES = "states";
 
     public String getParserName() {
         return ALLELEFRACTIONS;
@@ -58,6 +59,7 @@ public class AlleleFractionPatternParser extends AbstractXMLObjectParser {
     public Object parseXMLObject(XMLObject xo) throws XMLParseException {
         List<int[]> seqlist = new ArrayList<int[]>();
         Taxa taxonlist = new Taxa();
+        int nStates = 0;
 
         for (int i = 0; i < xo.getChildCount(); i++) {
             final Object child = xo.getChild(i);
@@ -65,12 +67,20 @@ public class AlleleFractionPatternParser extends AbstractXMLObjectParser {
             if (child instanceof AFsequence) {
                 taxonlist.addTaxon(((AFsequence) child).getTaxon());
                 seqlist.add(((AFsequence) child).getSequence());
+            } else if (xo.getChildName(i).equals(STATES)){
+                Parameter statesParameter = (Parameter) xo.getElementFirstChild(STATES);
+                if (statesParameter.getParameterValue(0) % 1 != 0){
+                    throw new XMLParseException("The states parameter must be an integer. Current value: " + statesParameter.getParameterValue(0));
+                }
+
+                nStates = (int) statesParameter.getParameterValue(0);
+
             } else {
                 throw new XMLParseException("Unknown child element found in alignment");
             }
         }
 
-        Patterns patterns = new Patterns(new AFsequence(), taxonlist);
+        Patterns patterns = new Patterns(new AFsequence(nStates), taxonlist);
         for (int site = 0; site < (seqlist.get(0)).length; site++){
             int[] current_pattern = new int[seqlist.size()];
             for (int seq_index = 0; seq_index < seqlist.size(); seq_index++){
@@ -84,6 +94,7 @@ public class AlleleFractionPatternParser extends AbstractXMLObjectParser {
         logger.info("Site patterns '" + xo.getId() + "' created:");
         logger.info("  - Taxa count = " + patterns.getTaxonCount());
         logger.info("  - Site count = " + patterns.getPatternCount());
+        logger.info("  - Expected states = " + patterns.getStateCount());
 
         return patterns;
     }
@@ -123,7 +134,8 @@ public class AlleleFractionPatternParser extends AbstractXMLObjectParser {
     private final XMLSyntaxRule[] rules = {
             new ElementRule(AFsequence.class,
                     "A string of numbers representing the AFs",
-                    1, Integer.MAX_VALUE)
+                    1, Integer.MAX_VALUE),
+            new ElementRule(STATES, Parameter.class, "Number of expected states (states=2S+1)", false),
     };
 }
 
