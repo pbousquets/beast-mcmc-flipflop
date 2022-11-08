@@ -175,10 +175,6 @@ public class FlipFlopModel extends ComplexSubstitutionModel{
         this.freqModel = new FrequencyModel(dataType, empFreq);
     }
 
-    public void setupMatrix(){
-        //setupInfinitesimalRates();
-        //super.setupMatrix();
-    }
 
 
 }
