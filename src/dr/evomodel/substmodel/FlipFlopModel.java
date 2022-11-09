@@ -119,9 +119,9 @@ public class FlipFlopModel extends ComplexSubstitutionModel{
      **/
     public void generateStateVar(){
         int S = (int) stemCellParam.getParameterValue(0);
-        int num_states = stateCount; //TODO: make sure this is working fine
+        int num_states = stateCount;
 
-        int[][] stateVar = new int[num_states][];
+        this.stateVar = new int[num_states][];
         int ii = 0;
         for (int m = 0; m <= S; m++){
             for (int k = 0; k <= S; k++){
@@ -131,7 +131,6 @@ public class FlipFlopModel extends ComplexSubstitutionModel{
                 }
             }
         }
-        this.stateVar = stateVar;
     }
 
     //matrix is already valid
