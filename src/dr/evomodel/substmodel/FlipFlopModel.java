@@ -133,6 +133,8 @@ public class FlipFlopModel extends ComplexSubstitutionModel{
         }
     }
 
+    public double[][] getAmat(){return amat;}
+
     //matrix is already valid
     protected void makeValid(double[][] matrix, int dimension){}
 
