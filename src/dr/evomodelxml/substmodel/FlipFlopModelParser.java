@@ -27,8 +27,6 @@
 
 package dr.evomodelxml.substmodel;
 
-import dr.evolution.datatype.DataType;
-import dr.evolution.datatype.TwoStates;
 import dr.inference.model.Variable;
 import dr.inference.model.Parameter;
 import dr.evolution.datatype.AFsequence;
@@ -63,14 +61,14 @@ public class FlipFlopModelParser extends AbstractXMLObjectParser {
         Variable muParam = (Variable) xo.getElementFirstChild(MU);
 
         int S = (int) stemCellParam.getParameterValue(0);
-        int stateCount = (int) 0.5*(S+1)*(S+2);
+        int stateCount = (int) (0.5*(S+1)*(S+2));
         double[] freqs = new double[stateCount];
         for(int i = 0; i < freqs.length; i++){
             freqs[i] = 1.0/stateCount;
         }
 
         AFsequence afseq = new AFsequence(stateCount);
-        FrequencyModel freqModel = new FrequencyModel(AFsequence.INSTANCE, freqs);
+        FrequencyModel freqModel = new FrequencyModel(afseq, freqs);
 
         Logger.getLogger("dr.evomodel").info("Creating FlipFlip model");
         Logger.getLogger("dr.evomodel").info("  - Initial gamma:" + gammaParam.getValue(0));
