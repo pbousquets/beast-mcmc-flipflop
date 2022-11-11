@@ -138,44 +138,5 @@ public class FlipFlopModel extends ComplexSubstitutionModel{
     //matrix is already valid
     protected void makeValid(double[][] matrix, int dimension){}
 
-    /*
-     * Set up stationary frequencies
-     */
-    public void computeTwoPhaseStationaryDistribution(){
-        synchronized (this) {
-            if (updateMatrix) {
-                setupMatrix();
-            }
-        }
-
-        if (!wellConditioned) {
-            throw new RuntimeException("not well conditioned");
-        }
-        int eigenValPos = -1;
-
-        for(int i = 0; i < stateCount; i++){
-            if(Eval[i] == 0){
-                eigenValPos = i;
-                break;
-            }
-        }
-        /*for(int i = 0; i < EvalImag.length; i++){
-            //System.out.println("imaginery part" + EvalImag[i]);
-            if(EvalImag[i] != 0.0){
-                throw new RuntimeException("imaginery part" + EvalImag[i]);
-            }
-        }*/
-
-        double[] empFreq = new double[stateCount];
-        //System.out.println("eq dist");
-        for(int i = 0; i < stateCount; i++){
-            empFreq[i] = Evec[i][eigenValPos]*Ievc[eigenValPos][i];
-            //System.out.println(empFreq[i]);
-
-        }
-        this.freqModel = new FrequencyModel(dataType, empFreq);
-    }
-
-
 
 }
