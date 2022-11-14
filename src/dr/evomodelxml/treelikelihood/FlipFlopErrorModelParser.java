@@ -88,7 +88,10 @@ public class FlipFlopErrorModelParser extends AbstractXMLObjectParser {
 
         FlipFlopErrorModel afModel = new FlipFlopErrorModel(includeTaxa, excludeTaxa, stemCellParameter, deltaParameter, etaParameter, kappaParameter);
 
-        Logger.getLogger("dr.evomodel").info("Using allele frequency sequence error model with " + (int) stemCellParameter.getParameterValue(0) + " stem cells");
+        Logger.getLogger("dr.evomodel").info("\n---\n\nUsing allele frequency sequence error model with " + (int) stemCellParameter.getParameterValue(0) + " stem cells");
+        Logger.getLogger("dr.evomodel").info("  - Initial delta = " + deltaParameter.getParameterValue(0));
+        Logger.getLogger("dr.evomodel").info("  - Initial eta = " + etaParameter.getParameterValue(0));
+        Logger.getLogger("dr.evomodel").info("  - Initial kappa = " + kappaParameter.getParameterValue(0));
 
         return afModel;
     }

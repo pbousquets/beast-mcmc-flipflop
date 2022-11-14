@@ -91,7 +91,7 @@ public class AlleleFractionPatternParser extends AbstractXMLObjectParser {
         patterns.setId((String)xo.getAttribute(ID));
 
         final Logger logger = Logger.getLogger("dr.evoxml");
-        logger.info("Site patterns '" + xo.getId() + "' created:");
+        logger.info("\n---\n\nSite patterns '" + xo.getId() + "' created:");
         logger.info("  - Taxa count = " + patterns.getTaxonCount());
         logger.info("  - Site count = " + patterns.getPatternCount());
         logger.info("  - Expected states = " + patterns.getStateCount());

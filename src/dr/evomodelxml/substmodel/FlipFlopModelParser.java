@@ -70,10 +70,11 @@ public class FlipFlopModelParser extends AbstractXMLObjectParser {
         AFsequence afseq = new AFsequence(stateCount);
         FrequencyModel freqModel = new FrequencyModel(afseq, freqs);
 
-        Logger.getLogger("dr.evomodel").info("Creating FlipFlip model");
-        Logger.getLogger("dr.evomodel").info("  - Initial gamma:" + gammaParam.getValue(0));
-        Logger.getLogger("dr.evomodel").info("  - Initial lambda:" + lambdaParam.getValue(0));
-        Logger.getLogger("dr.evomodel").info("  - Initial mu:" + muParam.getValue(0));
+        Logger.getLogger("dr.evomodel").info("\n---\n\nCreating FlipFlip model");
+        Logger.getLogger("dr.evomodel").info("  - Initial gamma = " + gammaParam.getValue(0));
+        Logger.getLogger("dr.evomodel").info("  - Initial lambda = " + lambdaParam.getValue(0));
+        Logger.getLogger("dr.evomodel").info("  - Initial mu = " + muParam.getValue(0));
+        Logger.getLogger("dr.evomodel").info("\n---");
 
         return new FlipFlopModel(xo.getId(), stemCellParam, gammaParam, lambdaParam, muParam, freqModel);
     }

@@ -35,23 +35,38 @@
             0,0.1,0.1,0.7,0.1,0.1,0.6,0.17,0.21,0.1,0.7
         </afsequence>
         <states>
-            <parameter id="alignment.states" value="11"/>
+            <parameter id="alignment.states" value="5"/>
         </states>
     </afalignment>
 
     <AFsequenceErrorModel id="errorModel" type="transitions">
         <stemCells>
-            <parameter id="errorModel.stemCells" value="5"/>
+            <parameter id="errorModel.stemCells" value="2"/>
         </stemCells>
         <deltaOffset>
-            <parameter id="errorModel.deltaOffset" value="4.0E-7" lower="0.0" upper="100.0"/>
+            <parameter id="errorModel.deltaOffset" value="5" lower="0.0" upper="100.0"/>
         </deltaOffset>
         <etaOffset>
-            <parameter id="errorModel.etaOffset" value="4.0E-7" lower="0.0" upper="100.0"/>
+            <parameter id="errorModel.etaOffset" value="95" lower="0.0" upper="100.0"/>
         </etaOffset>
         <kappaScale>
-            <parameter id="errorModel.kappaScale" value="4.0E-7" lower="0.0" upper="100.0"/>
+            <parameter id="errorModel.kappaScale" value="0.1"/>
         </kappaScale>
     </AFsequenceErrorModel>
+
+    <flipflopModel id = "model">
+        <stemCells>
+            <parameter id="model.cells" value="2"/>
+        </stemCells>
+        <mu>
+            <parameter id="model.mu" value="0.1"/>
+        </mu>
+        <gamma>
+            <parameter id="model.gamma" value="0.1"/>
+        </gamma>
+        <lambda>
+            <parameter id="model.lambda" value="1"/>
+        </lambda>
+    </flipflopModel>
 
 </beast>
