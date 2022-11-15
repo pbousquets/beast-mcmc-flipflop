@@ -38,18 +38,18 @@ public class TestFlipFlopModel extends TestCase {
         //MODEL
         protected final int nCells=2;
         protected final int nStates = (int) (0.5 * (nCells + 1) * (nCells + 2));
-        protected final double gamma=0.1;
-        protected final double lambda=1;
-        protected final double mu=0.1;
+        protected final double gamma=0.05;
+        protected final double lambda=0.95;
+        protected final double mu=0.05;
 
         //EXPECTED
         protected final double [] expectedResults = {
-                -0.4, 0.4, 0.0, 0.0, 0.0, 0.0,
-                1.1, -2.4000000000000004, 1.2, 0.1, 0.0, 0.0,
-                0.0, 0.2, -0.4, 0.0, 0.2, 0.0,
-                1.0, 0.2, 0.0, -2.4000000000000004, 0.2, 1.0,
-                0.0, 0.0, 1.2, 0.1, -2.4, 1.1,
-                0.0, 0.0, 0.0, 0.0, 0.4, -0.4
+                -0.2, 0.2, 0.0, 0.0, 0.0, 0.0,
+                1.0, -2.1, 1.05, 0.05, 0.0, 0.0,
+                0.0, 0.1, -0.2, 0.0, 0.1, 0.0,
+                0.95, 0.1, 0.0, -2.1, 0.1, 0.95,
+                0.0, 0.0, 1.05, 0.05, -2.0999999999999996, 1.0,
+                0.0, 0.0, 0.0, 0.0, 0.2, -0.2
         };
 
         //GETTERS
@@ -113,10 +113,6 @@ public class TestFlipFlopModel extends TestCase {
                     flatmat[mat.length*k+i] = mat[k][i];
                 }
             }
-
-            //System.out.println(Arrays.deepToString(mat));
-            //System.out.println(Arrays.toString(flatmat));
-            //System.out.println(Arrays.toString(expectedMat));
 
             for (int j = 0; j < flatmat.length; ++j) {
                 assertEquals(flatmat[j], expectedMat[j], 1e-10);
