@@ -3,21 +3,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import dr.app.treestat.TreeStatData;
 import dr.evolution.alignment.Patterns;
 import dr.evolution.datatype.AFsequence;
 import dr.evolution.tree.Tree;
 import dr.evolution.util.Taxa;
 import dr.evolution.util.Taxon;
-import dr.evolution.util.TaxonList;
-import dr.evolution.util.Units;
 import dr.evomodel.coalescent.CoalescentSimulator;
 import dr.evomodel.coalescent.ConstantPopulationModel;
 import dr.evomodel.coalescent.DemographicModel;
-import dr.evomodel.tree.StarTreeModel;
-import dr.evomodel.tree.TreeModel;
 import dr.inference.model.Parameter;
-import dr.util.FlipFlopUtils;
 import dr.evomodel.treelikelihood.FlipFlopErrorModel;
 
 import junit.framework.TestCase;
@@ -32,7 +26,6 @@ public class TestFlipFlopErrorModel extends TestCase {
     interface Instance {
 
         int getNtips();
-        int getNcells();
         int getNstates();
 
         double getStemCellParameter();
@@ -40,12 +33,7 @@ public class TestFlipFlopErrorModel extends TestCase {
         double getEtaParameter();
         double getKappaParameter();
 
-        double[] getSequence();
-
         String getSequenceString (int iTip);
-
-        double[] getExpectedResult();
-
         double[] getExpectedResult(int iTip);
 
     }
@@ -63,10 +51,6 @@ public class TestFlipFlopErrorModel extends TestCase {
         protected final double kappa=0.9;
 
         //EXPECTED
-
-        protected final double [] expectedIdealAlpha= {0.045 , 0.2475, 0.45  , 0.6525, 0.855};
-
-        protected final double [] expectedIdealBeta= {0.855 , 0.6525, 0.45  , 0.2475, 0.045};
         protected final double [] expectedResults = {
                 -0.8984707443537294,0.21490279494496956,0.03657211353834405,0.03657211353834405,-0.6749731588762,-2.678222651996067,
                 -2.163589418547541,-0.6873845867301609,-0.5028839756181054,-0.5028839756181054,-0.8515979555139683,-2.492016156115154,
@@ -79,7 +63,6 @@ public class TestFlipFlopErrorModel extends TestCase {
 
         //GETTERS
         public int getNtips(){return this.nTips;};
-        public int getNcells(){return this.nCells;};
         public int getNstates(){return this.nStates;};
         public double getStemCellParameter(){
             return this.nCells;
@@ -93,24 +76,10 @@ public class TestFlipFlopErrorModel extends TestCase {
         public double getKappaParameter(){
             return this.kappa;
         };
-        public double[] getSequence(){
-            return this.sequence;
-        };
 
         public String getSequenceString(int iTip){
             return(String.valueOf(this.sequence[iTip])); //Implementation for only one patter/locus
         }
-        public double[] getExpectedIdealAlpha() {
-            return this.expectedIdealAlpha;
-        }
-        public double[] getExpectedIdealBeta() {
-            return this.expectedIdealBeta;
-        }
-
-        public double[] getExpectedResult() {
-            return(this.expectedResults);
-        }
-
         public double[] getExpectedResult(int iTip) {
             return(Arrays.copyOfRange(expectedResults,iTip*nStates,iTip*nStates+nStates));
         }

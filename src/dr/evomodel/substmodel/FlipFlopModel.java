@@ -25,10 +25,10 @@
 
 package dr.evomodel.substmodel;
 
-import dr.evolution.datatype.AFsequence;
 import dr.inference.model.Variable;
 import dr.inference.model.Parameter;
 import dr.inference.model.Model;
+import java.util.Arrays;
 
 
 /**
@@ -46,6 +46,7 @@ public class FlipFlopModel extends ComplexSubstitutionModel{
      * @param gammaParam        Gamma parameter
      * @param lambdaParam       Lambda parameter
      * @param muParam           Mu parameter
+     * @param useFrequencyModel Whether to use the frequency model or ignore it
      * @param freqModel         Frequency model
      */
 
@@ -54,10 +55,12 @@ public class FlipFlopModel extends ComplexSubstitutionModel{
     private Variable<Double> gammaParam = null;
     private Variable<Double> lambdaParam = null;
     private Variable<Double> muParam = null;
+    private double[] stationaryDistribution = null;
+    private double[] dummyStationaryDistribution = null;
     private int[][] stateVar;
-
-    public FlipFlopModel(String name, Parameter stemCellParam, Variable gammaParam, Variable lambdaParam, Variable muParam, FrequencyModel freqModel) {
-        super(name, freqModel.getDataType(), freqModel, null); //TODO: check the last parameter
+    private boolean useFrequencyModel = true;
+    public FlipFlopModel(String name, Parameter stemCellParam, Variable gammaParam, Variable lambdaParam, Variable muParam, boolean useFrequencyModel, FrequencyModel freqModel) {
+        super(name, freqModel.getDataType(), freqModel, null);
 
         // None of the variables should be null with the current parser, so no need to evaluate them, right?
         addVariable(stemCellParam);
@@ -71,6 +74,12 @@ public class FlipFlopModel extends ComplexSubstitutionModel{
         generateStateVar();
 
         updateMatrix = true;
+
+        this.useFrequencyModel = useFrequencyModel;
+
+        dummyStationaryDistribution = new double[stateCount];
+        Arrays.fill(dummyStationaryDistribution, 1);
+
     }
 
     protected void handleModelChangedEvent(Model model, Object object, int index) {
@@ -80,16 +89,16 @@ public class FlipFlopModel extends ComplexSubstitutionModel{
     //store rate matrix
     @Override
     public void storeIntoAmat(){
+        double[] rates = new double[stateCount*(stateCount-1)];
         int S = (int) stemCellParam.getParameterValue(0);
         double gamma = gammaParam.getValue(0);
         double lam = lambdaParam.getValue(0);
         double mu = muParam.getValue(0);
-        int num_states = stateCount;
 
-        for (int down = 0; down < num_states; down++){ //Represents the new state
+        for (int down = 0; down < stateCount; down++){ //Represents the new state (out-state)
             int k_down = stateVar[down][0];
             int m_down = stateVar[down][1];
-            for (int across = 0; across < num_states; across++) { //Represents the old state
+            for (int across = 0; across < stateCount; across++) { //Represents the old state (in-state)
                 int k = stateVar[across][0];
                 int m = stateVar[across][1];
                 if (k == k_down-1 & m == m_down){
@@ -109,6 +118,21 @@ public class FlipFlopModel extends ComplexSubstitutionModel{
                 } else {
                     amat[across][down] = 0;
                 }
+            }
+        }
+
+        double[] pi = getPi();
+        int i, j;
+        for (i = 0; i < stateCount; i++) {
+            for (j = i+1; j < stateCount; j++) {
+                amat[i][j] = amat[i][j] * pi[j];
+            }
+        }
+
+        // Copy lower triangle in column-order form (transposed)
+        for (j = 0; j< stateCount; j++) {
+            for (i = j+1; i < stateCount; i++) {
+                amat[i][j] = amat[i][j] * pi[j];
             }
         }
     }
@@ -133,10 +157,24 @@ public class FlipFlopModel extends ComplexSubstitutionModel{
         }
     }
 
+    @Override
+    protected void computeStationaryDistribution() {
+        if (useFrequencyModel) {
+            stationaryDistribution = freqModel.getFrequencies();
+        } else {
+            stationaryDistribution = dummyStationaryDistribution; // In case no freq model is needed, an arrays full of ones will be used
+        }
+    }
+
+    @Override
+    protected double[] getPi() {
+        if (useFrequencyModel) {
+            return freqModel.getFrequencies();
+        } else {
+            return dummyStationaryDistribution;
+        }
+
+    }
+
     public double[][] getAmat(){return amat;}
-
-    //matrix is already valid
-    protected void makeValid(double[][] matrix, int dimension){}
-
-
 }

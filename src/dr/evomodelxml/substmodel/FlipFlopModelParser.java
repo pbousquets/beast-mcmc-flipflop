@@ -48,6 +48,7 @@ public class FlipFlopModelParser extends AbstractXMLObjectParser {
     public static final String GAMMA = "gamma";
     public static final String LAMBDA= "lambda";
     public static final String MU= "mu";
+    public static final String USEFREQMODEL= "useFrequencyModel";
 
     public String getParserName() {
         return FLIPFLOP_MODEL;
@@ -59,6 +60,7 @@ public class FlipFlopModelParser extends AbstractXMLObjectParser {
         Variable gammaParam = (Variable) xo.getElementFirstChild(GAMMA);
         Variable lambdaParam = (Variable) xo.getElementFirstChild(LAMBDA);
         Variable muParam = (Variable) xo.getElementFirstChild(MU);
+        boolean useFrequencyModel = xo.getAttribute(USEFREQMODEL, true);
 
         int S = (int) stemCellParam.getParameterValue(0);
         int stateCount = (int) (0.5*(S+1)*(S+2));
@@ -76,7 +78,7 @@ public class FlipFlopModelParser extends AbstractXMLObjectParser {
         Logger.getLogger("dr.evomodel").info("  - Initial mu = " + muParam.getValue(0));
         Logger.getLogger("dr.evomodel").info("\n---");
 
-        return new FlipFlopModel(xo.getId(), stemCellParam, gammaParam, lambdaParam, muParam, freqModel);
+        return new FlipFlopModel(xo.getId(), stemCellParam, gammaParam, lambdaParam, muParam, useFrequencyModel, freqModel);
     }
 
     //************************************************************************
@@ -103,6 +105,7 @@ public class FlipFlopModelParser extends AbstractXMLObjectParser {
             new ElementRule(MU,
                     new XMLSyntaxRule[]{new ElementRule(Variable.class)}),
             new ElementRule(STEM_CELLS,
-                    new XMLSyntaxRule[]{new ElementRule(Variable.class)})
+                    new XMLSyntaxRule[]{new ElementRule(Variable.class)}),
+            AttributeRule.newBooleanRule(USEFREQMODEL, true)
     };
 }
