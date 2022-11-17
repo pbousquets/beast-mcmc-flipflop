@@ -28,14 +28,11 @@ package dr.evoxml;
 import dr.xml.*;
 import dr.evolution.util.Taxa;
 import dr.evolution.datatype.AFsequence;
-import dr.evolution.datatype.DataType;
 import dr.evolution.alignment.Patterns;
-import dr.evolution.alignment.SiteList;
 import dr.inference.model.Parameter;
 import java.util.logging.Logger;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * @author Pablo Bousquets
@@ -135,7 +132,7 @@ public class AlleleFractionPatternParser extends AbstractXMLObjectParser {
             new ElementRule(AFsequence.class,
                     "A string of numbers representing the AFs",
                     1, Integer.MAX_VALUE),
-            new ElementRule(STATES, Parameter.class, "Number of expected states (states=2S+1)", false),
+            new ElementRule(STATES, Parameter.class, "Number of expected states (states=0.5*(S+1)(S+2))", false),
     };
 }
 
