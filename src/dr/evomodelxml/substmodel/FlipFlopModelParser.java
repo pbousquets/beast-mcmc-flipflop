@@ -78,7 +78,7 @@ public class FlipFlopModelParser extends AbstractXMLObjectParser {
         Logger.getLogger("dr.evomodel").info("  - Initial mu = " + muParam.getValue(0));
         Logger.getLogger("dr.evomodel").info("\n---");
 
-        return new FlipFlopModel(xo.getId(), stemCellParam, gammaParam, lambdaParam, muParam, useFrequencyModel, freqModel);
+        return new FlipFlopModel(xo.getId(), stemCellParam, gammaParam, lambdaParam, muParam, useFrequencyModel, freqModel, null);
     }
 
     //************************************************************************
