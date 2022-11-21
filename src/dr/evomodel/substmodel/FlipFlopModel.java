@@ -166,14 +166,10 @@ public class FlipFlopModel extends AbstractSubstitutionModel implements Likeliho
 
         storedUpdateMatrix = updateMatrix;
 
-//        if(updateMatrix)
-//            System.err.println("Storing updatable state!");
-
         storedWellConditioned = wellConditioned;
 
         System.arraycopy(stationaryDistribution, 0, storedStationaryDistribution, 0, stateCount);
         System.arraycopy(EvalImag, 0, storedEvalImag, 0, stateCount);
-//        storedNormalization = normalization;
 
         // Inherited
         System.arraycopy(Eval, 0, storedEval, 0, stateCount);
