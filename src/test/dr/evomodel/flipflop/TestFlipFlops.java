@@ -82,7 +82,7 @@ public class TestFlipFlops extends TestCase {
         protected final double gamma=0.05;
         protected final double lambda=0.95;
         protected final double mu=0.05;
-        protected final boolean useFreqModel = false;
+        protected final boolean useFreqModel = true;
 
         //EXPECTED
         protected final double [] expectedResults = { //TODO!
@@ -148,9 +148,9 @@ public class TestFlipFlops extends TestCase {
             //Create pi freqs and modify them so not all of them have the same value
             double[] freqs = new double[nstates];
             Arrays.fill(freqs, (double) 1/nstates);
-            freqs[1] = freqs[1]+0.2;
+            /*freqs[1] = freqs[1]+0.2;
             freqs[2] = freqs[2]-0.15;
-            freqs[3] = freqs[3]-0.05;
+            freqs[3] = freqs[3]-0.05;*/
 
             // Create PatternList to be able to use the FlipFlopErrorModel. Just adding C to each tip's number (short for Crypt)
             //Taxa
@@ -187,7 +187,7 @@ public class TestFlipFlops extends TestCase {
             //Tree simulation. We do not care about the simulation parameters, we just need a tree object with the proper number of external nodes (tips) for the super(FlipFlopErrorModel) to initalize the tip states properly.
             // We do not care about anything else
             CoalescentSimulator simulator = new CoalescentSimulator();
-            DemographicModel constantPop = new ConstantPopulationModel(new Parameter.Default(50.0), dr.evolution.util.Units.Type.YEARS);
+            DemographicModel constantPop = new ConstantPopulationModel(new Parameter.Default(10), dr.evolution.util.Units.Type.YEARS);
             Tree theTree=simulator.simulateTree(taxonlist,constantPop);
             TreeModel treeModel = new TreeModel(theTree);
 
@@ -202,20 +202,21 @@ public class TestFlipFlops extends TestCase {
 
             FrequencyModel freqModel = new FrequencyModel(afseq, freqs);
 
-            FlipFlopModel model = new FlipFlopModel("test", stemCellParameter, gammaParam, lambdaParam, muParam, useFreqModel, freqModel);
+            FlipFlopModel model = new FlipFlopModel("test", stemCellParameter, gammaParam, lambdaParam, muParam, useFreqModel, freqModel, null);
 
             //siteModel
             GammaSiteModel siteModel = new GammaSiteModel(model);
 
-            TreeLikelihood treeLikelihood = new TreeLikelihood(patterns, treeModel, siteModel, null, null,
+            TreeLikelihood treeLikelihood = new TreeLikelihood(patterns, treeModel, siteModel, null, errorModel,
                     false, false, true, false, false);
             treeLikelihood.setId(TreeLikelihoodParser.TREE_LIKELIHOOD);
 
             System.out.println("\n\nTHE INITIAL LIKELIHOOD IS: " + treeLikelihood.getLogLikelihood() + "\n\n");
+/*
 
-            /*
             // Operators
             OperatorSchedule schedule = new SimpleOperatorSchedule();
+            Parameter kappaParam = new Parameter.Default(1, test.getKappaParameter());
 
             MCMCOperator operator = new ScaleOperator(kappaParam, 0.5);
             operator.setWeight(1.0);
