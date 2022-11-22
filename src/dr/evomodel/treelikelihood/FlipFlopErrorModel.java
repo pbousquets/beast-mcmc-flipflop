@@ -168,7 +168,7 @@ public class FlipFlopErrorModel extends TipStatesModel implements Citable {
             lgamma_alphaplusbeta = GammaFunction.lnGamma(transformed_alpha[z] + transformed_beta[z]);
 
             for (int n = 0; n < N; n++) { //Calculate the log pdf of the beta distribution for the nth dataproint drawn from the zth peak. Iterate through sites
-                peakPartials[n][z] = ((transformed_alpha[z] - 1) * Math.log(double_betas[n]) + (transformed_beta[z] - 1) * StrictMath.log1p(-double_betas[n]) - lgamma_alpha - lgamma_beta + lgamma_alphaplusbeta);
+                peakPartials[n][z] = Math.exp((transformed_alpha[z] - 1) * Math.log(double_betas[n]) + (transformed_beta[z] - 1) * StrictMath.log1p(-double_betas[n]) - lgamma_alpha - lgamma_beta + lgamma_alphaplusbeta);
             }
         }
 

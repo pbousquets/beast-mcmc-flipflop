@@ -140,7 +140,7 @@ public class TestFlipFlopErrorModel extends TestCase {
                 double [] calculatedPartials = new double [Nstates];
                 errorModel.getTipPartials(iTip,calculatedPartials);
                 for (int kk = 0; kk < Nstates; kk++){
-                    assertEquals(expectedPartials[kk], calculatedPartials[kk], 1e-5);
+                    assertEquals(expectedPartials[kk], Math.log(calculatedPartials[kk]), 1e-5);
                 }
             }
         }
