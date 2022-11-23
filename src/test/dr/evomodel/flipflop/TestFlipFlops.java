@@ -1,7 +1,7 @@
 package test.dr.evomodel.flipflop;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Arrays;
 
 import dr.evolution.alignment.Patterns;
 import dr.evolution.datatype.AFsequence;
@@ -19,7 +19,6 @@ import dr.evomodel.substmodel.FlipFlopModel;
 import dr.evomodel.substmodel.FrequencyModel;
 import dr.evomodel.tree.TreeModel;
 import dr.evomodel.treelikelihood.TreeLikelihood;
-import dr.evomodelxml.sitemodel.GammaSiteModelParser;
 import dr.evomodelxml.tree.TreeModelParser;
 import dr.evomodelxml.treelikelihood.TreeLikelihoodParser;
 import dr.inference.loggers.ArrayLogFormatter;
@@ -29,11 +28,9 @@ import dr.inference.mcmc.MCMC;
 import dr.inference.mcmc.MCMCOptions;
 import dr.inference.model.Parameter;
 import dr.evomodel.treelikelihood.FlipFlopErrorModel;
-
 import dr.inference.operators.*;
 import dr.inference.trace.ArrayTraceList;
 import dr.inference.trace.Trace;
-import dr.inference.trace.TraceCorrelation;
 import junit.framework.TestCase;
 
 /**
@@ -42,144 +39,60 @@ import junit.framework.TestCase;
  * @author Pablo Bousquets
  */
 public class TestFlipFlops extends TestCase {
+    class Test {
+        public Test(String name, String[] sequences, int age, int nCells, double delta, double eta, double kappa, double gamma, double lambda, double mu, boolean useFreqModel, double[] stationaryDistribution){
+            this.name = name;
+            this.sequences = sequences;
+            this.age = age;
+            this.nCells = nCells;
+            this.delta = delta;
+            this.kappa = kappa;
+            this.eta = eta;
+            this.gamma = gamma;
+            this.lambda = lambda;
+            this.mu = mu;
+            this.useFreqModel = useFreqModel;
+            this.stationaryDistribution = stationaryDistribution;
 
-    interface Instance {
+            this.nStates = (int) (0.5 * (nCells + 1) * (nCells + 2));
 
-        int getNtips();
-        int getNstates();
+            int Ntips = sequences.length;
+            AFsequence afseq = new AFsequence(this.nStates);
 
-        double getStemCellParameter();
-        double getDeltaParameter();
-        double getEtaParameter();
-        double getKappaParameter();
+            // Create the parameters
+            Parameter deltaParameter = new Parameter.Default(delta);
+            Parameter etaParameter = new Parameter.Default(eta);
+            Parameter kappaParameter = new Parameter.Default(kappa);
 
-        double getGammaParameter();
-        double getLambdaParameter();
-        double getMuParameter();
-        boolean getUseFrequencyModel();
+            Parameter stemCellParameter = new Parameter.Default(1, nCells);
+            Parameter gammaParam = new Parameter.Default(1, gamma);
+            Parameter lambdaParam = new Parameter.Default(1, lambda);
+            Parameter muParam = new Parameter.Default(1, mu);
 
-        String[] getSequences();
-        double[] getExpectedResult(int iTip);
-
-    }
-
-    Instance test0 = new Instance() {
-        //DATA
-        protected final int nTips=3;
-        protected final String[] sequences = {
-                "0.1, 0.4, 0.14, 0.12, 0.99, .95, 0.01",
-                "0.2, 0.3, 0.13, 0.42, 0.29, .01, 0.91",
-                "0.6, 0.36, 0.1, 0.62, 0.24, .15, 0.73"
-        };
-
-        //MODEL
-        protected final int nCells=2;
-        protected final int nStates = (int) (0.5 * (nCells + 1) * (nCells + 2));
-        protected final double delta=0.05;
-        protected final double eta=0.95;
-        protected final double kappa=0.9;
-
-        protected final double gamma=0.05;
-        protected final double lambda=0.95;
-        protected final double mu=0.05;
-        protected final boolean useFreqModel = true;
-
-        //EXPECTED
-        protected final double [] expectedResults = { //TODO!
-        };
-
-        //GETTERS
-        public int getNtips(){return this.nTips;};
-        public int getNstates(){return this.nStates;};
-        public double getStemCellParameter(){
-            return this.nCells;
-        };
-        public double getDeltaParameter(){
-            return this.delta;
-        };
-        public double getEtaParameter(){
-            return this.eta;
-        };
-        public double getKappaParameter(){
-            return this.kappa;
-        };
-
-        public double getGammaParameter(){
-            return this.gamma;
-        };
-        public double getLambdaParameter(){
-            return this.lambda;
-        };
-        public double getMuParameter(){
-            return this.mu;
-        };
-        public boolean getUseFrequencyModel(){
-            return this.useFreqModel;
-        };
-
-        public String[] getSequences(){
-            return this.sequences; //Implementation for only one patter/locus
-        }
-        public double[] getExpectedResult(int iTip) {
-            return(Arrays.copyOfRange(expectedResults,iTip*nStates,iTip*nStates+nStates));
-        }
-    };
-
-    Instance[] all = {test0}; //Add more instances of tests here
-
-    public void testFlipFlops() {
-        for (Instance test : all) {
-            // Get the error model parameters
-            double delta = test.getDeltaParameter();
-            double eta = test.getEtaParameter();
-            double kappa = test.getKappaParameter();
-            double cells = test.getStemCellParameter();
-            int Ntips = test.getNtips();
-            int nstates = test.getNstates();
-            AFsequence afseq = new AFsequence(nstates); // Needed to initialize the models later
-
-            //Get the flipflop model parameters
-            Parameter stemCellParameter = new Parameter.Default(1, test.getStemCellParameter());
-            Parameter gammaParam = new Parameter.Default(1, test.getGammaParameter());
-            Parameter lambdaParam = new Parameter.Default(1, test.getLambdaParameter());
-            Parameter muParam = new Parameter.Default(1, test.getMuParameter());
-            boolean useFreqModel = test.getUseFrequencyModel();
-
-            //Create pi freqs and modify them so not all of them have the same value
-            double[] freqs = new double[nstates];
-            Arrays.fill(freqs, (double) 1/nstates);
-            /*freqs[1] = freqs[1]+0.2;
-            freqs[2] = freqs[2]-0.15;
-            freqs[3] = freqs[3]-0.05;*/
-
-            // Create PatternList to be able to use the FlipFlopErrorModel. Just adding C to each tip's number (short for Crypt)
-            //Taxa
+            //Initiate taxonlist
             Taxa taxonlist = new Taxa();
             for (int iTip=0;iTip<Ntips;iTip++){
                 taxonlist.addTaxon(new Taxon("C" + String.valueOf(iTip)));
             }
 
-            //Patterns
+            //Create the seqlist
             List<int[]> seqlist = new ArrayList<int[]>();
-            taxonlist = new Taxa();
-            for (int idx = 0; idx < test.getSequences().length; idx ++){
-                AFsequence seq = new AFsequence(test.getSequences()[idx]);
-                seq.setTaxon(new Taxon("S"+idx));
-                seqlist.add(seq.getSequence());
-                taxonlist.addTaxon(seq.getTaxon());
 
+            for (int iTip=0;iTip<Ntips;iTip++) {
+                seqlist.add(new AFsequence(sequences[iTip]).getSequence());
             }
 
-            Patterns patterns = new Patterns(new AFsequence(nstates), taxonlist);
+            // Create the patterns
+            this.patterns = new Patterns(afseq, taxonlist);
             for (int site = 0; site < (seqlist.get(0)).length; site++){
                 int[] current_pattern = new int[seqlist.size()];
                 for (int seq_index = 0; seq_index < seqlist.size(); seq_index++){
                     current_pattern[seq_index] = seqlist.get(seq_index)[site];
                 }
-                patterns.addPattern(current_pattern);
+                this.patterns.addPattern(current_pattern);
             }
-            patterns.setId("test");
 
+            System.out.println("Input read. Working with: ");
             System.out.println("  - Taxa count = " + patterns.getTaxonCount());
             System.out.println("  - Site count = " + patterns.getPatternCount());
             System.out.println("  - Expected states = " + patterns.getStateCount());
@@ -187,38 +100,95 @@ public class TestFlipFlops extends TestCase {
             //Tree simulation. We do not care about the simulation parameters, we just need a tree object with the proper number of external nodes (tips) for the super(FlipFlopErrorModel) to initalize the tip states properly.
             // We do not care about anything else
             CoalescentSimulator simulator = new CoalescentSimulator();
-            DemographicModel constantPop = new ConstantPopulationModel(new Parameter.Default(10), dr.evolution.util.Units.Type.YEARS);
+            DemographicModel constantPop = new ConstantPopulationModel(new Parameter.Default(age), dr.evolution.util.Units.Type.YEARS);
             Tree theTree=simulator.simulateTree(taxonlist,constantPop);
-            TreeModel treeModel = new TreeModel(theTree);
 
-            //Creating the error model
-            FlipFlopErrorModel errorModel= new FlipFlopErrorModel(taxonlist, new Taxa(), new Parameter.Default(cells), new Parameter.Default(delta),new Parameter.Default(eta),new Parameter.Default(kappa));
+            TreeModel treeModel = new TreeModel(theTree);
+            FlipFlopErrorModel errorModel= new FlipFlopErrorModel(taxonlist, new Taxa(), stemCellParameter, deltaParameter, etaParameter, kappaParameter);
 
             //Initializing the error model
             errorModel.setTree(theTree);
-            for (int iTip=0;iTip<patterns.getTaxonCount();iTip++) {
-                errorModel.setStates(patterns,iTip,iTip,patterns.getTaxonId(iTip));
+            for (int iTip=0;iTip<Ntips;iTip++) {
+                errorModel.setStates(this.patterns,iTip,iTip,this.patterns.getTaxonId(iTip));
             }
 
-            FrequencyModel freqModel = new FrequencyModel(afseq, freqs);
+            FrequencyModel freqModel = new FrequencyModel(afseq, this.stationaryDistribution);
 
             FlipFlopModel model = new FlipFlopModel("test", stemCellParameter, gammaParam, lambdaParam, muParam, useFreqModel, freqModel, null);
 
-            //siteModel
             GammaSiteModel siteModel = new GammaSiteModel(model);
 
-            TreeLikelihood treeLikelihood = new TreeLikelihood(patterns, treeModel, siteModel, null, errorModel,
+            this.treeLikelihood = new TreeLikelihood(patterns, treeModel, siteModel, null, errorModel,
                     false, false, true, false, false);
             treeLikelihood.setId(TreeLikelihoodParser.TREE_LIKELIHOOD);
+        }
 
-            System.out.println("\n\nTHE INITIAL LIKELIHOOD IS: " + treeLikelihood.getLogLikelihood() + "\n\n");
+        public TreeLikelihood getTreeLikelihoodModel(){
+            return this.treeLikelihood;
+        };
+        public String getName(){
+            return this.name;
+        }
+
+        protected final String[] sequences;
+        protected final int age;
+        protected final int nCells;
+        protected final int nStates;
+        protected final double delta;
+        protected final double eta;
+        protected final double kappa;
+        protected final double gamma;
+        protected final double lambda;
+        protected final double mu;
+        protected final boolean useFreqModel;
+        protected final double[] stationaryDistribution;
+        protected final Patterns patterns;
+        protected final TreeLikelihood treeLikelihood;
+        private String name;
+    };
+
+
+    String[] sequences = new String[] {
+            "0.1, 0.4, 0.14, 0.12, 0.99, .95, 0.01",
+            "0.2, 0.3, 0.13, 0.42, 0.29, .01, 0.91",
+            "0.6, 0.36, 0.1, 0.62, 0.24, .15, 0.73"
+    };
+
+    int nCells=2;
+    int age = 2;
+    double delta=0.05;
+    double eta=0.95;
+    double kappa=0.9;
+    double gamma=0.05;
+    double lambda=0.95;
+    double mu=0.05;
+    double[] stationaryDistributionTest = new double[]{0.16666666666666666, 0.3666666666666667, 0.016666666666666663, 0.11666666666666665, 0.16666666666666666, 0.16666666666666666};
+
+    Test test1 = new Test("test1", sequences, age, nCells, delta, eta, kappa, gamma, lambda, mu, true, stationaryDistributionTest);
+    Test test2 = new Test("test2", sequences, age, nCells, delta, eta, kappa, gamma, lambda, mu, false, stationaryDistributionTest);
+
+    String[] sequences2 = new String[] {
+            "0.1, 0.4, 0.14, 0.12, 0.99, .95, 0.01",
+            "0.2, 0.3, 0.13, 0.42, 0.29, .01, 0.91",
+            "0.6, 0.36, 0.1, 0.62, 0.24, .15, 0.73",
+            "0.1, 0.05, 0.2, 0.52, 0.20, .08, 0.6",
+            "0.12, 0.16, 0.23, 0.42, 0.18, .11, 0.33"
+    };
+
+    Test test3 = new Test("test3", sequences2, age, nCells, delta, eta, kappa, gamma, lambda, mu, false, stationaryDistributionTest);
+    Test test4 = new Test("test4", sequences2, age, nCells, delta, eta, kappa, gamma, lambda, mu, false, stationaryDistributionTest);
+
+    Test[] all = {test1, test2, test3, test4}; //Add more instances of tests here
+
+    public void testFlipFlops() {
+        for (Test test : all) {
+            TreeLikelihood treeModel = test.getTreeLikelihoodModel();
+            System.out.println("The initial likelihood of " + test.getName() + " is " +  treeModel.getLogLikelihood());
 /*
-
-            // Operators
             OperatorSchedule schedule = new SimpleOperatorSchedule();
-            Parameter kappaParam = new Parameter.Default(1, test.getKappaParameter());
 
-            MCMCOperator operator = new ScaleOperator(kappaParam, 0.5);
+            Parameter kParam = new Parameter.Default(1, 0.5);
+            MCMCOperator operator = new ScaleOperator(kParam, 0.5);
             operator.setWeight(1.0);
             schedule.addOperator(operator);
 
@@ -255,12 +225,12 @@ public class TestFlipFlops extends TestCase {
             loggers[0] = new MCLogger(formatter, 1, false);
             loggers[0].add(treeLikelihood);
             loggers[0].add(rootHeight);
-            //loggers[0].add(kappaParam);
+            //loggers[0].add(kParam);
 
             loggers[1] = new MCLogger(new TabDelimitedFormatter(System.out), 1, false);
             loggers[1].add(treeLikelihood);
             loggers[1].add(rootHeight);
-            //loggers[1].add(kappaParam);
+            //loggers[1].add(kParam);
 
             // MCMC
             MCMC mcmc = new MCMC("mcmc1");
@@ -279,10 +249,9 @@ public class TestFlipFlops extends TestCase {
 
             for (int i = 1; i < traces.size(); i++) {
                 traceList.analyseTrace(i);
-            }
-        */
+            }*/
 
         }
-    };
-
+    }
 }
+
