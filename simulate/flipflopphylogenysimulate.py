@@ -1,3 +1,4 @@
+import click
 import numpy as np
 import pandas as pd
 from scipy import linalg, stats
@@ -6,6 +7,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib.backends.backend_pdf import PdfPages
 import os
+import json
 
 def generate_state_var(S):
     return [(k, m) for m in range(S+1) for k in range(S+1) if k+m <=S]
@@ -31,8 +33,8 @@ def generate_rate_matrix(S, lam, mu, gamma, stateVar=None):
             elif k == k_down-1 and m == m_down+1:
                 RateMatrix[down, across] = m * (k*lam/(S-1)+2*gamma)
             elif k == k_down and m == m_down:
-                RateMatrix[down, across] = -(2*((k+m)*(S-m-k)+k*m)*lam/(S-1) + 
-                                            (k+2*m)*gamma + (2*S-(k+2*m))*mu) 
+                RateMatrix[down, across] = -(2*((k+m)*(S-m-k)+k*m)*lam/(S-1) +
+                                            (k+2*m)*gamma + (2*S-(k+2*m))*mu)
 
     return RateMatrix
 
@@ -89,21 +91,21 @@ def beta_convert_params(mu, kappa):
         raise Exception("kappa must be greater than 0")
     elif np.any(mu <= 0) or np.any(mu >= 1):
         raise Exception("mu must be between 0 and 1")
-    
-    alpha = kappa * mu 
+
+    alpha = kappa * mu
     beta = kappa * (1- mu)
 
     return alpha, beta
 
 def rescale_beta(beta, delta, eta):
-    # Linear transform of beta values from between 
+    # Linear transform of beta values from between
     # 0 and 1 to between delta and eta
     return (eta - delta) * beta + delta
 
 def add_noise(beta, delta, eta, kappa):
     beta_rescale = rescale_beta(beta, delta, eta)
     a, b = beta_convert_params(beta_rescale, kappa)
- 
+
     return stats.beta.rvs(a, b)
 
 def all_parents(tree):
@@ -113,88 +115,104 @@ def all_parents(tree):
             parents[child] = clade
     return parents
 
-def simulate_beta(S, lam, mu, gamma, delta, eta, kappa, N):
+def simulate_beta(tree, S, lam, mu, gamma, delta, eta, kappa, N):
     rng = np.random.default_rng()
 
     stateVar = generate_state_var(S)
     RateMatrix = generate_rate_matrix(S, lam, mu, gamma, stateVar)
 
     initialConditions = np.zeros((int(0.5 * (S+1) * (S+2)), N))
-    initialConditions[[0, -1], :] = 0.5 
+    initialConditions[[0, -1], :] = 0.5
 
     stateInit = multinomial_rvs(1, initialConditions, rng)
     tree.root.fcpgs = evolve_state(RateMatrix, stateInit, tree.root.branch_length, rng)
 
     n = 0
-    for clade in tree.find_clades(): 
+    for clade in tree.find_clades():
         if clade.name is None:
             clade.name = f'{n}'
             n += 1
 
     parent_dict = all_parents(tree)
 
-    for clade in tree.find_clades(): 
+    for clade in tree.find_clades():
         if clade.name != '0':
             parent_clade = parent_dict[clade]
             clade.fcpgs = evolve_state(RateMatrix, parent_clade.fcpgs, clade.branch_length, rng)
             clade.beta = convert_state_beta(clade.fcpgs, S, stateVar)
             clade.betaNoisy = add_noise(clade.beta, delta, eta, kappa)
-            
+
     return tree
 
-directory = os.path.dirname(os.path.realpath(__file__))
+def file_exists_callback(ctx, param, value):
+    if not os.path.isfile(value):
+        raise click.BadParameter(f"The provided tree file ({value}) does not exist")
+    return value
 
-tree = Phylo.read(os.path.join(directory, 'example.tree'), "newick")
-tree.ladderize()  # Flip branches so deeper clades are displayed at top
-tree.rooted = True
+@click.command(context_settings={"show_default": True})
+@click.option("--nSites", "N", default=1000, help="Number of fCpGs to simulate", type=int)
+@click.option("--nCells", "S", default=5, help="Number of stem cells to consider", type=int)
+@click.option("--lam", default=1.3, help="Fixed lambda parameter value", type=float)
+@click.option("--mu", default=0.03, help="Fixed mu parameter value", type=float)
+@click.option("--gamma", default=0.03, help="Fixed gamma parameter value", type=float)
+@click.option("--delta", default=0.05, help="Fixed delta parameter value", type=float)
+@click.option("--eta", default=0.93, help="Fixed eta parameter value", type=float)
+@click.option("--kappa", default=100, help="Fixed kappa parameter value", type=float)
+@click.option("--tree_file", required = True, help="Tree file in Newick format to use", type=str, callback=file_exists_callback)
+@click.option("--output", required = True, help="Suffix that output files will carry", type=str)
+def main(N, S, lam, mu, gamma, delta, eta, kappa, tree_file, output):
+    arguments = locals()
+    directory = os.path.dirname(os.path.abspath(tree_file))
+    os.makedirs(f"{directory}/{output}", exist_ok=True)
+    tree = Phylo.read(tree_file, "newick")
+    assert tree.root.branch_length, "The tree root's branch length is null"
 
-with PdfPages(os.path.join(directory,'exampleTree.pdf')) as export_pdf:
-    fig, ax = plt.subplots()
-    Phylo.draw(tree, axes=ax, do_show=False)
-    plt.tick_params(
-        axis='y',          # changes apply to the x-axis
-        which='both',      # both major and minor ticks are affected
-        left=False,      # ticks along the bottom edge are off
-        right=False,         # ticks along the top edge are off
-        labelleft=False) # labels along the bottom edge are off
-    plt.ylabel('')
-    ax.spines['right'].set_visible(False)
-    ax.spines['top'].set_visible(False)
-    ax.spines['left'].set_visible(False)
-    export_pdf.savefig()
-    plt.close()
+    tree.ladderize()  # Flip branches so deeper clades are displayed at top
+    tree.rooted = True
 
-N = 1000
-S = 5
-lam = 1.3
-mu = 0.03
-gamma = mu
-
-delta = 0.05
-eta = 0.93
-kappa = 100
-
-tree = simulate_beta(S, lam, mu, gamma, delta, eta, kappa, N)
-
-df = pd.DataFrame({})
-
-for clade in tree.get_terminals():
-    df[clade.name] = clade.betaNoisy
-
-df.to_csv(os.path.join(directory, 'exampleBeta.csv'))
-
-with PdfPages(os.path.join(directory, 'simulatedClustermap.pdf')) as export_pdf:
-    sns.clustermap(df, cmap="vlag")
-    export_pdf.savefig()
-    plt.close()
-
-with PdfPages(os.path.join(directory, 'exampleBetaHist.pdf')) as export_pdf:
-    for col in df:
-        fig, ax = plt.subplots()      
-        plt.hist(df[col], np.linspace(0, 1, 51), density=True, alpha=0.4) 
-        plt.xlabel("Fraction methylated")
-        plt.ylabel("Probability density")
-        sns.despine()
-        plt.tight_layout()
+    with PdfPages(os.path.join(directory,f'{output}/{output}Tree.pdf')) as export_pdf:
+        fig, ax = plt.subplots()
+        Phylo.draw(tree, axes=ax, do_show=False)
+        plt.tick_params(
+            axis='y',          # changes apply to the x-axis
+            which='both',      # both major and minor ticks are affected
+            left=False,      # ticks along the bottom edge are off
+            right=False,         # ticks along the top edge are off
+            labelleft=False) # labels along the bottom edge are off
+        plt.ylabel('')
+        ax.spines['right'].set_visible(False)
+        ax.spines['top'].set_visible(False)
+        ax.spines['left'].set_visible(False)
         export_pdf.savefig()
         plt.close()
+
+    tree = simulate_beta(tree, S, lam, mu, gamma, delta, eta, kappa, N)
+
+    df = pd.DataFrame({})
+
+    for clade in tree.get_terminals():
+        df[clade.name] = clade.betaNoisy
+
+    df.to_csv(os.path.join(directory, f'{output}/{output}Beta.csv'))
+
+    with PdfPages(os.path.join(directory, f'{output}/{output}SimulatedClustermap.pdf')) as export_pdf:
+        sns.clustermap(df, cmap="vlag")
+        export_pdf.savefig()
+        plt.close()
+
+    with PdfPages(os.path.join(directory, f'{output}/{output}BetaHist.pdf')) as export_pdf:
+        for col in df:
+            fig, ax = plt.subplots()
+            plt.hist(df[col], np.linspace(0, 1, 51), density=True, alpha=0.4)
+            plt.xlabel("Fraction methylated")
+            plt.ylabel("Probability density")
+            sns.despine()
+            plt.tight_layout()
+            export_pdf.savefig()
+            plt.close()
+
+    with open(os.path.join(directory, f'{output}/{output}Parameters.json'), 'w') as fp:
+        json.dump(arguments, fp, indent=1)
+
+if __name__ == "__main__":
+    main()
