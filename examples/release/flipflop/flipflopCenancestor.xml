@@ -1,0 +1,360 @@
+<?xml version="1.0" standalone="yes"?>
+<beast>
+
+    <!-- The list of taxa to be analysed (can also include dates/ages).          -->
+    <taxa id="taxa">
+		<taxon id="S1"/>
+		<taxon id="S2"/>
+		<taxon id="S3"/>
+		<taxon id="S3_2"/>
+    </taxa>
+
+    <afalignment id="alignment">
+        <afsequence>
+            <taxon idref="S1"/>
+            0.1,0.1,0.2,0.7,0.1,0.1,0.5,0.7,0.1,0.1,0.7
+        </afsequence>
+        <afsequence>
+            <taxon idref="S2"/>
+            0.14,0.5,0.4,1,0.1,0.1,0.5,0.7,0.1,0.1,0.75
+        </afsequence>
+        <afsequence>
+            <taxon idref="S3"/>
+            0.1,0.1,0.2,0.7,0.1,0.1,0.6,0.7,0.1,0.1,0.7
+        </afsequence>
+        <afsequence>
+            <taxon idref="S3_2"/>
+            0,0.1,0.1,0.7,0.1,0.1,0.6,0.17,0.21,0.1,0.7
+        </afsequence>
+        <states>
+            <parameter id="alignment.states" value="5"/>
+        </states>
+    </afalignment>
+
+    <AFsequenceErrorModel id="errorModel">
+        <stemCells>
+            <parameter id="errorModel.stemCells" value="2"/>
+        </stemCells>
+        <deltaOffset>
+            <parameter id="errorModel.deltaOffset" value="0.05" lower="0.0" upper="1.0"/>
+        </deltaOffset>
+        <etaOffset>
+            <parameter id="errorModel.etaOffset" value="0.95" lower="0.0" upper="1.0"/>
+        </etaOffset>
+        <kappaScale>
+            <parameter id="errorModel.kappaScale" value="0.1" lower="0.0"/>
+        </kappaScale>
+    </AFsequenceErrorModel>
+
+	<!-- DM TODO: Not using selection bias correction for now -->
+	<!--
+	<ascertainedCharacterPatterns id="patterns">
+		<alignment idref="alignment"/>
+		<state code='H'/>
+	</ascertainedCharacterPatterns>
+	-->
+
+	<!-- DM TODO: For now, we do not have a way to deal with ambiguous or unknown characters, so we should probably strip them. I also think we do not have a way of specifying them either, so at this point this is not very relevant -->
+	<!--
+	<patterns id="patterns" strip="true">
+		<alignment idref="alignment"/>
+	</patterns>
+	-->
+	
+	<!-- A prior assumption that the population size has remained constant       -->
+	<!-- throughout the time spanned by the genealogy.                           -->
+	<constantSize id="constant" units="years">
+		<populationSize>
+			<parameter id="constant.popSize" value="1" lower="0.0"/>
+		</populationSize>
+	</constantSize>
+	
+	<!-- Generate a random starting tree under the coalescent process            -->
+	<coalescentSimulator id="startingTree">
+		<taxa idref="taxa"/>
+		<constantSize idref="constant"/>
+	</coalescentSimulator>
+	
+	<!-- Generate a tree model                                  -->
+	<treeModel id="treeModel">
+		<coalescentTree idref="startingTree"/>
+		<rootHeight>
+			<parameter id="treeModel.rootHeight"/>
+		</rootHeight>
+		<nodeHeights internalNodes="true">
+			<parameter id="treeModel.internalNodeHeights"/>
+		</nodeHeights>
+		<nodeHeights internalNodes="true" rootNode="true">
+			<parameter id="treeModel.allInternalNodeHeights"/>
+		</nodeHeights>
+	</treeModel>
+	
+	<!-- Generate a coalescent likelihood                                        -->
+	<coalescentLikelihood id="coalescent">
+		<model>
+			<constantSize idref="constant"/>
+		</model>
+		<populationTree>
+			<treeModel idref="treeModel"/>
+		</populationTree>
+	</coalescentLikelihood>
+	
+	<!-- The strict clock (Uniform rates across branches)                        -->
+	
+	<strictClockCenancestorBranchRates id="branchRates">
+		<rate>
+			<parameter id="clock.rate" value="1"/>
+		</rate>
+	</strictClockCenancestorBranchRates>
+	
+	<!-- The substitution model -->
+
+	<flipflopModel id = "flipflopSubstitutionModel">
+        <stemCells>
+            <parameter id="flipflop.cells" value="2"/>
+        </stemCells>
+        <mu>
+            <parameter id="flipflop.mu" value="0.1" lower="0.0"/>
+        </mu>
+        <gamma>
+            <parameter id="flipflop.gamma" value="0.1" lower="0.0"/>
+        </gamma>
+        <lambda>
+            <parameter id="flipflop.lambda" value="1" lower="0.0"/>
+        </lambda>
+    </flipflopModel>
+	
+	<siteModel id="siteModel">
+		<substitutionModel>
+			<flipflopModel idref="flipflopSubstitutionModel"/>
+		</substitutionModel>
+	</siteModel>
+
+	
+	<flipflopCenancestorFrequency id="CenancestorFrequencyModel" methylatedProportion="0.5">
+		<alignment idref="alignment" />
+		<substitutionModel idref="flipflopSubstitutionModel"/>
+		<frequencies>
+			<parameter id="cenancestor.frequencies" value="1"/>
+		</frequencies>
+	</flipflopCenancestorFrequency>
+
+	<!-- Manual alternative -->
+	<!--
+	<flipflopCenancestorFrequency id="CenancestorFrequencyModel">
+		<alignment idref="alignment"/>
+		<substitutionModel idref="flipflopSubstitutionModel"/>
+		<frequencies>
+			<parameter id="cenancestor.frequencies" value="0.5 0 0 0 0 0.5"/>
+		</frequencies>
+	</flipflopCenancestorFrequency>
+	-->
+	<!-- TODO DM: Implement a parametric frequency model in which we only sample the methylatedProportion -->
+	<!-- This should fail
+	<flipflopCenancestorFrequency id="CenancestorFrequencyModel">
+		<alignment idref="alignment"/>
+		<substitutionModel idref="flipflopSubstitutionModel"/>
+		<frequencies>
+			<parameter id="cenancestor.frequencies" value="1"/>
+		</frequencies>
+	</flipflopCenancestorFrequency>
+	-->
+	
+	<!-- DM TODO: this is not compatible with Ambiguities for now -->
+	<!-- DM TODO: I will need to add a frequencyModel or some way to indicate the state at the root, I do not want to hardcode it -->
+	<cenancestorTreeLikelihood id="treeLikelihood" useAmbiguities="false">
+		<patterns idref="alignment"/>
+		<treeModel idref="treeModel"/>
+		<siteModel idref="siteModel"/>
+		<cenancestorHeight>
+			<parameter id="luca_height" value="0" upper="60.0" lower="5.0" />
+		</cenancestorHeight>
+		<cenancestorBranch>
+			<parameter id="luca_branch" value="1" upper="55.0" lower="0.0"/>
+			<!-- Value 1 as a safe starting value -->
+		</cenancestorBranch>
+		<strictClockCenancestorBranchRates idref="branchRates"/>
+	</cenancestorTreeLikelihood>
+	
+	<operators id="operators" optimizationSchedule="default">
+
+		<!-- Error --> <!-- DM TODO: Are scale operators the best option? are the scale and weight appropriate? -->
+		<scaleOperator scaleFactor="0.25" weight="0.25">
+	                <parameter idref="errorModel.stemCells"/>
+		</scaleOperator>
+		<scaleOperator scaleFactor="0.25" weight="0.25">
+	                <parameter idref="errorModel.deltaOffset"/>
+		</scaleOperator>
+		<scaleOperator scaleFactor="0.25" weight="0.25">
+	                <parameter idref="errorModel.etaOffset"/>
+		</scaleOperator>
+		<scaleOperator scaleFactor="0.25" weight="0.25">
+	                <parameter idref="errorModel.kappaScale"/>
+		</scaleOperator>
+
+		<!-- Substitution --> <!-- DM TODO: Are scale operators the best option? are the scale and weight appropriate? -->
+		<scaleOperator scaleFactor="0.25" weight="0.25">
+	                <parameter idref="flipflop.mu"/>
+		</scaleOperator>
+		<scaleOperator scaleFactor="0.25" weight="0.25">
+	                <parameter idref="flipflop.gamma"/>
+		</scaleOperator>
+		<scaleOperator scaleFactor="0.25" weight="0.25">
+	                <parameter idref="flipflop.lambda"/>
+		</scaleOperator>
+
+		<!-- Clock -->
+		<!---<scaleOperator scaleFactor="0.5" weight="10.0">
+			<parameter idref="clock.rate"/>
+		</scaleOperator>-->
+
+		<!-- Demography -->
+		<scaleOperator scaleFactor="0.5" weight="3.0">
+			<parameter idref="constant.popSize"/>
+		</scaleOperator>
+	
+		<!-- Tree -->
+		<subtreeSlide size="2.5" gaussian="true" weight="15.0"> <!-- 2.5 years. They will be automatically optimized by BEAST though -->
+			<treeModel idref="treeModel"/>
+		</subtreeSlide>
+		<narrowExchange weight="15.0">
+			<treeModel idref="treeModel"/>
+		</narrowExchange>
+		<wideExchange weight="3.0">
+			<treeModel idref="treeModel"/>
+		</wideExchange>
+		<wilsonBalding weight="3.0">
+			<treeModel idref="treeModel"/>
+		</wilsonBalding>
+		<scaleOperator scaleFactor="0.75" weight="5.0">
+			<parameter idref="treeModel.rootHeight"/>
+		</scaleOperator>
+		<uniformOperator weight="30.0">
+			<parameter idref="treeModel.internalNodeHeights"/>
+		</uniformOperator>
+		
+		<scaleOperator scaleFactor="0.2" weight="1.0"> <!-- We operate the branch since it is relative to the root. Operating luca_height is error prone, since it depends on the root -->
+	                <parameter idref="luca_branch"/>
+	    </scaleOperator>
+	
+        <upDownOperator scaleFactor="0.75" weight="5.0">
+                <up>
+                        <parameter idref="clock.rate"/>
+                </up>
+                <down>
+                        <parameter idref="treeModel.allInternalNodeHeights"/>
+						<parameter idref="luca_height"/>
+                </down>
+        </upDownOperator>
+	
+	</operators>
+	
+	<!-- Define MCMC                                                             -->
+	<mcmc id="mcmc" chainLength="200000" autoOptimize="true" operatorAnalysis="flipflopCenancestorTest.ops">
+		<posterior id="posterior">
+			<prior id="prior">
+				<!-- Error -->
+				<betaPrior shape="95.0" shapeB="5.0">
+					<parameter idref="errorModel.etaOffset"/>
+				</betaPrior>
+				<betaPrior shape="5.0" shapeB="95.0">
+					<parameter idref="errorModel.deltaOffset"/>
+				</betaPrior>
+
+				<!-- Rounded from meanlog=log(4.562081337867566),sdlog = 0.29356037920852385 resulting from mu=100 sigma=30 and taking into consideration that in scipy scale = exp(meanlog) -->
+				<!--
+				<logNormalPrior mean="1.5" stdev="0.3">
+					<parameter idref="errorModel.kappaScale"/>
+				</logNormalPrior>
+				-->
+
+				<logNormalPrior mean="4.56" stdev="0.3">
+				<!-- Rounded from calculating the logscale mean and stdev for mean=100 and stdev=30-->
+					<parameter idref="errorModel.kappaScale"/>
+				</logNormalPrior>
+
+				<!-- Substitution -->
+				<halfNormalPrior mean="0.0" stdev="0.05">
+					<parameter idref="flipflop.mu"/>
+				</halfNormalPrior>
+				<halfNormalPrior mean="0.0" stdev="0.05">
+					<parameter idref="flipflop.gamma"/>
+				</halfNormalPrior>
+				<halfNormalPrior mean="0.0" stdev="1">
+					<parameter idref="flipflop.lambda"/>
+				</halfNormalPrior>
+
+				<!-- Clock -->
+				<!--
+				<oneOnXPrior>
+	                <parameter idref="clock.rate"/>
+				</oneOnXPrior>
+				-->
+				
+				<!-- Demography -->
+				<oneOnXPrior>
+					<parameter idref="constant.popSize"/>
+				</oneOnXPrior>
+				
+				<!-- Tree -->
+	            <coalescentLikelihood idref="coalescent"/>
+				<!-- Cenancestor Prior on the height, since it is easier to have a meaningful prior on it (time of the initial development of the BE fragment) -->
+	            <uniformPrior lower="5.0" upper="60.0">
+					<parameter idref="luca_height"/>
+	            </uniformPrior>
+			</prior>
+			<likelihood id="likelihood">
+				<cenancestorTreeLikelihood idref="treeLikelihood"/>
+			</likelihood>
+		</posterior>
+		<operators idref="operators"/>
+	
+		<!-- write log to screen                                                     -->
+		<log id="screenLog" logEvery="200">
+			<column label="Posterior" dp="4" width="12">
+				<posterior idref="posterior"/>
+			</column>
+			<column label="Prior" dp="4" width="12">
+				<prior idref="prior"/>
+			</column>
+			<column label="Likelihood" dp="4" width="12">
+				<likelihood idref="likelihood"/>
+			</column>
+		</log>
+	
+		<!-- write log to file                                                       -->
+		<log id="fileLog" logEvery="200" fileName="flipflopCenancestorTest.log" overwrite="false">
+			<posterior idref="posterior"/>
+			<prior idref="prior"/>
+			<likelihood idref="likelihood"/>
+			<parameter idref="errorModel.deltaOffset"/>
+			<parameter idref="errorModel.etaOffset"/>
+			<parameter idref="errorModel.kappaScale"/>
+			<parameter idref="errorModel.stemCells"/>
+			<parameter idref="flipflop.mu"/>
+			<parameter idref="flipflop.gamma"/>
+			<parameter idref="flipflop.lambda"/>
+			<parameter idref="flipflop.cells"/>
+			<parameter idref="treeModel.rootHeight"/>
+			<parameter idref="luca_height"/>
+			<parameter idref="luca_branch"/>
+			<parameter idref="constant.popSize"/>
+			<parameter idref="clock.rate"/>
+			<coalescentLikelihood idref="coalescent"/>
+		</log>
+	
+		<!-- write tree log to file                                                  -->
+		<logTree id="treeFileLog" logEvery="200" nexusFormat="true" fileName="flipflopCenancestorTest.trees" sortTranslationTable="true">
+			<treeModel idref="treeModel"/>
+			<trait name="rate" tag="rate">
+				<strictClockCenancestorBranchRates idref="branchRates"/>
+			</trait>
+			<posterior idref="posterior"/>
+		</logTree>
+	</mcmc>
+	<report>
+		<property name="timer">
+			<mcmc idref="mcmc"/>
+		</property>
+	</report>
+</beast>
