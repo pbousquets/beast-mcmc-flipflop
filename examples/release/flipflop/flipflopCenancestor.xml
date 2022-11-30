@@ -27,7 +27,7 @@
             0,0.1,0.1,0.7,0.1,0.1,0.6,0.17,0.21,0.1,0.7
         </afsequence>
         <states>
-            <parameter id="alignment.states" value="5"/>
+				<parameter id="alignment.states" value="6"/>
         </states>
     </afalignment>
 
@@ -166,6 +166,7 @@
 		<patterns idref="alignment"/>
 		<treeModel idref="treeModel"/>
 		<siteModel idref="siteModel"/>
+		<tipStatesModel idref="errorModel"/>
 		<cenancestorHeight>
 			<parameter id="luca_height" value="0" upper="60.0" lower="5.0" />
 		</cenancestorHeight>
