@@ -88,7 +88,7 @@ public class AFsequenceParser extends AbstractXMLObjectParser {
     }
 
     public String getParserDescription() {
-        return "A sequence of allele frquencies.";
+        return "A sequence of allele frequencies.";
     }
 
     public Class getReturnType() { return AFsequence.class; }
@@ -97,7 +97,7 @@ public class AFsequenceParser extends AbstractXMLObjectParser {
 
     private XMLSyntaxRule[] rules = new XMLSyntaxRule[] {
             new ElementRule(Taxon.class),
-            new ElementRule(String.class, "A character string representing allele frquencies", "0,0.1,0.23,1")
+            new ElementRule(String.class, "A character string representing allele frequencies", "0,0.1,0.23,1")
     };
 }
 

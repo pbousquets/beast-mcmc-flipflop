@@ -1,8 +1,11 @@
+.DS_Store
 .idea
 release/
 *.iml
 *.ipr
 *.iws
+*.log
+*.trees
 bin/
 build/
 dist/
