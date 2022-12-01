@@ -43,7 +43,7 @@ public class AFsequence extends DataType {
     public Taxon taxon;
 
     private int sequenceLength = 0;
-
+    private boolean hitLimit = false;
     private String name;
 
     public static final AFsequence INSTANCE = new AFsequence();
@@ -76,7 +76,7 @@ public class AFsequence extends DataType {
         double[] double_seq = new double[split_sequence.length];
         for (int i = 0; i < split_sequence.length; i++) {
             double value = Double.parseDouble(split_sequence[i]);
-            checkRange(value, 0, 1);
+            value = checkRange(value, 0, 1);
             double_seq[i] = value;
         }
         this.sequence = FlipFlopUtils.mapDoubleRangeToInt(double_seq, 0, 1, 200); //TODO: parametize the precision?
@@ -87,10 +87,22 @@ public class AFsequence extends DataType {
     }
     public int[] getSequence(){ return this.sequence; }
 
-    public void checkRange(double value, int min, int max) {
+    public double checkRange(double value, int min, int max) {
         if (value < min || value > max) {
             throw new java.lang.RuntimeException(String.format("Allele frequencies are expected to be in range [%d-%d]", min, max));
         }
+
+        if (value == 0)  {
+            setHitLimit(true);
+            value = 0.0000000001;
+        }
+
+        if (value == 1)  {
+            setHitLimit(true);
+            value = 1-0.0000000001;
+        }
+
+        return value;
     }
 
     /**
@@ -148,6 +160,8 @@ public class AFsequence extends DataType {
     public void setId(String id) {
         this.id = id;
     }
+    public boolean getHitLimit(){return this.hitLimit;}
+    public void setHitLimit(boolean limit) {this.hitLimit = limit;}
 
 }
 

@@ -31,6 +31,7 @@ import dr.evolution.util.Taxon;
 import dr.xml.*;
 
 import java.util.StringTokenizer;
+import java.util.logging.Logger;
 
 /**
  * @author Alexei Drummond
@@ -53,8 +54,6 @@ public class AFsequenceParser extends AbstractXMLObjectParser {
         AFsequence sequence = new AFsequence();
 
         Taxon taxon = (Taxon)xo.getChild(Taxon.class);
-
-        DataType dataType = null;
 
         StringBuffer seqBuf = new StringBuffer();
 
@@ -84,9 +83,16 @@ public class AFsequenceParser extends AbstractXMLObjectParser {
         sequence.setSequenceString(sequenceString);
         sequence.setTaxon(taxon);
 
+        if (sequence.getHitLimit()){ //Show warning if any beta is 0 or 1
+            warningLimit(sequence);
+        }
         return sequence;
     }
 
+    public void warningLimit(AFsequence sequence){
+        final Logger logger = Logger.getLogger("dr.evoxml");
+        logger.info("\n----\nWARNING: 0s and 1s found in " + sequence.getTaxon() + " when parsing the beta values. They'll be forced to 10^-9 or 1-10^-9 to avoid infinite likelihoods\n----");
+    }
     public String getParserDescription() {
         return "A sequence of allele frequencies.";
     }
