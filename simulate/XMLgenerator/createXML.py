@@ -236,7 +236,7 @@ class createXML:
                     self.doc.stag("coalescentLikelihood", idref="coalescent")
 
                 self.newSection("write tree log to file")
-                with self.tag("logTree", id="filelog", logEvery=f"{sampling}", nexusFormat="true", fileName=f"{output}.trees", sortTranslationTable="true"):
+                with self.tag("logTree", id="treeFileLog", logEvery=f"{sampling}", nexusFormat="true", fileName=f"{output}.trees", sortTranslationTable="true"):
                     self.doc.stag("treeModel", idref="treeModel")
                     with self.tag("trait", name="rate", tag="rate"):
                         self.doc.stag("strictClockCenancestorBranchRates", idref="branchRates")
