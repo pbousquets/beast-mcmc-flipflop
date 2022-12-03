@@ -1,12 +1,9 @@
 package dr.evomodelxml.substmodel;
 
 import dr.evolution.alignment.PatternList;
-import dr.evolution.alignment.Patterns;
-import dr.evolution.datatype.AFsequence;
 import dr.evolution.datatype.DataType;
 import dr.evomodel.substmodel.FrequencyModel;
-import dr.evomodel.substmodel.SubstitutionModel;
-import dr.evoxml.util.DataTypeUtils;
+import dr.evomodel.substmodel.GeneralFrequencyModel;
 import dr.inference.model.Parameter;
 import dr.xml.*;
 
@@ -32,8 +29,7 @@ public class FlipFlopCenancestorFrequencyParser extends AbstractXMLObjectParser 
     public Object parseXMLObject(XMLObject xo) throws XMLParseException {
 
         DataType dataType = ((PatternList) xo.getChild(PatternList.class)).getDataType();
-        SubstitutionModel model = (SubstitutionModel) xo.getChild(SubstitutionModel.class);
-        int nStates=model.getFrequencyModel().getFrequencyCount();
+        int nStates=dataType.getStateCount();
 
         Double methylatedProportion=null;
         if(xo.hasAttribute(METHYLATEDPROPORTION)){
@@ -45,7 +41,7 @@ public class FlipFlopCenancestorFrequencyParser extends AbstractXMLObjectParser 
         StringBuilder sb = new StringBuilder("Creating cenancestor state frequencies model '" + freqsParam.getParameterName() + "': ");
 
         if(methylatedProportion == null & (freqsParam.getDimension() != nStates)){
-            throw new XMLParseException("dimension of frequency parameter and number of sequence states don't match with "+METHYLATEDPROPORTION+" not specified");
+            throw new XMLParseException("dimension of frequency parameter and number of sequence states don't match with "+METHYLATEDPROPORTION);
         }
 
         // frequencies set programatically
@@ -95,7 +91,7 @@ public class FlipFlopCenancestorFrequencyParser extends AbstractXMLObjectParser 
         sb.append("}");
         Logger.getLogger("dr.evomodel").info(sb.toString());
 
-        return new FrequencyModel(dataType, freqsParam);
+        return new GeneralFrequencyModel(dataType, freqsParam);
     }
 
     public String getParserDescription() {
@@ -112,7 +108,6 @@ public class FlipFlopCenancestorFrequencyParser extends AbstractXMLObjectParser 
 
     private final XMLSyntaxRule[] rules = {
             new ElementRule(PatternList.class, "Initial value", 0, 1), //to set the datatype
-            new ElementRule(SubstitutionModel.class), //to get the number of states
             new ElementRule(FREQUENCIES, new XMLSyntaxRule[]{new ElementRule(Parameter.class)}), //frequency parameter
             new ElementRule(METHYLATEDPROPORTION,double.class,"Proportion of fully-methylated cells",true), //to re-initialize the frequencies programatically if desired
             AttributeRule.newBooleanRule(NORMALIZE, true), // to normalize specified frequencies

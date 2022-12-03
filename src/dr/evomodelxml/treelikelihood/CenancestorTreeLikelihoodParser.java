@@ -29,6 +29,7 @@ package dr.evomodelxml.treelikelihood;
 
 import dr.evolution.alignment.PatternList;
 import dr.evomodel.sitemodel.SiteModel;
+import dr.evomodel.substmodel.AbstractGeneralFrequencyModel;
 import dr.evomodel.substmodel.FrequencyModel;
 import dr.evomodel.tree.TreeModel;
 import dr.evomodel.treelikelihood.TipStatesModel;
@@ -72,7 +73,7 @@ public class CenancestorTreeLikelihoodParser extends AbstractXMLObjectParser {
         PatternList patternList = (PatternList) xo.getChild(PatternList.class);
         TreeModel treeModel = (TreeModel) xo.getChild(TreeModel.class);
         SiteModel siteModel = (SiteModel) xo.getChild(SiteModel.class);
-        FrequencyModel cenancestorFrequencyModel = (FrequencyModel) xo.getChild(FrequencyModel.class);
+        AbstractGeneralFrequencyModel cenancestorFrequencyModel = (AbstractGeneralFrequencyModel) xo.getChild(AbstractGeneralFrequencyModel.class);
 
         CenancestorBranchRateModel branchRateModel = (CenancestorBranchRateModel) xo.getChild(CenancestorBranchRateModel.class);
 

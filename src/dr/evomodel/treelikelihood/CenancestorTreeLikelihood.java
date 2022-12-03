@@ -36,6 +36,7 @@ import dr.evolution.tree.Tree;
 import dr.evolution.util.Taxon;
 import dr.evolution.util.TaxonList;
 import dr.evomodel.sitemodel.SiteModel;
+import dr.evomodel.substmodel.AbstractGeneralFrequencyModel;
 import dr.evomodel.substmodel.FrequencyModel;
 import dr.evomodel.tree.TreeModel;
 import dr.evomodel.tree.TreeModel.Node;
@@ -75,7 +76,7 @@ public class CenancestorTreeLikelihood extends AbstractTreeLikelihood {
                                      TipStatesModel tipStatesModel,
                                      Parameter cenancestorHeight,
                                      Parameter cenancestorBranch,
-                                     FrequencyModel cenancestorFrequencyModel,
+                                     AbstractGeneralFrequencyModel cenancestorFrequencyModel,
                                      // Parameter asStatistic,
                                      boolean useAmbiguities,
                                      boolean allowMissingTaxa,
@@ -102,12 +103,14 @@ public class CenancestorTreeLikelihood extends AbstractTreeLikelihood {
 
             if (cenancestorFrequencyModel != null) {
                 this.cenancestorFrequencyModel = cenancestorFrequencyModel;
-                addModel(this.cenancestorFrequencyModel);
+                addModel(cenancestorFrequencyModel);
+                useCenancestorFrequencies=true;
             } else {
-                this.cenancestorFrequencyModel=this.frequencyModel;
+                this.cenancestorFrequencyModel=null;
+                useCenancestorFrequencies=false;
             }
 
-            stateCount=this.cenancestorFrequencyModel.getFrequencyCount();
+            stateCount=patternList.getStateCount();
 
             this.tipStatesModel = tipStatesModel;
 
@@ -166,7 +169,7 @@ public class CenancestorTreeLikelihood extends AbstractTreeLikelihood {
                 cenancestorlikelihoodCore = new GeneralCenancestorLikelihoodCore(patternList.getStateCount());
             } else if (dataType instanceof dr.evolution.datatype.AFsequence) {
                 coreName = "Java cenancestor FlipFlop";
-                cenancestorlikelihoodCore = new GeneralCenancestorLikelihoodCore(this.cenancestorFrequencyModel.getFrequencyCount());
+                cenancestorlikelihoodCore = new GeneralCenancestorLikelihoodCore(patternList.getStateCount());
             } else {
                 throw new RuntimeException("Cenancestor tree likelihood for dataType "+this.dataType.getName()+" not implemented");
             }
@@ -700,7 +703,12 @@ public class CenancestorTreeLikelihood extends AbstractTreeLikelihood {
                     }
 
                     // calculate the pattern likelihoods
-                    double[] frequencies = cenancestorFrequencyModel.getFrequencies();
+                    double[] frequencies;
+                    if(useCenancestorFrequencies) {
+                        frequencies = cenancestorFrequencyModel.getFrequencies();
+                    } else {
+                        frequencies = frequencyModel.getFrequencies();
+                    }
                     cenancestorlikelihoodCore.calculateLogLikelihoods(partials, frequencies, patternLogLikelihoods);
                 }
 
@@ -810,7 +818,9 @@ public class CenancestorTreeLikelihood extends AbstractTreeLikelihood {
     /**
      * the frequency model for the cenancestor
      */
-    protected final FrequencyModel cenancestorFrequencyModel;
+    protected final AbstractGeneralFrequencyModel cenancestorFrequencyModel;
+
+    protected final boolean useCenancestorFrequencies;
 
     /**
      * the site model for these sites

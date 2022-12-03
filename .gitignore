@@ -6,6 +6,7 @@ release/
 *.iws
 *.log
 *.trees
+*.ops
 bin/
 build/
 dist/
