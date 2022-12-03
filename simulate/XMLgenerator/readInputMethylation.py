@@ -25,8 +25,13 @@ class readMethylation:
         self.precision = precision
         self.samples: List[str] = []
         self.sample_names: List[str] = self.input.columns.tolist()
+        self.checkValues()
 
     def parseSamples(self) -> None:
         for column in self.sample_names:
             sample: methylationSample = methylationSample(self.input[column], self.precision)
             self.samples.append(sample.toString())
+
+    def checkValues(self) -> None:
+        assert len(self.input.select_dtypes(include="object").columns) == 0, "\nStrings found in the dataframe. Did you to forget using the --stripRownames flag?\n"
+        assert all(self.input.max() <= 1) and all(self.input.min()) >= 0, "\nThe data frame contains values not in (0,1) range. \nDid you to forget using the --stripRownames flag?\n"
