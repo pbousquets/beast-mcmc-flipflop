@@ -64,6 +64,8 @@ public class CenancestorTreeLikelihood extends AbstractTreeLikelihood {
     private static final boolean DEBUG = false;
     private Parameter cenancestorHeight = null;
     private Parameter cenancestorBranch = null;
+    private boolean cenancestorDirty = true;
+    private boolean storedCenancestorDirty = true;
     private boolean branchRules=true;
 
     /**
@@ -325,6 +327,11 @@ public class CenancestorTreeLikelihood extends AbstractTreeLikelihood {
      * set cenancestor_branch length
      */
     public void setCenancestorBranch(double cen) {cenancestorBranch.setParameterValue(0, cen);}
+
+    protected void updateCenancestorState() {
+        cenancestorDirty=true;
+        likelihoodKnown=false;
+    }
     /**
      * @return cenancestor
      */
@@ -338,6 +345,12 @@ public class CenancestorTreeLikelihood extends AbstractTreeLikelihood {
     private final void updateCenancestorHeight()
     {
         cenancestorHeight.setParameterValueQuietly(0, treeModel.getNodeHeight(treeModel.getRoot())+getCenancestorBranch());
+    }
+
+    @Override
+    protected void updateAllNodes() {
+        cenancestorDirty=true;
+        super.updateAllNodes();
     }
 
     // **************************************************************
@@ -420,7 +433,7 @@ public class CenancestorTreeLikelihood extends AbstractTreeLikelihood {
         } else if (model == frequencyModel) {
             updateAllNodes();
         } else if (model == cenancestorFrequencyModel){
-            updateNode(treeModel.getRoot());
+            updateCenancestorState();
         } else if (model == tipStatesModel) {
             if(object instanceof Taxon)
             {
@@ -450,6 +463,7 @@ public class CenancestorTreeLikelihood extends AbstractTreeLikelihood {
         if (storePartials) {
             cenancestorlikelihoodCore.storeState();
         }
+        storedCenancestorDirty=cenancestorDirty;
         super.storeState();
 
     }
@@ -464,7 +478,7 @@ public class CenancestorTreeLikelihood extends AbstractTreeLikelihood {
         } else {
             updateAllNodes();
         }
-
+        cenancestorDirty=storedCenancestorDirty;
         super.restoreState();
 
     }
@@ -660,8 +674,8 @@ public class CenancestorTreeLikelihood extends AbstractTreeLikelihood {
             NodeRef child2 = tree.getChild(node, 1);
             final boolean update2 = traverse(tree, child2);
 
-            // If either child node was updated then update this node too
-            if (update1 || update2 || rootUpdated) {
+            // If either child node (root for the cenancestor) or the cenancestor itself was updated then update this node too
+            if (update1 || update2 || rootUpdated || cenancestorDirty) {
 
                 if (update1 || update2) {
                     final int childNum1 = child1.getNumber();
@@ -678,6 +692,7 @@ public class CenancestorTreeLikelihood extends AbstractTreeLikelihood {
                     if (COUNT_TOTAL_OPERATIONS) {
                         totalOperationCount ++;
                     }
+                    update = true;
                 }
 
                 if (parent == null) {
@@ -687,15 +702,16 @@ public class CenancestorTreeLikelihood extends AbstractTreeLikelihood {
                     int nodeNumCenan = getCenancestorIndex();
 
                     if(cenancestorHeight != null) {
-                        // Calculate the partials at the cenancestor. The transition matrix of the root was calculated before.
-                        cenancestorlikelihoodCore.setNodePartialsForUpdate(nodeNumCenan);
+                        if (update1 || update2 || rootUpdated) {
+                            // Calculate the partials at the cenancestor. The transition matrix of the root was calculated before.
+                            cenancestorlikelihoodCore.setNodePartialsForUpdate(nodeNumCenan);
 
-                        if (integrateAcrossCategories) {
-                            cenancestorlikelihoodCore.calculatePartials(nodeNum, nodeNumCenan);
-                        } else {
-                            cenancestorlikelihoodCore.calculatePartials(nodeNum, nodeNumCenan, siteCategories);
+                            if (integrateAcrossCategories) {
+                                cenancestorlikelihoodCore.calculatePartials(nodeNum, nodeNumCenan);
+                            } else {
+                                cenancestorlikelihoodCore.calculatePartials(nodeNum, nodeNumCenan, siteCategories);
+                            }
                         }
-
                         partials = getCenancestorPartials();
                     }
                     else { //Using the cenancestor model without cenancestor date. It assumes that the root of the tree is the cenancestor. Not tested. It shouldn't be normally used either.
@@ -710,9 +726,9 @@ public class CenancestorTreeLikelihood extends AbstractTreeLikelihood {
                         frequencies = frequencyModel.getFrequencies();
                     }
                     cenancestorlikelihoodCore.calculateLogLikelihoods(partials, frequencies, patternLogLikelihoods);
+                    cenancestorDirty=false;
+                    update = true;
                 }
-
-                update = true;
             }
         }
 
