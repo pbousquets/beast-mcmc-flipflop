@@ -108,8 +108,9 @@
 	</strictClockCenancestorBranchRates>
 	
 	<!-- The substitution model -->
-
+	
 	<flipflopModel id = "flipflopSubstitutionModel">
+		<alignment idref="alignment"/>
         <stemCells>
             <parameter id="flipflop.cells" value="2"/>
         </stemCells>
@@ -168,9 +169,6 @@
 
 		<!-- Error --> <!-- DM TODO: Are scale operators the best option? are the scale and weight appropriate? -->
 		<scaleOperator scaleFactor="0.25" weight="0.25">
-	                <parameter idref="errorModel.stemCells"/>
-		</scaleOperator>
-		<scaleOperator scaleFactor="0.25" weight="0.25">
 	                <parameter idref="errorModel.deltaOffset"/>
 		</scaleOperator>
 		<scaleOperator scaleFactor="0.25" weight="0.25">
@@ -224,17 +222,17 @@
 		<scaleOperator scaleFactor="0.2" weight="1.0"> <!-- We operate the branch since it is relative to the root. Operating luca_height is error prone, since it depends on the root -->
 	                <parameter idref="luca_branch"/>
 	    </scaleOperator>
-	
+		<!--	
         <upDownOperator scaleFactor="0.75" weight="5.0">
                 <up>
-                        <parameter idref="clock.rate"/>
+						<parameter idref="clock.rate"/>
                 </up>
                 <down>
                         <parameter idref="treeModel.allInternalNodeHeights"/>
-						<parameter idref="luca_height"/>
+						<parameter idref="luca_height"/>  DM should I operate on the branch too?
                 </down>
 		</upDownOperator>
-	
+		-->
 	</operators>
 	
 	<!-- Define MCMC                                                             -->

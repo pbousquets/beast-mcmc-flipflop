@@ -27,6 +27,8 @@
 
 package dr.evomodelxml.substmodel;
 
+import dr.evolution.alignment.PatternList;
+import dr.evolution.datatype.DataType;
 import dr.inference.model.Variable;
 import dr.inference.model.Parameter;
 import dr.evolution.datatype.AFsequence;
@@ -34,7 +36,9 @@ import dr.evomodel.substmodel.FlipFlopModel;
 import dr.evomodel.substmodel.FrequencyModel;
 import dr.xml.*;
 
+import java.text.NumberFormat;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 /**
  * @author Alexei Drummond
@@ -46,9 +50,10 @@ public class FlipFlopModelParser extends AbstractXMLObjectParser {
     public static final String FLIPFLOP_MODEL = "flipflopModel";
     public static final String STEM_CELLS = "stemCells";
     public static final String GAMMA = "gamma";
-    public static final String LAMBDA= "lambda";
-    public static final String MU= "mu";
-    public static final String USEFREQMODEL= "useFrequencyModel";
+    public static final String LAMBDA = "lambda";
+    public static final String MU = "mu";
+    public static final String NORMALIZE = "normalize";
+    public static final String FREQUENCIES = "frequencies";
 
     public String getParserName() {
         return FLIPFLOP_MODEL;
@@ -60,25 +65,61 @@ public class FlipFlopModelParser extends AbstractXMLObjectParser {
         Variable gammaParam = (Variable) xo.getElementFirstChild(GAMMA);
         Variable lambdaParam = (Variable) xo.getElementFirstChild(LAMBDA);
         Variable muParam = (Variable) xo.getElementFirstChild(MU);
-        boolean useFrequencyModel = xo.getAttribute(USEFREQMODEL, true);
+        boolean normalize = xo.getAttribute(NORMALIZE, false);
 
-        int S = (int) stemCellParam.getParameterValue(0);
-        int stateCount = (int) (0.5*(S+1)*(S+2));
-        double[] freqs = new double[stateCount];
-        for(int i = 0; i < freqs.length; i++){
-            freqs[i] = 1.0/stateCount;
+        PatternList data = (PatternList) xo.getChild(PatternList.class);
+        DataType dataType = data.getDataType();
+        int stateCount = dataType.getStateCount();
+
+        FrequencyModel freqModel=null;
+        boolean useFrequencyModel = false;
+
+        StringBuilder sb = new StringBuilder("\n---\n\nCreating FlipFlip model");
+        sb.append("\n\t- Initial gamma = " + gammaParam.getValue(0));
+        sb.append("\n\t- Initial lambda = " + lambdaParam.getValue(0));
+        sb.append("\n\t- Initial mu = " + muParam.getValue(0));
+        sb.append("\n\t- Normalization using flux of out-states: " + normalize);
+
+        if (xo.hasChildNamed(FREQUENCIES)) { //Given frequency parameter. We normalize them by default
+            Parameter freqsParam = (Parameter) xo.getElementFirstChild(FREQUENCIES);
+            double cumfreqs=0;
+
+            for (int i=0; i<freqsParam.getDimension();i++){
+                cumfreqs += freqsParam.getParameterValue(i);
+            }
+
+            for (int i = 0; i < freqsParam.getDimension(); i++) {
+                if (cumfreqs != 0)
+                    freqsParam.setParameterValue(i, freqsParam.getParameterValue(i) / cumfreqs);
+                else
+                    freqsParam.setParameterValue(i, 1.0 / freqsParam.getDimension());
+            }
+
+            freqModel = new FrequencyModel(dataType, freqsParam);
+            useFrequencyModel = true;
+        } else { //No frequency parameter given. We just make one with equal freqs. It will not be used
+            // to specify the transition matrix, but they will be used to calculate the stationary freqs
+            double[] freqs = new double[stateCount];
+            for (int i = 0; i < freqs.length; i++) {
+                freqs[i] = 1.0 / stateCount;
+            }
+            freqModel = new FrequencyModel(dataType, freqs);
         }
 
-        AFsequence afseq = new AFsequence(stateCount);
-        FrequencyModel freqModel = new FrequencyModel(afseq, freqs);
+        sb.append("\n\t- Using a frequency model to set the transition matrix: " + useFrequencyModel);
+        sb.append("\n\t- Initial frequency model: {");
+        NumberFormat format = NumberFormat.getNumberInstance();
+        format.setMaximumFractionDigits(5);
+        sb.append(format.format(freqModel.getFrequencyParameter().getParameterValue(0)));
+        for (int i = 1; i < stateCount; i++) {
+            sb.append(", ");
+            sb.append(format.format(freqModel.getFrequencyParameter().getParameterValue(i)));
+        }
+        sb.append("}");
+        sb.append("\n---");
+        Logger.getLogger("dr.evomodel").info(sb.toString());
 
-        Logger.getLogger("dr.evomodel").info("\n---\n\nCreating FlipFlip model");
-        Logger.getLogger("dr.evomodel").info("  - Initial gamma = " + gammaParam.getValue(0));
-        Logger.getLogger("dr.evomodel").info("  - Initial lambda = " + lambdaParam.getValue(0));
-        Logger.getLogger("dr.evomodel").info("  - Initial mu = " + muParam.getValue(0));
-        Logger.getLogger("dr.evomodel").info("\n---");
-
-        return new FlipFlopModel(xo.getId(), stemCellParam, gammaParam, lambdaParam, muParam, useFrequencyModel, freqModel, null);
+        return new FlipFlopModel(xo.getId(), dataType, stemCellParam, gammaParam, lambdaParam, muParam, normalize, useFrequencyModel, freqModel);
     }
 
     //************************************************************************
@@ -106,6 +147,8 @@ public class FlipFlopModelParser extends AbstractXMLObjectParser {
                     new XMLSyntaxRule[]{new ElementRule(Variable.class)}),
             new ElementRule(STEM_CELLS,
                     new XMLSyntaxRule[]{new ElementRule(Variable.class)}),
-            AttributeRule.newBooleanRule(USEFREQMODEL, true)
+            new ElementRule(PatternList.class,false),
+            new ElementRule(FREQUENCIES, Parameter.class,"Equilibrium frequencies",true),
+            AttributeRule.newBooleanRule(NORMALIZE, true)
     };
 }

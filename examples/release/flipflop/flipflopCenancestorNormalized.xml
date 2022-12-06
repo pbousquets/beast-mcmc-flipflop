@@ -109,7 +109,8 @@
 	
 	<!-- The substitution model -->
 
-	<flipflopModel id = "flipflopSubstitutionModel">
+	<flipflopModel id = "flipflopSubstitutionModel" normalize="true">
+		<alignment idref="alignment"/>
         <stemCells>
             <parameter id="flipflop.cells" value="2"/>
         </stemCells>
@@ -122,8 +123,10 @@
         <lambda>
             <parameter id="flipflop.lambda" value="1" lower="0.0"/>
 		</lambda>
-		<alignment idref="alignment"/>
-    </flipflopModel>
+		<frequencies>
+			<parameter id="flipflop.substitution.frequencies" value="0.167 0.167 0.167 0.167 0.167 0.167"/>
+		</frequencies>
+	</flipflopModel>
 	
 	<siteModel id="siteModel">
 		<substitutionModel>
@@ -131,14 +134,23 @@
 		</substitutionModel>
 	</siteModel>
 
-	<!-- Parametric frequencies -->
-	<flipflopCenancestorFrequencyProportion id="cenancestorFrequencyModel">
+	<!-- Programmatic initialization of regular frequencies -->
+	<flipflopCenancestorFrequency id="cenancestorFrequencyModel" methylatedProportion="0.5">
 		<alignment idref="alignment" />
-		<methylatedProportion>
-			<parameter id="cenancestor.methylatedProportion" value="0.5" lower="0" upper="1"/>
-		</methylatedProportion>
-	</flipflopCenancestorFrequencyProportion>
+		<frequencies>
+			<parameter id="cenancestor.frequencies" value="1"/>
+		</frequencies>
+	</flipflopCenancestorFrequency>
 	
+	<!-- Manual alternative -->
+	<!--
+	<flipflopCenancestorFrequency id="cenancestorFrequencyModel">
+		<alignment idref="alignment"/>
+		<frequencies>
+			<parameter id="cenancestor.frequencies" value="0.5 0 0 0 0 0.5"/>
+		</frequencies>
+	</flipflopCenancestorFrequency>
+	-->
 	<!-- DM TODO: this is not compatible with Ambiguities for now -->
 	<cenancestorTreeLikelihood id="treeLikelihood" useAmbiguities="false">
 		<patterns idref="alignment"/>
@@ -169,7 +181,10 @@
 	                <parameter idref="errorModel.kappaScale"/>
 		</scaleOperator>
 
-		<!-- Substitution --> <!-- DM TODO: Are scale operators the best option? are the scale and weight appropriate? -->
+		<!-- Substitution --> <!-- DM TODO: Are scale operators the best option? are the scale and weight appropriate? -->p
+        <deltaExchange delta="0.01" weight="0.1">
+        	<parameter idref="flipflop.substitution.frequencies"/>
+		</deltaExchange>
 		<scaleOperator scaleFactor="0.25" weight="0.25">
 	                <parameter idref="flipflop.mu"/>
 		</scaleOperator>
@@ -213,7 +228,6 @@
 		<scaleOperator scaleFactor="0.2" weight="1.0"> <!-- We operate the branch since it is relative to the root. Operating luca_height is error prone, since it depends on the root -->
 	                <parameter idref="luca_branch"/>
 	    </scaleOperator>
-		
 		<!--
         <upDownOperator scaleFactor="0.75" weight="5.0">
                 <up>
@@ -225,14 +239,11 @@
                 </down>
 		</upDownOperator>
 		-->
-		<scaleOperator scaleFactor="0.5" weight="3.0">
-			<parameter idref="cenancestor.methylatedProportion"/>
-		</scaleOperator>
 	
 	</operators>
 	
 	<!-- Define MCMC                                                             -->
-	<mcmc id="mcmc" chainLength="5000000" autoOptimize="true" operatorAnalysis="flipflopCenancestorParametricFreqsTest.ops">
+	<mcmc id="mcmc" chainLength="5000000" autoOptimize="true" operatorAnalysis="flipflopCenancestorNormalizedTest.ops">
 		<posterior id="posterior">
 			<prior id="prior">
 				<!-- Error -->
@@ -249,6 +260,9 @@
 				</logNormalPrior>
 
 				<!-- Substitution -->
+				<uniformPrior lower="0.0" upper="1.0">
+					<parameter idref="flipflop.substitution.frequencies"/>
+				</uniformPrior>
 				<halfNormalPrior mean="0.0" stdev="0.05">
 					<parameter idref="flipflop.mu"/>
 				</halfNormalPrior>
@@ -277,9 +291,6 @@
 	            <uniformPrior lower="5.0" upper="60.0">
 					<parameter idref="luca_height"/>
 				</uniformPrior>
-				<betaPrior shape="5.0" shapeB="5.0">
-					<parameter idref="cenancestor.methylatedProportion"/>
-				</betaPrior>
 			</prior>
 			<likelihood id="likelihood">
 				<cenancestorTreeLikelihood idref="treeLikelihood"/>
@@ -301,7 +312,7 @@
 		</log>
 	
 		<!-- write log to file                                                       -->
-		<log id="fileLog" logEvery="5000" fileName="flipflopCenancestorParametricFreqsTest.log" overwrite="false">
+		<log id="fileLog" logEvery="5000" fileName="flipflopCenancestorNormalizedTest.log" overwrite="false">
 			<posterior idref="posterior"/>
 			<prior idref="prior"/>
 			<likelihood idref="likelihood"/>
@@ -309,11 +320,11 @@
 			<parameter idref="errorModel.etaOffset"/>
 			<parameter idref="errorModel.kappaScale"/>
 			<parameter idref="errorModel.stemCells"/>
+			<parameter idref="flipflop.substitution.frequencies" />
 			<parameter idref="flipflop.mu"/>
 			<parameter idref="flipflop.gamma"/>
 			<parameter idref="flipflop.lambda"/>
 			<parameter idref="flipflop.cells"/>
-			<parameter idref="cenancestor.methylatedProportion"/>
 			<parameter idref="treeModel.rootHeight"/>
 			<parameter idref="luca_height"/>
 			<parameter idref="luca_branch"/>
@@ -323,7 +334,7 @@
 		</log>
 	
 		<!-- write tree log to file                                                  -->
-		<logTree id="treeFileLog" logEvery="5000" nexusFormat="true" fileName="flipflopCenancestorParametricFreqsTest.trees" sortTranslationTable="true">
+		<logTree id="treeFileLog" logEvery="5000" nexusFormat="true" fileName="flipflopCenancestorNormalizedTest.trees" sortTranslationTable="true">
 			<treeModel idref="treeModel"/>
 			<trait name="rate" tag="rate">
 				<strictClockCenancestorBranchRates idref="branchRates"/>

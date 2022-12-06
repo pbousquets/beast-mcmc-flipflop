@@ -40,7 +40,7 @@ import junit.framework.TestCase;
  */
 public class TestFlipFlops extends TestCase {
     class Test {
-        public Test(String name, String[] sequences, int age, int nCells, double delta, double eta, double kappa, double gamma, double lambda, double mu, boolean useFreqModel, double[] stationaryDistribution){
+        public Test(String name, String[] sequences, int age, int nCells, double delta, double eta, double kappa, double gamma, double lambda, double mu, boolean useNormalization, boolean useFreqModel, double[] stationaryDistribution){
             this.name = name;
             this.sequences = sequences;
             this.age = age;
@@ -51,6 +51,7 @@ public class TestFlipFlops extends TestCase {
             this.gamma = gamma;
             this.lambda = lambda;
             this.mu = mu;
+            this.useNormalization = useNormalization;
             this.useFreqModel = useFreqModel;
             this.stationaryDistribution = stationaryDistribution;
 
@@ -114,7 +115,7 @@ public class TestFlipFlops extends TestCase {
 
             FrequencyModel freqModel = new FrequencyModel(afseq, this.stationaryDistribution);
 
-            FlipFlopModel model = new FlipFlopModel("test", stemCellParameter, gammaParam, lambdaParam, muParam, useFreqModel, freqModel, null);
+            FlipFlopModel model = new FlipFlopModel("test", afseq, stemCellParameter, gammaParam, lambdaParam, muParam, useNormalization, useFreqModel, freqModel);
 
             GammaSiteModel siteModel = new GammaSiteModel(model);
 
@@ -140,6 +141,7 @@ public class TestFlipFlops extends TestCase {
         protected final double gamma;
         protected final double lambda;
         protected final double mu;
+        protected final boolean useNormalization;
         protected final boolean useFreqModel;
         protected final double[] stationaryDistribution;
         protected final Patterns patterns;
@@ -164,8 +166,8 @@ public class TestFlipFlops extends TestCase {
     double mu=0.05;
     double[] stationaryDistributionTest = new double[]{0.16666666666666666, 0.3666666666666667, 0.016666666666666663, 0.11666666666666665, 0.16666666666666666, 0.16666666666666666};
 
-    Test test1 = new Test("test1", sequences, age, nCells, delta, eta, kappa, gamma, lambda, mu, true, stationaryDistributionTest);
-    Test test2 = new Test("test2", sequences, age, nCells, delta, eta, kappa, gamma, lambda, mu, false, stationaryDistributionTest);
+    Test test1 = new Test("test1", sequences, age, nCells, delta, eta, kappa, gamma, lambda, mu, false,true, stationaryDistributionTest);
+    Test test2 = new Test("test2", sequences, age, nCells, delta, eta, kappa, gamma, lambda, mu, false, false, stationaryDistributionTest);
 
     String[] sequences2 = new String[] {
             "0.1, 0.4, 0.14, 0.12, 0.99, .95, 0.01",
@@ -175,8 +177,8 @@ public class TestFlipFlops extends TestCase {
             "0.12, 0.16, 0.23, 0.42, 0.18, .11, 0.33"
     };
 
-    Test test3 = new Test("test3", sequences2, age, nCells, delta, eta, kappa, gamma, lambda, mu, false, stationaryDistributionTest);
-    Test test4 = new Test("test4", sequences2, age, nCells, delta, eta, kappa, gamma, lambda, mu, false, stationaryDistributionTest);
+    Test test3 = new Test("test3", sequences2, age, nCells, delta, eta, kappa, gamma, lambda, mu, false,false, stationaryDistributionTest);
+    Test test4 = new Test("test4", sequences2, age, nCells, delta, eta, kappa, gamma, lambda, mu, false, false, stationaryDistributionTest);
 
     Test[] all = {test1, test2, test3, test4}; //Add more instances of tests here
 

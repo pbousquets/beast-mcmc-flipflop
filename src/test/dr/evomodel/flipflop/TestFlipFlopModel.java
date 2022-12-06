@@ -16,12 +16,13 @@ import java.util.Arrays;
 public class TestFlipFlopModel extends TestCase {
 
     class Test {
-        public Test(int age, int nCells, double gamma, double lambda, double mu, boolean useFreqModel, double[] stationaryDistribution, double[] expectedRateMat, double[] expectedTransitionMat){
+        public Test(int age, int nCells, double gamma, double lambda, double mu, boolean useNormalization, boolean useFreqModel, double[] stationaryDistribution, double[] expectedRateMat, double[] expectedTransitionMat){
             this.age = age;
             this.nCells = nCells;
             this.gamma = gamma;
             this.lambda = lambda;
             this.mu = mu;
+            this.useNormalization = useNormalization;
             this.useFreqModel = useFreqModel;
             this.stationaryDistribution = stationaryDistribution;
             this.nStates = (int) (0.5 * (nCells + 1) * (nCells + 2));
@@ -36,7 +37,7 @@ public class TestFlipFlopModel extends TestCase {
             Parameter lambdaParam = new Parameter.Default(1, lambda);
             Parameter muParam = new Parameter.Default(1, mu);
 
-            model = new FlipFlopModel("test", stemCellParameter, gammaParam, lambdaParam, muParam, useFreqModel, freqModel, null);
+            model = new FlipFlopModel("test", afseq, stemCellParameter, gammaParam, lambdaParam, muParam, useNormalization, useFreqModel, freqModel);
         }
 
         public int getNstates(){return nStates;};
@@ -58,6 +59,7 @@ public class TestFlipFlopModel extends TestCase {
         protected final double gamma;
         protected final double lambda;
         protected final double mu;
+        protected final boolean useNormalization;
         protected final boolean useFreqModel;
         protected final double[] stationaryDistribution;
         protected final double[] expectedRateMat;
@@ -87,7 +89,7 @@ public class TestFlipFlopModel extends TestCase {
     };
 
 
-    Test test1 = new Test(2, 2, 0.05, 0.95, 0.05, true, stationaryDistributionTest, expectedRateMatTest1, expectedTransitionMatTest1);
+    Test test1 = new Test(2, 2, 0.05, 0.95, 0.05, false, true, stationaryDistributionTest, expectedRateMatTest1, expectedTransitionMatTest1);
 
     // TEST2
     double[] expectedRateMatTest2 = {
@@ -106,7 +108,7 @@ public class TestFlipFlopModel extends TestCase {
            , 0.03236981, 0.0227272 , 0.45193286, 0.00316781, 0.07340708, 0.41639524
            , 0.00492936, 0.00463868, 0.12179875, 0.00193187, 0.08144377, 0.78525757
     };
-    Test test2 = new Test(2, 2, 0.05, 0.95, 0.05, false, stationaryDistributionTest, expectedRateMatTest2, expectedTransitionMatTest2);
+    Test test2 = new Test(2, 2, 0.05, 0.95, 0.05, false, false, stationaryDistributionTest, expectedRateMatTest2, expectedTransitionMatTest2);
 
 
 
