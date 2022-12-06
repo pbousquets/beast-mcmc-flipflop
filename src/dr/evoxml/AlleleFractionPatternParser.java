@@ -43,7 +43,7 @@ import java.util.ArrayList;
 public class AlleleFractionPatternParser extends AbstractXMLObjectParser {
 
     public static final String ALLELEFRACTIONS = "afalignment"; //Reference to main XML class
-    public static final String STATES = "states";
+    public static final String STEM_CELLS = "stemCells";
 
     public String getParserName() {
         return ALLELEFRACTIONS;
@@ -64,13 +64,12 @@ public class AlleleFractionPatternParser extends AbstractXMLObjectParser {
             if (child instanceof AFsequence) {
                 taxonlist.addTaxon(((AFsequence) child).getTaxon());
                 seqlist.add(((AFsequence) child).getSequence());
-            } else if (xo.getChildName(i).equals(STATES)){
-                Parameter statesParameter = (Parameter) xo.getElementFirstChild(STATES);
-                if (statesParameter.getParameterValue(0) % 1 != 0){
-                    throw new XMLParseException("The states parameter must be an integer. Current value: " + statesParameter.getParameterValue(0));
+            } else if (xo.getChildName(i).equals(STEM_CELLS)){
+                Parameter cellsParameter = (Parameter) xo.getElementFirstChild(STEM_CELLS);
+                if (cellsParameter.getParameterValue(0) % 1 != 0){
+                    throw new XMLParseException("The cells parameter must be an integer. Current value: " + cellsParameter.getParameterValue(0));
                 }
-
-                nStates = (int) statesParameter.getParameterValue(0);
+                nStates = (int) (0.5 * (cellsParameter.getParameterValue(0)+1) * (cellsParameter.getParameterValue(0)+2));
 
             } else {
                 throw new XMLParseException("Unknown child element found in alignment");
@@ -132,7 +131,7 @@ public class AlleleFractionPatternParser extends AbstractXMLObjectParser {
             new ElementRule(AFsequence.class,
                     "A string of numbers representing the AFs",
                     1, Integer.MAX_VALUE),
-            new ElementRule(STATES, Parameter.class, "Number of expected states (states=0.5*(S+1)(S+2))", false),
+            new ElementRule(STEM_CELLS, Parameter.class, "Number of stem cells", false),
     };
 }
 
