@@ -232,7 +232,7 @@
 	</operators>
 	
 	<!-- Define MCMC                                                             -->
-	<mcmc id="mcmc" chainLength="5000000" autoOptimize="true" operatorAnalysis="flipflopCenancestorParametricFreqsTest.ops">
+	<mcmc id="mcmc" chainLength="5000000" autoOptimize="true" operatorAnalysis="flipflopCenancestorParametricFreqsTest.ops" fullEvaluation="100000">
 		<posterior id="posterior">
 			<prior id="prior">
 				<!-- Error -->
@@ -301,7 +301,7 @@
 		</log>
 	
 		<!-- write log to file                                                       -->
-		<log id="fileLog" logEvery="5000" fileName="flipflopCenancestorParametricFreqsTest.log" overwrite="false">
+		<log id="fileLog" logEvery="1" fileName="flipflopCenancestorParametricFreqsTest.log" overwrite="false">
 			<posterior idref="posterior"/>
 			<prior idref="prior"/>
 			<likelihood idref="likelihood"/>

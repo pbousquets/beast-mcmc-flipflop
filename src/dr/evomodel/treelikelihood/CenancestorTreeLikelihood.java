@@ -648,12 +648,12 @@ public class CenancestorTreeLikelihood extends AbstractTreeLikelihood {
         else if (parent == null && cenancestorHeight != null && updateNode[nodeNum]) //The root has to be updated
         {
             // First update the transition probability matrix(ices) for the root-cenancestor fake branch
-            rootUpdated=true;
-            // Get the operational time of the fake branch from the root to the cenancestor
+               // Get the operational time of the fake branch from the root to the cenancestor
             double rootHeight = treeModel.getNodeHeight(treeModel.getRoot());
             double branchRate = branchRateModel.getBranchRate(rootHeight, getCenancestorHeight()); //TODO: Could this be easily improved? I would have to adapt the tree structure and abstact tree likelihood
             double branchTime = branchRate * getCenancestorBranch() ; //TODO: Could this be easily improved? The same as before
 
+            cenancestorlikelihoodCore.setNodeMatrixForUpdate(nodeNum);
 
             for (int i = 0; i < categoryCount; i++)
             {
@@ -662,6 +662,9 @@ public class CenancestorTreeLikelihood extends AbstractTreeLikelihood {
                 cenancestorlikelihoodCore.setNodeMatrix(nodeNum, i, probabilities);
 
             }
+
+            rootUpdated=true;
+            update = true;
         }
 
         // If the node is internal, update the partial likelihoods.
