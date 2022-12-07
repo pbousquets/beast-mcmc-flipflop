@@ -89,7 +89,7 @@ public class TestFlipFlopModel extends TestCase {
     };
 
 
-    Test test1 = new Test(2, 2, 0.05, 0.95, 0.05, false, true, stationaryDistributionTest, expectedRateMatTest1, expectedTransitionMatTest1);
+    Test test1 = new Test(2, 2, 0.05, 0.95, 0.05, true, true, stationaryDistributionTest, expectedRateMatTest1, expectedTransitionMatTest1);
 
     // TEST2
     double[] expectedRateMatTest2 = {
