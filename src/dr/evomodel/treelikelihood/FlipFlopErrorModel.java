@@ -42,6 +42,16 @@ import java.util.List;
  */
 public class FlipFlopErrorModel extends TipStatesModel implements Citable {
     private int peakCount;
+    private double[] ideal_beta;
+    private double[] beta;
+    private double[] transformed_alpha;
+    private double[] transformed_beta;
+    double lgamma_alpha;
+    double lgamma_beta;
+    double lgamma_alphaplusbeta;
+    private int N;
+    private int Z;
+    private double[][] peakPartials = null;
     private int[] cellStateAF;
 
     public FlipFlopErrorModel(TaxonList includeTaxa, TaxonList excludeTaxa,
@@ -77,6 +87,11 @@ public class FlipFlopErrorModel extends TipStatesModel implements Citable {
 
         this.stateCount = (int)  (0.5 * (stemCellParameter.getParameterValue(0) + 1) * (stemCellParameter.getParameterValue(0) + 2));
         this.peakCount = 2 * (int) stemCellParameter.getParameterValue(0) + 1;
+        this.ideal_beta = new double [stateCount];
+        this.beta = new double [stateCount];
+        this.transformed_alpha = new double [stateCount];
+        this.transformed_beta = new double [stateCount];
+
         generateStateVar();
     }
 
@@ -114,39 +129,44 @@ public class FlipFlopErrorModel extends TipStatesModel implements Citable {
         }
 
     }
+
     @Override
     public void getTipPartials(int nodeIndex, double[] partials) {
         /* Note: the partials are generated in the abstracttreelikelihood class as:
             double[] partials = new double[patternCount * stateCount];
             Partials format is partials per site per state: [site1state1,site1state2,site1state3,...,site2state1,site2state2,site2state3,...]
          */
-
         int[] states = this.states[nodeIndex];
-        double[][] peakPartials = getPeakPartials(states);
 
-        for (int index = 0; index < partials.length; index++){
-            int cellStateIndex = index % stateCount; //It points to the current cell state (i.e., k=0,m=0 k=1,m=0 ...)
+        if (peakPartials == null){
+            initPeakPartials(states.length, stateCount);
+        }
+
+        setPeakPartials(states);
+
+        for (int index = 0; index < partials.length; index++) {
+            int cellStateIndex = index % stateCount; // It points to the current cell state (i.e., k=0,m=0 k=1,m=0 ...)
             int peakIndex = cellStateAF[cellStateIndex]; // The peaks are sorted by methylation level, so the number of alleles are equivalent to the index in peakPartials
-            int actualSite = (int) (index / stateCount); // If the are N states, every N positions in partials will go to the next site
+            int actualSite = (int) (index / stateCount); // If there are N states, every N positions in partials will go to the next site
             partials[index] = peakPartials[actualSite][peakIndex];
         }
     }
 
-    public double[][] getPeakPartials(int[] states){
+    private void initPeakPartials(int sites, int states){
+        this.N = sites; //number of sites: y.len in the original function
+        this.Z = states; //number of states: alpha.len in the original function
+        peakPartials = new double[N][Z];
+
+    }
+    public void setPeakPartials(int[] states){
         double[] double_betas = FlipFlopUtils.remapDigitized(states, 200); // Turn the states into the 0,1 original range
 
         double delta = deltaParameter.getParameterValue(0);
         double eta = etaParameter.getParameterValue(0);
         double kappa = kappaParameter.getParameterValue(0);
 
-        int total_states = this.peakCount;
-        double[] ideal_beta = new double [total_states];
-        double[] beta = new double [total_states];
-        double[] transformed_alpha = new double [total_states];
-        double[] transformed_beta = new double [total_states];
-
-        for (int state = 0; state < total_states; state ++){
-            ideal_beta[state] = ((double) state) / (total_states - 1); // We'll have 0/N methylated alleles, 1/N allele, 2/N alleles, ... N/N methylated alleles (considering here N = total alleles)
+        for (int state = 0; state < peakCount; state ++){
+            ideal_beta[state] = ((double) state) / (peakCount - 1); // We'll have 0/N methylated alleles, 1/N allele, 2/N alleles, ... N/N methylated alleles (considering here N = total alleles)
             beta[state] = (eta - delta) * ideal_beta[state] + delta; // Rescale the expected peaks to linear scale
 
             //Convert mean/dispersion parameterization of a beta distribution
@@ -155,13 +175,6 @@ public class FlipFlopErrorModel extends TipStatesModel implements Citable {
         }
 
         //Loop through each of the possible Z=2S+1 peaks and calculate the log-pdf of the nth beta value in y[N] for the zth beta distribution
-        int N = double_betas.length; //number of sites: y.len in the original function
-        int Z = transformed_alpha.length; //number of states: alpha.len in the original function
-        double lgamma_alpha;
-        double lgamma_beta;
-        double lgamma_alphaplusbeta;
-        double[][] peakPartials = new double[N][Z];
-
         for (int z = 0; z < Z; z++) {  //Precompute the log-gamma constants. Iterate through states
             lgamma_alpha = GammaFunction.lnGamma(transformed_alpha[z]);
             lgamma_beta = GammaFunction.lnGamma(transformed_beta[z]);
@@ -171,9 +184,6 @@ public class FlipFlopErrorModel extends TipStatesModel implements Citable {
                 peakPartials[n][z] = Math.exp((transformed_alpha[z] - 1) * Math.log(double_betas[n]) + (transformed_beta[z] - 1) * StrictMath.log1p(-double_betas[n]) - lgamma_alpha - lgamma_beta + lgamma_alphaplusbeta);
             }
         }
-
-        return peakPartials;
-
     }
 
     private final Parameter stemCellParameter;
