@@ -61,8 +61,8 @@ public class CenancestorTreeLikelihood extends AbstractTreeLikelihood {
     private static final boolean DEBUG = false;
     private Parameter cenancestorHeight = null;
     private Parameter cenancestorBranch = null;
-    private boolean cenancestorDirty = true;
-    private boolean storedCenancestorDirty = true;
+    private boolean cenancestorStateDirty = true;
+    private boolean storedCenancestorStateDirty = true;
     private boolean branchRules=true;
 
     /**
@@ -347,7 +347,7 @@ public class CenancestorTreeLikelihood extends AbstractTreeLikelihood {
     public void setCenancestorBranch(double cen) {cenancestorBranch.setParameterValue(0, cen);}
 
     protected void updateCenancestorState() {
-        cenancestorDirty=true;
+        cenancestorStateDirty=true;
         likelihoodKnown=false;
     }
     /**
@@ -357,12 +357,13 @@ public class CenancestorTreeLikelihood extends AbstractTreeLikelihood {
         return cenancestorBranch.getValue(0);
     }
 
-    private final void updateCenancestor() {
+    private final void updateCenancestorPosition() {
         if(branchRules){
             updateCenancestorHeight();
         } else {
             updateCenancestorBranch();
         }
+        updateNode(treeModel.getRoot());
     }
 
     private final void updateCenancestorBranch() {
@@ -375,7 +376,7 @@ public class CenancestorTreeLikelihood extends AbstractTreeLikelihood {
 
     @Override
     protected void updateAllNodes() {
-        cenancestorDirty=true;
+        cenancestorStateDirty=true;
         super.updateAllNodes();
     }
 
@@ -425,7 +426,7 @@ public class CenancestorTreeLikelihood extends AbstractTreeLikelihood {
 
                 if (((TreeModel.TreeChangedEvent) object).areAllInternalHeightsChanged()) {
                     updateAllNodes();
-                    updateCenancestor();
+                    updateCenancestorPosition();
                 } else if (((TreeModel.TreeChangedEvent) object).isNodeChanged()) {
                     // If a node event occurs the node and its two child nodes
                     // are flagged for updating (this will result in everything
@@ -434,13 +435,13 @@ public class CenancestorTreeLikelihood extends AbstractTreeLikelihood {
                     // rate changes.
                     updateNodeAndChildren(((TreeModel.TreeChangedEvent) object).getNode());
                     if(((TreeModel.TreeChangedEvent) object).getNode()==treeModel.getRoot()) {
-                        updateCenancestor();
+                        updateCenancestorPosition();
                     }
 
                 } else if (((TreeModel.TreeChangedEvent) object).isTreeChanged()) {
                     // Full tree events result in a complete updating of the tree likelihood
                     updateAllNodes();
-                    updateCenancestor();
+                    updateCenancestorPosition();
                 } else {
                     // Other event types are ignored (probably trait changes).
                     //System.err.println("Another tree event has occured (possibly a trait change).");
@@ -492,7 +493,7 @@ public class CenancestorTreeLikelihood extends AbstractTreeLikelihood {
         if (storePartials) {
             cenancestorlikelihoodCore.storeState();
         }
-        storedCenancestorDirty=cenancestorDirty;
+        storedCenancestorStateDirty=cenancestorStateDirty;
         super.storeState();
 
     }
@@ -507,7 +508,7 @@ public class CenancestorTreeLikelihood extends AbstractTreeLikelihood {
         } else {
             updateAllNodes();
         }
-        cenancestorDirty=storedCenancestorDirty;
+        cenancestorStateDirty=storedCenancestorStateDirty;
         super.restoreState();
 
     }
@@ -707,7 +708,7 @@ public class CenancestorTreeLikelihood extends AbstractTreeLikelihood {
             final boolean update2 = traverse(tree, child2);
 
             // If either child node (root for the cenancestor) or the cenancestor itself was updated then update this node too
-            if (update1 || update2 || rootUpdated || cenancestorDirty) {
+            if (update1 || update2 || rootUpdated || cenancestorStateDirty) {
 
                 if (update1 || update2) {
                     final int childNum1 = child1.getNumber();
@@ -758,7 +759,7 @@ public class CenancestorTreeLikelihood extends AbstractTreeLikelihood {
                         frequencies = frequencyModel.getFrequencies();
                     }
                     cenancestorlikelihoodCore.calculateLogLikelihoods(partials, frequencies, patternLogLikelihoods);
-                    cenancestorDirty=false;
+                    cenancestorStateDirty=false;
                     update = true;
                 }
             }
