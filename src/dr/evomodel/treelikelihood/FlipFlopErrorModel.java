@@ -26,6 +26,8 @@
 package dr.evomodel.treelikelihood;
 
 import dr.evolution.util.TaxonList;
+import dr.inference.model.Model;
+import dr.inference.model.Variable;
 import dr.math.GammaFunction;
 import dr.evomodelxml.treelikelihood.FlipFlopErrorModelParser;
 import dr.inference.model.Parameter;
@@ -51,8 +53,11 @@ public class FlipFlopErrorModel extends TipStatesModel implements Citable {
     double lgamma_alphaplusbeta;
     private int N;
     private int Z;
-    private double[][] peakPartials = null;
+    private double[][][] peakPartials;
+    private double[][][] storedPeakPartials;
     private int[] cellStateAF;
+    private boolean updateMatrix;
+    private boolean storedUpdateMatrix;
 
     public FlipFlopErrorModel(TaxonList includeTaxa, TaxonList excludeTaxa,
                               Parameter stemCellParameter,
@@ -136,29 +141,42 @@ public class FlipFlopErrorModel extends TipStatesModel implements Citable {
             double[] partials = new double[patternCount * stateCount];
             Partials format is partials per site per state: [site1state1,site1state2,site1state3,...,site2state1,site2state2,site2state3,...]
          */
+
         int[] states = this.states[nodeIndex];
 
         if (peakPartials == null){
-            initPeakPartials(states.length, stateCount);
+            initPeakPartials(states.length, stateCount, tree.getExternalNodeCount());
         }
 
-        setPeakPartials(states);
+        if (updateMatrix) {
+            setPeakPartials(states, nodeIndex);
+
+            if (nodeIndex == tree.getExternalNodeCount()-1) {
+                updateMatrix = false;
+            }
+
+        }
 
         for (int index = 0; index < partials.length; index++) {
             int cellStateIndex = index % stateCount; // It points to the current cell state (i.e., k=0,m=0 k=1,m=0 ...)
             int peakIndex = cellStateAF[cellStateIndex]; // The peaks are sorted by methylation level, so the number of alleles are equivalent to the index in peakPartials
             int actualSite = (int) (index / stateCount); // If there are N states, every N positions in partials will go to the next site
-            partials[index] = peakPartials[actualSite][peakIndex];
+            partials[index] = peakPartials[nodeIndex][actualSite][peakIndex];
         }
+
     }
 
-    private void initPeakPartials(int sites, int states){
+    private void initPeakPartials(int sites, int states, int nodes){
         this.N = sites; //number of sites: y.len in the original function
         this.Z = states; //number of states: alpha.len in the original function
-        peakPartials = new double[N][Z];
+
+        this.updateMatrix = true;
+
+        peakPartials = new double[nodes][N][Z];
+        storedPeakPartials = new double[nodes][N][Z];
 
     }
-    public void setPeakPartials(int[] states){
+    public void setPeakPartials(int[] states, int nodeIndex){
         double[] double_betas = FlipFlopUtils.remapDigitized(states, 200); // Turn the states into the 0,1 original range
 
         double delta = deltaParameter.getParameterValue(0);
@@ -181,9 +199,38 @@ public class FlipFlopErrorModel extends TipStatesModel implements Citable {
             lgamma_alphaplusbeta = GammaFunction.lnGamma(transformed_alpha[z] + transformed_beta[z]);
 
             for (int n = 0; n < N; n++) { //Calculate the log pdf of the beta distribution for the nth dataproint drawn from the zth peak. Iterate through sites
-                peakPartials[n][z] = Math.exp((transformed_alpha[z] - 1) * Math.log(double_betas[n]) + (transformed_beta[z] - 1) * StrictMath.log1p(-double_betas[n]) - lgamma_alpha - lgamma_beta + lgamma_alphaplusbeta);
+                peakPartials[nodeIndex][n][z] = Math.exp((transformed_alpha[z] - 1) * Math.log(double_betas[n]) + (transformed_beta[z] - 1) * StrictMath.log1p(-double_betas[n]) - lgamma_alpha - lgamma_beta + lgamma_alphaplusbeta);
             }
         }
+    }
+
+    @Override
+    public void restoreState(){
+        double[][][] tmp3 = storedPeakPartials;
+        storedPeakPartials = peakPartials;
+        peakPartials = tmp3;
+
+        updateMatrix = storedUpdateMatrix;
+    }
+    @Override
+    public void storeState() {
+        storedUpdateMatrix = updateMatrix;
+
+        for (int i = 0; i < peakPartials.length; i++) {
+            for (int j = 0; j < peakPartials[0].length; j++) {
+                System.arraycopy(peakPartials[i][j], 0, storedPeakPartials[i][j], 0, peakPartials[0][0].length);
+            }
+        }
+    }
+    @Override
+    public void handleModelChangedEvent(Model model, Object object, int index) {
+        updateMatrix = true;
+        fireModelChanged();
+    }
+    @Override
+    public void handleVariableChangedEvent(Variable variable, int index, Parameter.ChangeType type) {
+        updateMatrix = true;
+        fireModelChanged();
     }
 
     private final Parameter stemCellParameter;
