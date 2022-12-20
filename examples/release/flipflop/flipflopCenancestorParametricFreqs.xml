@@ -26,14 +26,14 @@
             <taxon idref="S3_2"/>
             0,0.1,0.1,0.7,0.1,0.1,0.6,0.17,0.21,0.1,0.7
         </afsequence>
-        <states>
-				<parameter id="alignment.states" value="6"/>
-        </states>
+		<stemCells>
+			<parameter id="alignment.stemCells" value="2"/>
+		</stemCells>
     </afalignment>
 
     <AFsequenceErrorModel id="errorModel">
         <stemCells>
-            <parameter id="errorModel.stemCells" value="2"/>
+			<parameter idref="alignment.stemCells"/>
         </stemCells>
         <deltaOffset>
             <parameter id="errorModel.deltaOffset" value="0.05" lower="0.0" upper="1.0"/>
@@ -111,7 +111,7 @@
 
 	<flipflopModel id = "flipflopSubstitutionModel">
         <stemCells>
-            <parameter id="flipflop.cells" value="2"/>
+			<parameter idref="alignment.stemCells"/>
         </stemCells>
         <mu>
             <parameter id="flipflop.mu" value="0.1" lower="0.0"/>
@@ -301,18 +301,16 @@
 		</log>
 	
 		<!-- write log to file                                                       -->
-		<log id="fileLog" logEvery="5000" fileName="flipflopCenancestorParametricFreqsTest.log" overwrite="false">
+		<log id="fileLog" logEvery="1" fileName="flipflopCenancestorParametricFreqsTest.log" overwrite="false">
 			<posterior idref="posterior"/>
 			<prior idref="prior"/>
 			<likelihood idref="likelihood"/>
 			<parameter idref="errorModel.deltaOffset"/>
 			<parameter idref="errorModel.etaOffset"/>
 			<parameter idref="errorModel.kappaScale"/>
-			<parameter idref="errorModel.stemCells"/>
 			<parameter idref="flipflop.mu"/>
 			<parameter idref="flipflop.gamma"/>
 			<parameter idref="flipflop.lambda"/>
-			<parameter idref="flipflop.cells"/>
 			<parameter idref="cenancestor.methylatedProportion"/>
 			<parameter idref="treeModel.rootHeight"/>
 			<parameter idref="luca_height"/>

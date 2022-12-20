@@ -53,7 +53,7 @@ public class CenancestorTreeLikelihoodParser extends AbstractXMLObjectParser {
     public static final String FORCE_RESCALING = "forceRescaling";
     public static final String CENANCESTOR_HEIGHT = "cenancestorHeight";
     public static final String CENANCESTOR_BRANCH = "cenancestorBranch";
-//    public static final String USE_AS_STATISTIC= "useAsStatistic";
+    public static final String HEIGHT_RULES = "heightRules";
 
     public String getParserName() {
         return TREE_LIKELIHOOD;
@@ -65,6 +65,7 @@ public class CenancestorTreeLikelihoodParser extends AbstractXMLObjectParser {
         boolean allowMissingTaxa = xo.getAttribute(ALLOW_MISSING_TAXA, false);
         boolean storePartials = xo.getAttribute(STORE_PARTIALS, true);
         boolean forceJavaCore = xo.getAttribute(FORCE_JAVA_CORE, false);
+        boolean heightRules = xo.getAttribute(HEIGHT_RULES,false);
 
         if (Boolean.valueOf(System.getProperty("java.only"))) {
             forceJavaCore = true;
@@ -91,7 +92,6 @@ public class CenancestorTreeLikelihoodParser extends AbstractXMLObjectParser {
             throw new XMLParseException("The state emitting TipStateModel requires BEAGLE");
         }
 
-
         boolean forceRescaling = xo.getAttribute(FORCE_RESCALING, false);
 
         return new CenancestorTreeLikelihood(
@@ -104,7 +104,8 @@ public class CenancestorTreeLikelihoodParser extends AbstractXMLObjectParser {
                 cenancestorBranch,
                 cenancestorFrequencyModel,
                 //AsStatistic,
-                useAmbiguities, allowMissingTaxa, storePartials, forceJavaCore, forceRescaling);
+                useAmbiguities, allowMissingTaxa, storePartials, forceJavaCore, forceRescaling,
+                heightRules);
     }
 
     //************************************************************************
@@ -129,6 +130,7 @@ public class CenancestorTreeLikelihoodParser extends AbstractXMLObjectParser {
             AttributeRule.newBooleanRule(STORE_PARTIALS, true),
             AttributeRule.newBooleanRule(FORCE_JAVA_CORE, true),
             AttributeRule.newBooleanRule(FORCE_RESCALING, true),
+            AttributeRule.newBooleanRule(HEIGHT_RULES,true),
             new ElementRule(PatternList.class),
             new ElementRule(TreeModel.class),
             new ElementRule(SiteModel.class),
