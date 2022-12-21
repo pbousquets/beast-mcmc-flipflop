@@ -216,10 +216,22 @@ public class FlipFlopModel extends ComplexSubstitutionModel implements Likelihoo
             throw new RuntimeException("not well conditioned");
         } else {
 
-            int eigenValPos = -1;
-            for (int i = 0; i < stateCount; i++) {
-                if (Eval[i] == 0.0) {
+            //setupMatrix assigns 0 to the abs(Eval) < 1e-10, but I am getting some < 1e-9
+            //int eigenValPos = -1;
+            //for (int i = 0; i < stateCount; i++) {
+            //    if (Eval[i] == 0.0) {
+            //        eigenValPos = i;
+            //    }
+            //}
+
+            int eigenValPos = 0;
+            double minEigenVal=Math.abs(Eval[0]);
+            double newEigenVal=0;
+            for(int i = 1; i < stateCount; i++){
+                newEigenVal=Math.abs(Eval[i]);
+                if(newEigenVal < minEigenVal){
                     eigenValPos = i;
+                    minEigenVal = newEigenVal;
                 }
             }
 
