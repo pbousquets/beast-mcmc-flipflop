@@ -80,12 +80,20 @@ public class FlipFlopModelParser extends AbstractXMLObjectParser {
         sb.append("\n\t- Initial mu = " + muParam.getValue(0));
         sb.append("\n\t- Normalization using flux of out-states: " + normalize);
 
+        boolean updateDimension = false;
+
         if (xo.hasChildNamed(FREQUENCIES)) { //Given frequency parameter. We normalize them by default
             Parameter freqsParam = (Parameter) xo.getElementFirstChild(FREQUENCIES);
+
             double cumfreqs=0;
 
-            for (int i=0; i<freqsParam.getDimension();i++){
-                cumfreqs += freqsParam.getParameterValue(i);
+            if(freqsParam.getDimension()!=stateCount){
+                freqsParam.setDimension(stateCount);
+                updateDimension = true;
+            } else {
+                for (int i=0; i<freqsParam.getDimension();i++){
+                    cumfreqs += freqsParam.getParameterValue(i);
+                }
             }
 
             for (int i = 0; i < freqsParam.getDimension(); i++) {
@@ -107,6 +115,9 @@ public class FlipFlopModelParser extends AbstractXMLObjectParser {
         }
 
         sb.append("\n\t- Using a frequency model to set the transition matrix: " + useFrequencyModel);
+        if (updateDimension){
+            sb.append("\n\t- WARNING: XML frequency parameter of improper dimension. Fixed.");
+        }
         sb.append("\n\t- Initial frequency model: {");
         NumberFormat format = NumberFormat.getNumberInstance();
         format.setMaximumFractionDigits(5);
