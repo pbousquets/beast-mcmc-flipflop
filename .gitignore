@@ -1,6 +1,6 @@
 .DS_Store
 .idea
-release/
+/release/
 *.iml
 *.ipr
 *.iws
