@@ -11,3 +11,5 @@ bin/
 build/
 dist/
 out/
+simulate/simulation_datasets
+simulate/simulation_datasets*
