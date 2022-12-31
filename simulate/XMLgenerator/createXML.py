@@ -12,7 +12,16 @@ class createXML:
     This class builds the actual XML file
     """
 
-    def __init__(self) -> None:
+    def __init__(self, age:int, stemCells: int = 3, delta: float = 0.2, eta: float = 0.7, kappa: float = 50, mu: float = 0.1, gamma: float = 0.1, Lambda: float = 1, normalize = False) -> None:
+        self.age = age
+        self.stemCells = stemCells
+        self.delta = delta
+        self.eta = eta
+        self.kappa = kappa
+        self.mu = mu
+        self.gamma = gamma
+        self.Lambda = Lambda
+        self.normalize = "true" if normalize else "false"
         self.doc, self.tag, self.text, self.line = Doc().ttl()
         self.doc.asis('<?xml version="1.0" standalone="yes"?>')
 
@@ -20,14 +29,15 @@ class createXML:
         self.sequences: List[str] = readMet.samples
         self.names: List[str] = readMet.sample_names
 
-    def buildDoc(self, output: str, iterations: int = 20_000, sampling: int = 200, screenSampling: int = 200):
+    def buildDoc(self, output: str, iterations: int = 750000, sampling: int = 75, screenSampling: int = 75):
         with self.tag("beast"):
 
             self.newSection("The list of taxa to be analysed (can also include dates/ages).")
             with self.tag("taxa"):
                 self.doc.attr(id="taxa")
                 for name in self.names:
-                    self.doc.stag("taxon", id=f"{name}")
+                    with self.tag("taxon", id=f"{name}"):
+                        self.doc.stag("date", value=f"{self.age}", direction="forwards", units="years")
 
             self.newSection("The list of sequences to be analysed")
             with self.tag("afalignment", id="alignment"):
@@ -35,19 +45,19 @@ class createXML:
                     with self.tag("afsequence"):
                         self.doc.stag("taxon", idref=f"{name}")
                         self.text(self.sequences[i])
-                with self.tag("states"):  # TODO: This will probably change in the future
-                    self.doc.stag("parameter", id="alignment.states", value=6)
+                with self.tag("stemCells"):
+                    self.doc.stag("parameter", id="alignment.stemCells", value=self.stemCells)
 
             self.newSection("Initialize the error model")
             with self.tag("AFsequenceErrorModel", id="errorModel"):
                 with self.tag("stemCells"):
-                    self.doc.stag("parameter", id="errorModel.stemCells", value="2")
+                    self.doc.stag("parameter", idref="alignment.stemCells")
                 with self.tag("deltaOffset"):
-                    self.doc.stag("parameter", id="errorModel.deltaOffset", value="0.05", lower="0.0", upper="1.0")
+                    self.doc.stag("parameter", id="errorModel.deltaOffset", value=self.delta, lower="0.0", upper="1.0")
                 with self.tag("etaOffset"):
-                    self.doc.stag("parameter", id="errorModel.etaOffset", value="0.95", lower="0.0", upper="1.0")
+                    self.doc.stag("parameter", id="errorModel.etaOffset", value=self.eta, lower="0.0", upper="1.0")
                 with self.tag("kappaScale"):
-                    self.doc.stag("parameter", id="errorModel.kappaScale", value="0.1", lower="0.0")
+                    self.doc.stag("parameter", id="errorModel.kappaScale", value=self.kappa, lower="0.0")
 
             self.newSection("A prior assumption that the population size has remained constant")
             self.newSection("throughout the time spanned by the genealogy", addNewline=False)
@@ -83,15 +93,16 @@ class createXML:
                     self.doc.stag("parameter", id="clock.rate", value="1")
 
             self.newSection("The substitution model")
-            with self.tag("flipflopModel", id="flipflopSubstitutionModel"):
+            with self.tag("flipflopModel", id="flipflopSubstitutionModel", normalize = self.normalize):
+                self.doc.stag("alignment", idref="alignment")
                 with self.tag("stemCells"):
-                    self.doc.stag("parameter", id="flipflop.cells", value="2")
+                    self.doc.stag("parameter", idref="alignment.stemCells")
                 with self.tag("mu"):
-                    self.doc.stag("parameter", id="flipflop.mu", value="0.1", lower="0.0")
+                    self.doc.stag("parameter", id="flipflop.mu", value=self.mu, lower="0.0")
                 with self.tag("gamma"):
-                    self.doc.stag("parameter", id="flipflop.gamma", value="0.1", lower="0.0")
+                    self.doc.stag("parameter", id="flipflop.gamma", value=self.gamma, lower="0.0")
                 with self.tag("lambda"):
-                    self.doc.stag("parameter", id="flipflop.lambda", value="1", lower="0.0")
+                    self.doc.stag("parameter", id="flipflop.lambda", value=self.Lambda, lower="0.0")
 
             self.newSection("The site model")
             with self.tag("siteModel", id="siteModel"):
@@ -99,54 +110,54 @@ class createXML:
                     self.doc.stag("flipflopModel", idref="flipflopSubstitutionModel")
 
             self.newSection("The cenancestor frequency")
-            with self.tag("flipflopCenancestorFrequency", id="CenancestorFrequencyModel", methylatedProportion="0.5"):
+            with self.tag("flipflopCenancestorFrequency", id="cenancestorFrequencyModel", methylatedProportion="0.5"):
                 self.doc.stag("alignment", idref="alignment")
-                self.doc.stag("substitutionModel", idref="flipflopSubstitutionModel")
                 with self.tag("frequencies"):
                     self.doc.stag("parameter", id="cenancestor.frequencies", value="1")
 
             self.newSection("The cenancestor treelikelihood")
-            with self.tag("cenancestorTreeLikelihood", id="treeLikelihood", useAmbiguities="false"):
+            with self.tag("cenancestorTreeLikelihood", id="treeLikelihood", useAmbiguities="false", heightRules="true"):
                 self.doc.stag("alignment", idref="alignment")
                 self.doc.stag("treeModel", idref="treeModel")
                 self.doc.stag("siteModel", idref="siteModel")
+                self.doc.stag("cenancestorFrequency", idref="cenancestorFrequencyModel")
                 self.doc.stag("tipStatesModel ", idref="errorModel")
                 with self.tag("cenancestorHeight"):
-                    self.doc.stag("parameter", id="luca_height", value="0", upper="60.0", lower="5.0")
+                    self.doc.stag("parameter", id="luca_height", value="45")
                 with self.tag("cenancestorBranch"):
-                    self.doc.stag("parameter", id="luca_branch", value="1", upper="55.0", lower="0.0")
+                    self.doc.stag("parameter", id="luca_branch", value="1", upper="45.0", lower="0.0")
                 self.doc.stag("strictClockCenancestorBranchRates", idref="branchRates")
 
             self.newSection("Set the operators")
             with self.tag("operators", id="operators", optimizationSchedule="default"):
-                self.newSection("DM TODO: Are scale operators the best option? are the scale and weight appropriate?", addNewline=False)
 
                 ## error model
-                with self.tag("scaleOperator", scaleFactor="0.25", weight="0.25"):
-                    self.doc.stag("parameter", idref="errorModel.stemCells")
-                with self.tag("scaleOperator", scaleFactor="0.25", weight="0.25"):
+                self.newSection("Error model", addNewline=False)
+                with self.tag("scaleOperator", scaleFactor="0.9", weight="0.75"):
                     self.doc.stag("parameter", idref="errorModel.deltaOffset")
-                with self.tag("scaleOperator", scaleFactor="0.25", weight="0.25"):
+                with self.tag("scaleOperator", scaleFactor="0.9", weight="0.75"):
                     self.doc.stag("parameter", idref="errorModel.etaOffset")
-                with self.tag("scaleOperator", scaleFactor="0.25", weight="0.25"):
+                with self.tag("scaleOperator", scaleFactor="0.9", weight="0.75"):
                     self.doc.stag("parameter", idref="errorModel.kappaScale")
 
-                ## flipflip model
-                with self.tag("scaleOperator", scaleFactor="0.25", weight="0.25"):
+                ## flipflop model
+                self.newSection("flipflop model", addNewline=False)
+                with self.tag("scaleOperator", scaleFactor="0.9", weight="0.5"):
                     self.doc.stag("parameter", idref="flipflop.mu")
-                with self.tag("scaleOperator", scaleFactor="0.25", weight="0.25"):
+                with self.tag("scaleOperator", scaleFactor="0.9", weight="0.5"):
                     self.doc.stag("parameter", idref="flipflop.gamma")
-                with self.tag("scaleOperator", scaleFactor="0.25", weight="0.25"):
+                with self.tag("scaleOperator", scaleFactor="0.9", weight="0.5"):
                     self.doc.stag("parameter", idref="flipflop.lambda")
 
                 ## Demography
-                with self.tag("scaleOperator", scaleFactor="0.5", weight="0.3"):
+                self.newSection("Demography", addNewline=False)
+                with self.tag("scaleOperator", scaleFactor="0.2", weight="3.0"):
                     self.doc.stag("parameter", idref="constant.popSize")
 
                 ## Tree
-                self.newSection("2.5 years. They will be automatically optimized by BEAST though", addNewline=False)
-
+                self.newSection("Tree", addNewline=False)
                 with self.tag("subtreeSlide", size="2.5", gaussian="true", weight="15.0"):
+                    self.newSection("2.5 years. They will be automatically optimized by BEAST though", addNewline=False)
                     self.doc.stag("parameter", idref="treeModel")
                 with self.tag("narrowExchange", weight="15.0"):
                     self.doc.stag("parameter", idref="treeModel")
@@ -154,20 +165,18 @@ class createXML:
                     self.doc.stag("parameter", idref="treeModel")
                 with self.tag("wilsonBalding", weight="3.0"):
                     self.doc.stag("parameter", idref="treeModel")
-                with self.tag("scaleOperator", scaleFactor="0.75", weight="5.0"):
+                with self.tag("scaleOperator", scaleFactor="0.25", weight="3.0"):
                     self.doc.stag("parameter", idref="treeModel.rootHeight")
                 with self.tag("uniformOperator", weight="30.0"):
                     self.doc.stag("parameter", idref="treeModel.internalNodeHeights")
-
-                self.newSection("We operate the branch since it is relative to the root. Operating luca_height is error prone, since it depends on the root", addNewline=False)
-                with self.tag("scaleOperator", scaleFactor="0.2", weight="1.0"):
-                    self.doc.stag("parameter", idref="luca_branch")
-                with self.tag("upDownOperator", scaleFactor="0.75", weight="5.0"):
+                with self.tag("upDownOperator", scaleFactor="0.25", weight="3.0"):
                     with self.tag("up"):
-                        self.doc.stag("parameter", idref="clock.rate")
+                        self.doc.stag("parameter", idref="flipflop.mu")
+                        self.doc.stag("parameter", idref="flipflop.gamma")
+                        self.doc.stag("parameter", idref="flipflop.lambda")
                     with self.tag("down"):
                         self.doc.stag("parameter", idref="treeModel.allInternalNodeHeights")
-                        self.doc.stag("parameter", idref="luca_height")
+                        #self.doc.stag("parameter", idref="luca_height")
 
             self.newSection("Define MCMC")
             with self.tag("mcmc", id="mcmc", chainLength=f"{iterations}", autoOptimize="true", operatorAnalysis=f"{output}.ops"):
@@ -195,11 +204,11 @@ class createXML:
                             self.doc.stag("parameter", idref="constant.popSize")
 
                         self.newSection("Tree", addNewline=False)
-                        self.doc.stag("parameter", idref="coalescent")
+                        self.doc.stag("coalescentLikelihood", idref="coalescent")
 
                         self.newSection("Cenancestor Prior on the height, since it is easier to have a meaningful prior on it (time of the initial development of the BE fragment)", addNewline=False)
-                        with self.tag("uniformPrior", lower="5.0", upper="60.0"):
-                            self.doc.stag("parameter", idref="luca_height")
+                        with self.tag("uniformPrior", lower="0.0", upper="50.0"):
+                            self.doc.stag("parameter", idref="luca_branch")
 
                     with self.tag("likelihood", id="likelihood"):
                         self.doc.stag("cenancestorTreeLikelihood", idref="treeLikelihood")
@@ -207,7 +216,7 @@ class createXML:
                 self.doc.stag("operators", idref="operators")
 
                 self.newSection("write log to screen")
-                with self.tag("log", id="screenLog", logEvery=f"{sampling}"):
+                with self.tag("log", id="screenLog", logEvery=f"{screenSampling}"):
                     with self.tag("column", label="Posterior", dp="4", width="12"):
                         self.doc.stag("posterior", idref="posterior")
                     with self.tag("column", label="Prior", dp="4", width="12"):
@@ -216,18 +225,17 @@ class createXML:
                         self.doc.stag("likelihood", idref="likelihood")
 
                 self.newSection("write log to file")
-                with self.tag("log", id="filelog", logEvery=f"{screenSampling}", fileName=f"{output}.log", overwrite="false"):
+                with self.tag("log", id="filelog", logEvery=f"{sampling}", fileName=f"{output}.log", overwrite="false"):
                     self.doc.stag("posterior", idref="posterior")
                     self.doc.stag("prior", idref="prior")
                     self.doc.stag("likelihood", idref="likelihood")
                     self.doc.stag("parameter", idref="errorModel.deltaOffset")
                     self.doc.stag("parameter", idref="errorModel.etaOffset")
                     self.doc.stag("parameter", idref="errorModel.kappaScale")
-                    self.doc.stag("parameter", idref="errorModel.stemCells")
                     self.doc.stag("parameter", idref="flipflop.mu")
                     self.doc.stag("parameter", idref="flipflop.gamma")
                     self.doc.stag("parameter", idref="flipflop.lambda")
-                    self.doc.stag("parameter", idref="flipflop.cells")
+                    self.doc.stag("parameter", idref="alignment.stemCells")
                     self.doc.stag("parameter", idref="treeModel.rootHeight")
                     self.doc.stag("parameter", idref="luca_height")
                     self.doc.stag("parameter", idref="luca_branch")
@@ -238,9 +246,6 @@ class createXML:
                 self.newSection("write tree log to file")
                 with self.tag("logTree", id="treeFileLog", logEvery=f"{sampling}", nexusFormat="true", fileName=f"{output}.trees", sortTranslationTable="true"):
                     self.doc.stag("treeModel", idref="treeModel")
-                    with self.tag("trait", name="rate", tag="rate"):
-                        self.doc.stag("strictClockCenancestorBranchRates", idref="branchRates")
-                    self.doc.stag("posterior", idref="posterior")
 
             with self.tag("report"):
                 with self.tag("property", name="timer"):
