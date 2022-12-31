@@ -11,15 +11,16 @@ from os import path
 import itertools
 import tqdm
 
-N = 1000
+N = 2000
 delta = 0.05
 eta = 0.93
 
 eff_pop_size = 5
 time = 35
-time_root = 10
+root_limits = "5,30"
 seed = None
 random_tree = False
+no_tree = True
 directory = "simulation_datasets/"
 
 cells = [3, 10, 20]
@@ -36,8 +37,8 @@ for S, lam, mu, gamma, kappa, sample in tqdm.tqdm(runs):
 
     if path.exists(f"{directory}/{output}"):
         continue
-    tree_file = f"{directory}/test_{sample}samples/test_{sample}samples.tree"
-    main(N, S, lam, mu, gamma, delta, eta, kappa, random_tree, tree_file, seed, samples, eff_pop_size, time, time_root, directory, output)
 
+    tree_file = f"{directory}/test_{sample}samples/test_{sample}samples.tree"
+    main(N, S, lam, mu, gamma, delta, eta, kappa, random_tree, tree_file, seed, samples, eff_pop_size, time, root_limits, directory, output, no_tree)
 
 
