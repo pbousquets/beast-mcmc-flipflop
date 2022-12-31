@@ -40,7 +40,7 @@ class CustomCommand(click.Command):
 # Random tree
 def generate_random_tree(k, N, t, root_height, seed):
     # Simulate the coalescent tree using msprime
-    ts = msprime.simulate(sample_size=k, Ne=N, length=t, mutation_rate=0, random_seed=seed)
+    ts = msprime.simulate(sample_size=k, Ne=N, mutation_rate=0, random_seed=seed)
     tree = next(ts.trees())
 
     # Get the tree in Newick format
@@ -215,22 +215,32 @@ def file_exists_callback(ctx, param, value):
 @click.option("--random_tree", default=False, help="Use a random tree", is_flag=True, cls=CustomOption, help_group="Phylogenetic tree")
 @click.option("--tree_file", help="Tree file in Newick format to use", type=str, callback=file_exists_callback, cls=CustomOption, help_group="Phylogenetic tree")
 @click.option("--samples", default=10, help="Number of samples in the simulated tree", type=int, cls=CustomOption, help_group="Phylogenetic tree")
-@click.option("--eff_pop_size", default=5, help="Effective population size for the simulated tree", type=float, cls=CustomOption, help_group="Phylogenetic tree")
+@click.option("--eff_pop_size", default=10_000, help="Effective population size for the simulated tree", type=float, cls=CustomOption, help_group="Phylogenetic tree")
 @click.option("--time", default=30, help="Number of years for the simulated tree", type=int, cls=CustomOption, help_group="Phylogenetic tree")
-@click.option("--time_root", default=10, help="Number of years until the first bifurcation", type=int, cls=CustomOption, help_group="Phylogenetic tree")
-@click.option("--seed", help="Set a seed", type=int, cls=CustomOption, help_group="Other")
+@click.option("--root_limits", default="5,25", help="Low and high limit the size of the root height. Comma-separated total years.", type=str, cls=CustomOption, help_group="Phylogenetic tree")
+@click.option("--seed", default=123, help="Set a seed", type=int, cls=CustomOption, help_group="Other")
 @click.option("--directory", default=".", help="Alternative root directory for the output", type=click.Path(exists=True), cls=CustomOption, help_group="Other")
 @click.option("--output", required = True, help="Prefix that output files will carry", type=str, cls=CustomOption, help_group="Other")
-def main(N, S, lam, mu, gamma, delta, eta, kappa, random_tree, tree_file, seed, samples, eff_pop_size, time, time_root, directory, output):
-    arguments = locals()
+@click.option("--no_tree", default=False, help="Whether to avoid plotting the phylogenetic tree", is_flag=True, cls=CustomOption, help_group="Other")
+def main(N, S, lam, mu, gamma, delta, eta, kappa, random_tree, tree_file, seed, samples, eff_pop_size, time, root_limits, directory, output, no_tree):
+    np.random.seed(seed)
+
+    arguments = locals() # Get current variables as a dictionary
 
     directory = f"{directory}/{output}"
     os.makedirs(directory, exist_ok=True)
 
     if random_tree:
         tree_file = f"{directory}/{output}.tree"
+        low_limit, high_limit = root_limits.split(",")
+        root_height = np.random.uniform(float(low_limit), float(high_limit))
+        tree_time = time - root_height
+
+        arguments["tree_time"] = tree_time
+        arguments["root_height"] = root_height
+
+        tree = generate_random_tree(samples, eff_pop_size, tree_time, root_height, seed)
         with open(tree_file, "w") as f:
-            tree = generate_random_tree(samples, eff_pop_size, time, time_root, seed)
             f.write(tree)
     else:
         assert tree_file, "Error. By default it's expected a tree. Otherwise, please activate the --random_tree flag."
@@ -241,21 +251,22 @@ def main(N, S, lam, mu, gamma, delta, eta, kappa, random_tree, tree_file, seed, 
     tree.ladderize()  # Flip branches so deeper clades are displayed at top
     tree.rooted = True
 
-    with PdfPages(f'{directory}/{output}Tree.pdf') as export_pdf:
-        fig, ax = plt.subplots()
-        Phylo.draw(tree, axes=ax, do_show=False)
-        plt.tick_params(
-            axis='y',          # changes apply to the x-axis
-            which='both',      # both major and minor ticks are affected
-            left=False,      # ticks along the bottom edge are off
-            right=False,         # ticks along the top edge are off
-            labelleft=False) # labels along the bottom edge are off
-        plt.ylabel('')
-        ax.spines['right'].set_visible(False)
-        ax.spines['top'].set_visible(False)
-        ax.spines['left'].set_visible(False)
-        export_pdf.savefig()
-        plt.close()
+    if not no_tree:
+        with PdfPages(f'{directory}/{output}Tree.pdf') as export_pdf:
+            fig, ax = plt.subplots()
+            Phylo.draw(tree, axes=ax, do_show=False)
+            plt.tick_params(
+                axis='y',          # changes apply to the x-axis
+                which='both',      # both major and minor ticks are affected
+                left=False,      # ticks along the bottom edge are off
+                right=False,         # ticks along the top edge are off
+                labelleft=False) # labels along the bottom edge are off
+            plt.ylabel('')
+            ax.spines['right'].set_visible(False)
+            ax.spines['top'].set_visible(False)
+            ax.spines['left'].set_visible(False)
+            export_pdf.savefig()
+            plt.close()
 
     tree = simulate_beta(tree, S, lam, mu, gamma, delta, eta, kappa, N)
 
