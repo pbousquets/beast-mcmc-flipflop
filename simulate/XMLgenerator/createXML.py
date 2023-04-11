@@ -123,9 +123,9 @@ class createXML:
                 self.doc.stag("cenancestorFrequency", idref="cenancestorFrequencyModel")
                 self.doc.stag("tipStatesModel ", idref="errorModel")
                 with self.tag("cenancestorHeight"):
-                    self.doc.stag("parameter", id="luca_height", value="45")
+                    self.doc.stag("parameter", id="luca_height", value=f"{self.age}")
                 with self.tag("cenancestorBranch"):
-                    self.doc.stag("parameter", id="luca_branch", value="1", upper="45.0", lower="0.0")
+                    self.doc.stag("parameter", id="luca_branch", value="1", upper=f"{self.age}", lower="0.0")
                 self.doc.stag("strictClockCenancestorBranchRates", idref="branchRates")
 
             self.newSection("Set the operators")
@@ -207,7 +207,7 @@ class createXML:
                         self.doc.stag("coalescentLikelihood", idref="coalescent")
 
                         self.newSection("Cenancestor Prior on the height, since it is easier to have a meaningful prior on it (time of the initial development of the BE fragment)", addNewline=False)
-                        with self.tag("uniformPrior", lower="0.0", upper="50.0"):
+                        with self.tag("uniformPrior", lower="0.0", upper=f"{self.age}"):
                             self.doc.stag("parameter", idref="luca_branch")
 
                     with self.tag("likelihood", id="likelihood"):
