@@ -198,9 +198,18 @@ class createXML:
                             self.doc.stag("parameter", idref="flipflop.gamma")
                         with self.tag("halfNormalPrior", mean="0.0", stdev="1"):
                             self.doc.stag("parameter", idref="flipflop.lambda")
+                        #DM: section with modifications for MLE
+                        #DM: This section added only if --mle is true
+                        with self.tag("gammaPrior", shape="2.0", scale="3.0", offset="1.0"):
+                            self.doc.stag("parameter", idref="alignment.stemCells")
 
                         self.newSection("Demography", addNewline=False)
-                        with self.tag("oneOnXPrior"):
+                        #DM: Change only needed when --mle is true
+                        #if mle is false
+                        #with self.tag("oneOnXPrior"):
+                            #self.doc.stag("parameter", idref="constant.popSize")
+                        #else
+                        with self.tag("logNormalPrior",  mean="100", stdev="2.148", meanInRealSpace="true"):
                             self.doc.stag("parameter", idref="constant.popSize")
 
                         self.newSection("Tree", addNewline=False)
@@ -250,6 +259,42 @@ class createXML:
             with self.tag("report"):
                 with self.tag("property", name="timer"):
                     self.doc.stag("mcmc", idref="mcmc")
+            ##DM: only if --mle
+            self.newSection("Power-posterior sampling for MLE estimation")
+            #DM:
+            #pathSteps = mle.steps
+            #chainLength = mle.iterations
+            #pathScheme and alpha do not need to be configurable for now, buy we can also have variables for them with the current ones as default
+            with self.tag("marginalLikelihoodEstimator", id="MLE", chainLength="20000", pathSteps="100", pathScheme="betaquantile", alpha="0.30"):
+                with self.tag("samplers"):
+                    self.doc.stag("mcmc", idref="mcmc")
+                with self.tag("pathLikelihood", id="pathLikelihood"):
+                    with self.tag("source"):
+                        self.doc.stag("posterior", idref="posterior")
+                    with self.tag("destination"):
+                        self.doc.stag("prior", idref="prior")
+                #logEvery = mle.sampling
+                with self.tag("log", id="MLELog", logEvery="20", fileName=f"{output}.MLE.log"):
+                    self.doc.stag("pathLikelihood", idref="pathLikelihood")
+            ##DM: end only if --mle
+
+            ##DM: only if mle.ps
+            self.newSection("MLE estimation using path sampling")
+            with self.tag("pathSamplingAnalysis", fileName=f"{output}.MLE.log"):
+                self.doc.stag("likelihoodColumn", name="pathLikelihood.delta")
+                self.doc.stag("thetaColumn", name="pathLikelihood.theta")
+            ##DM: end only if mle.ps
+            ##DM: only if mle.ss
+            self.newSection("MLE estimation using stepping-stone sampling")
+            with self.tag("steppingStoneSamplingAnalysis", fileName=f"{output}.MLE.log"):
+                self.doc.stag("likelihoodColumn", name="pathLikelihood.delta")
+                self.doc.stag("thetaColumn", name="pathLikelihood.theta")
+            ##DM: end only if mle.ss
+            ##DM: only if hme
+            self.newSection("\"MLE\" estimation using the harmonic mean estimator")
+            with self.tag("harmonicMeanAnalysis", fileName=f"{output}.log"):
+                self.doc.stag("likelihoodColumn", name="likelihood")
+            ##DM: end only if hme
 
     def newSection(self, text: str, addNewline: str = True) -> None:
         init = "\n" if addNewline else ""

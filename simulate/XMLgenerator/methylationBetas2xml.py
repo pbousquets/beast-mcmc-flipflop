@@ -49,6 +49,16 @@ class CustomCommand(click.Command):
 @click.option("--screenSampling", "screenSampling", cls=CustomOption, default=75, help="Frequency of sampling to print in the screen", type=int, help_group="Extra parameters")
 @click.option("--stripRownames", "stripRownames", cls=CustomOption, default=False, help="Whether the input contains row names or not (they need to be removed)", is_flag=True, help_group="Extra parameters")
 @click.option("--output", cls=CustomOption, default="test", help="Output prefix for the analysis files (XML, trees, logs...)", type=str, help_group="Extra parameters")
+
+#DM we need to add the following options
+#--mle Activates/deactivates sampling for Marginal Likelihood Estimation using Path Sampling and/or Stepping Stone. Binary. Default=False
+#--mle.steps Number of power posteriors to use for MLE. Integer. Default = 100. Feel free to use another separator between mle and steps if it makes it more "Pythonic"
+#--mle.iterations Number of MCMC iterations to run in each step. Integer. Default = --iterations / --mle.steps (ceiling if necessary)
+#--mle.sampling Sampling period for the power-posterior MCMC samplers. Integer. Default = mle.iterations / 1000 (flooring if necessary)
+#--mle.ps Activates/deactivates the analysis of the MLE samples to estimate the MLE using Path Sampling. Binary. Default=False. If set true, sets --mle true automatically (or not allowed if --mle is not true)
+#--mle.ss Activates/deactivates the analysis of the MLE samples to estimate the MLE using Stepping Stone. Binary. Default=False. If set true, sets --mle true automatically (or not allowed if --mle is not true)
+#--hme Activates/deactivates the estimation of the MLE using the Harmonic Mean Estimate (BAD). Binary. Default=False. IT DOES NOT REQUIRE OR ACTIVATE --mle
+
 def main(input: str, age: int, stemCells: int, delta:float, eta: float, kappa: float, mu: float, gamma: float, Lambda: float, iterations: int = 20_000, precision: int = 3, sampling: int = 200, screenSampling: int = 200, output: str = "test", stripRownames: bool = True) -> None:
     myobj = readMethylation(input, precision, stripRownames)
     myobj.parseSamples()
