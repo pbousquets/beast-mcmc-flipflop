@@ -12,7 +12,7 @@ class createXML:
     This class builds the actual XML file
     """
 
-    def __init__(self, age:int, stemCells: int = 3, delta: float = 0.2, eta: float = 0.7, kappa: float = 50, mu: float = 0.1, gamma: float = 0.1, Lambda: float = 1, normalize = False) -> None:
+    def __init__(self, age: int, stemCells: int = 3, delta: float = 0.2, eta: float = 0.7, kappa: float = 50, mu: float = 0.1, gamma: float = 0.1, Lambda: float = 1, normalize=False) -> None:
         self.age = age
         self.stemCells = stemCells
         self.delta = delta
@@ -29,7 +29,20 @@ class createXML:
         self.sequences: List[str] = readMet.samples
         self.names: List[str] = readMet.sample_names
 
-    def buildDoc(self, output: str, iterations: int = 750000, sampling: int = 75, screenSampling: int = 75):
+    def buildDoc(
+        self,
+        output: str,
+        iterations: int = 750000,
+        sampling: int = 75,
+        screenSampling: int = 75,
+        mle: bool = False,
+        mle_ss: bool = False,
+        mle_ps: bool = False,
+        hme: bool = False,
+        mle_steps: int = 100,
+        mle_iterations: int = None,
+        mle_sampling: int = None,
+    ) -> None:
         with self.tag("beast"):
 
             self.newSection("The list of taxa to be analysed (can also include dates/ages).")
@@ -93,7 +106,7 @@ class createXML:
                     self.doc.stag("parameter", id="clock.rate", value="1")
 
             self.newSection("The substitution model")
-            with self.tag("flipflopModel", id="flipflopSubstitutionModel", normalize = self.normalize):
+            with self.tag("flipflopModel", id="flipflopSubstitutionModel", normalize=self.normalize):
                 self.doc.stag("alignment", idref="alignment")
                 with self.tag("stemCells"):
                     self.doc.stag("parameter", idref="alignment.stemCells")
@@ -176,7 +189,7 @@ class createXML:
                         self.doc.stag("parameter", idref="flipflop.lambda")
                     with self.tag("down"):
                         self.doc.stag("parameter", idref="treeModel.allInternalNodeHeights")
-                        #self.doc.stag("parameter", idref="luca_height")
+                        # self.doc.stag("parameter", idref="luca_height")
 
             self.newSection("Define MCMC")
             with self.tag("mcmc", id="mcmc", chainLength=f"{iterations}", autoOptimize="true", operatorAnalysis=f"{output}.ops"):
@@ -198,19 +211,18 @@ class createXML:
                             self.doc.stag("parameter", idref="flipflop.gamma")
                         with self.tag("halfNormalPrior", mean="0.0", stdev="1"):
                             self.doc.stag("parameter", idref="flipflop.lambda")
-                        #DM: section with modifications for MLE
-                        #DM: This section added only if --mle is true
-                        with self.tag("gammaPrior", shape="2.0", scale="3.0", offset="1.0"):
-                            self.doc.stag("parameter", idref="alignment.stemCells")
+
+                        if mle:
+                            with self.tag("gammaPrior", shape="2.0", scale="3.0", offset="1.0"):
+                                self.doc.stag("parameter", idref="alignment.stemCells")
 
                         self.newSection("Demography", addNewline=False)
-                        #DM: Change only needed when --mle is true
-                        #if mle is false
-                        #with self.tag("oneOnXPrior"):
-                            #self.doc.stag("parameter", idref="constant.popSize")
-                        #else
-                        with self.tag("logNormalPrior",  mean="100", stdev="2.148", meanInRealSpace="true"):
-                            self.doc.stag("parameter", idref="constant.popSize")
+                        if mle:
+                            with self.tag("logNormalPrior", mean="100", stdev="2.148", meanInRealSpace="true"):
+                                self.doc.stag("parameter", idref="constant.popSize")
+                        else:
+                            with self.tag("oneOnXPrior"):
+                                self.doc.stag("parameter", idref="constant.popSize")
 
                         self.newSection("Tree", addNewline=False)
                         self.doc.stag("coalescentLikelihood", idref="coalescent")
@@ -259,42 +271,37 @@ class createXML:
             with self.tag("report"):
                 with self.tag("property", name="timer"):
                     self.doc.stag("mcmc", idref="mcmc")
-            ##DM: only if --mle
-            self.newSection("Power-posterior sampling for MLE estimation")
-            #DM:
-            #pathSteps = mle.steps
-            #chainLength = mle.iterations
-            #pathScheme and alpha do not need to be configurable for now, buy we can also have variables for them with the current ones as default
-            with self.tag("marginalLikelihoodEstimator", id="MLE", chainLength="20000", pathSteps="100", pathScheme="betaquantile", alpha="0.30"):
-                with self.tag("samplers"):
-                    self.doc.stag("mcmc", idref="mcmc")
-                with self.tag("pathLikelihood", id="pathLikelihood"):
-                    with self.tag("source"):
-                        self.doc.stag("posterior", idref="posterior")
-                    with self.tag("destination"):
-                        self.doc.stag("prior", idref="prior")
-                #logEvery = mle.sampling
-                with self.tag("log", id="MLELog", logEvery="20", fileName=f"{output}.MLE.log"):
-                    self.doc.stag("pathLikelihood", idref="pathLikelihood")
-            ##DM: end only if --mle
 
-            ##DM: only if mle.ps
-            self.newSection("MLE estimation using path sampling")
-            with self.tag("pathSamplingAnalysis", fileName=f"{output}.MLE.log"):
-                self.doc.stag("likelihoodColumn", name="pathLikelihood.delta")
-                self.doc.stag("thetaColumn", name="pathLikelihood.theta")
-            ##DM: end only if mle.ps
-            ##DM: only if mle.ss
-            self.newSection("MLE estimation using stepping-stone sampling")
-            with self.tag("steppingStoneSamplingAnalysis", fileName=f"{output}.MLE.log"):
-                self.doc.stag("likelihoodColumn", name="pathLikelihood.delta")
-                self.doc.stag("thetaColumn", name="pathLikelihood.theta")
-            ##DM: end only if mle.ss
-            ##DM: only if hme
-            self.newSection("\"MLE\" estimation using the harmonic mean estimator")
-            with self.tag("harmonicMeanAnalysis", fileName=f"{output}.log"):
-                self.doc.stag("likelihoodColumn", name="likelihood")
-            ##DM: end only if hme
+            if mle:
+                self.newSection("Power-posterior sampling for MLE estimation")
+                # pathScheme and alpha do not need to be configurable for now, buy we can also have variables for them with the current ones as default
+                with self.tag("marginalLikelihoodEstimator", id="MLE", chainLength=f"{mle_iterations}", pathSteps=f"{mle_steps}", pathScheme="betaquantile", alpha="0.30"):
+                    with self.tag("samplers"):
+                        self.doc.stag("mcmc", idref="mcmc")
+                    with self.tag("pathLikelihood", id="pathLikelihood"):
+                        with self.tag("source"):
+                            self.doc.stag("posterior", idref="posterior")
+                        with self.tag("destination"):
+                            self.doc.stag("prior", idref="prior")
+                    with self.tag("log", id="MLELog", logEvery=f"{mle_sampling}", fileName=f"{output}.MLE.log"):
+                        self.doc.stag("pathLikelihood", idref="pathLikelihood")
+
+                if mle_ps:
+                    self.newSection("MLE estimation using path sampling")
+                    with self.tag("pathSamplingAnalysis", fileName=f"{output}.MLE.log"):
+                        self.doc.stag("likelihoodColumn", name="pathLikelihood.delta")
+                        self.doc.stag("thetaColumn", name="pathLikelihood.theta")
+
+                if mle_ss:
+                    self.newSection("MLE estimation using stepping-stone sampling")
+                    with self.tag("steppingStoneSamplingAnalysis", fileName=f"{output}.MLE.log"):
+                        self.doc.stag("likelihoodColumn", name="pathLikelihood.delta")
+                        self.doc.stag("thetaColumn", name="pathLikelihood.theta")
+
+                if hme:
+                    self.newSection('"MLE" estimation using the harmonic mean estimator')
+                    with self.tag("harmonicMeanAnalysis", fileName=f"{output}.log"):
+                        self.doc.stag("likelihoodColumn", name="likelihood")
 
     def newSection(self, text: str, addNewline: str = True) -> None:
         init = "\n" if addNewline else ""
