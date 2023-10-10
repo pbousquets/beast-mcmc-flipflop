@@ -313,11 +313,11 @@
     <!--
     <property name="version" value="1.8.4"/>
     -->
-    <property name="version" value="1.0.0"/>
+    <property name="version" value="1.0_RC1"/>
 
-    <property name="version_number" value="1.8.4"/>
+    <property name="version_number" value="1.0_RC1"/>
     <property name="release_dir" value="release"/>
-    <property name="BEAST_name" value="BEAST"/>
+    <property name="BEAST_name" value="Phyfum"/>
     <property name="BEAUti_name" value="BEAUti"/>
     <property name="TreeAnnotator_name" value="TreeAnnotator"/>
     <property name="LogCombiner_name" value="LogCombiner"/>
