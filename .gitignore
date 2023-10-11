@@ -1,7 +1,15 @@
+.DS_Store
+.idea
+/release/
 *.iml
 *.ipr
 *.iws
+*.log
+*.trees
+*.ops
 bin/
 build/
 dist/
 out/
+simulate/simulation_datasets*
+simulate/xmls

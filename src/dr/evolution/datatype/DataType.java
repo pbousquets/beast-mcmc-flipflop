@@ -50,6 +50,8 @@ public abstract class DataType implements Serializable {
     public static final int P2PTYPE = 7;
     public static final int CONTINUOUS = 8;
 
+    public static final int AF_SEQ = 9;
+
     public static final char UNKNOWN_CHARACTER = '?';
     public static final char GAP_CHARACTER = '-';
 
@@ -93,6 +95,7 @@ public abstract class DataType implements Serializable {
             registerDataType(NewHiddenNucleotides.DESCRIPTION + "3", NewHiddenNucleotides.NUCLEOTIDE_HIDDEN_3);
             registerDataType(GeneralDataType.DESCRIPTION, GeneralDataType.INSTANCE);
             registerDataType(Microsatellite.DESCRIPTION, Microsatellite.INSTANCE);
+            registerDataType(AFsequence.DESCRIPTION, AFsequence.INSTANCE);
             registerDataType(P2P.DESCRIPTION, P2P.INSTANCE);
             registerDataType(ContinuousDataType.DESCRIPTION, ContinuousDataType.INSTANCE);
         }
@@ -417,6 +420,8 @@ public abstract class DataType implements Serializable {
                 return "Covarion";
             case DataType.GENERAL:
                 return "Discrete Traits";
+            case DataType.AF_SEQ:
+                return "Allele Fraction";
             case DataType.CONTINUOUS:
                 return "Continuous Traits";
             case DataType.MICRO_SAT:
