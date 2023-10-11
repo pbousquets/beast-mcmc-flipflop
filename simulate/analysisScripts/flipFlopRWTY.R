@@ -140,10 +140,10 @@ estimateMCCtree=function(inputFiles,outDir,burninStates,traceFileName="combinedP
   if(!file.exists(fullMccFileName)){
     #Test if required BEAST executables are available
     if(system2('which','logcombiner',stdout = F, stderr = F)!=0){
-      error("Required logcombiner executable not in PATH")
+      stop("Required logcombiner executable not in PATH")
     }
     if(system2('which','treeannotator',stdout = F, stderr = F)!=0){
-      error("Required treeannotator executable not in PATH")
+      stop("Required treeannotator executable not in PATH")
     }
     
     #Run logcombiner
@@ -161,7 +161,7 @@ estimateMCCtree=function(inputFiles,outDir,burninStates,traceFileName="combinedP
       }
       return(read.nexus(fullMccFileName))
     } else {
-      error("Problem generating the MCC tree estimate")
+      stop("Problem generating the MCC tree estimate")
       return (NA)
     }
   } else {
