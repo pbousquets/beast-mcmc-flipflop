@@ -36,7 +36,7 @@ class CustomCommand(click.Command):
 
 
 @click.command(cls=CustomCommand)
-@click.option("--age", cls=CustomOption, required=True, help="Samples age in years", type=int, help_group="Inputs")
+@click.option("--age", cls=CustomOption, required=True, help="Samples age in years", type=float, help_group="Inputs")
 @click.option("--input", cls=CustomOption, required=True, help="Methylation array beta values in CSV format", type=str, help_group="Inputs")
 @click.option("--stemCells", "stemCells", cls=CustomOption, default=3, help="Prior for the stemCells parameter", type=int, help_group="Priors")
 @click.option("--delta", cls=CustomOption, default=0.2, help="Prior for the delta parameter", type=float, help_group="Priors")
@@ -75,7 +75,7 @@ class CustomCommand(click.Command):
 
 def main(
     input: str,
-    age: int,
+    age: float,
     stemCells: int,
     delta: float,
     eta: float,

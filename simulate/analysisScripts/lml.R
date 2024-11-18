@@ -30,7 +30,7 @@ getlBF=function(x){
 
 ###Main###
 #Data parsing
-theData=fread("/Users/diego/Documents/Ciencia/Postdoc/projects/flipFlop/simulationStudy/simStudy/analysis/currentSummary.csv")
+theData=fread("/Users/diego/Documents/Ciencia/Postdoc/projects/flipFlop/simulationStudy/simStudy/analysis/allSummary.csv")
 theData[,`:=`(simulationCondition=paste(sep="_",alignment.stemCells,flipflop.lambda,flipflop.mu,flipflop.gamma,errorModel.kappaScale,nleaves))]
 setkey(theData,simulationCondition,lML)
 theData[,`:=`(trueS=alignment.stemCells==model.alignment.stemCells)]
@@ -129,10 +129,10 @@ ggplot(resultsData2,aes(x=propTrueInPP,y=propTrueResolved,color=minlBF))+
 resultsData2[,`:=`(optPtipPtr=sqrt(((1-propTrueInPP)^2)+((1-propTrueResolved)^2)))]
 selectedThresholdPtipPtr=resultsData2[order(optPtipPtr),first(minlBF)]
 
-selectedThresholdSS
-selectedThresholdMkNpv
-selectedThresholdNpv
-selectedThresholdPtipPtr
-
+exp(abs(c(selectedThresholdSS
+,selectedThresholdMkNpv
+,selectedThresholdNpv
+,selectedThresholdPtipPtr
+)))
 
 

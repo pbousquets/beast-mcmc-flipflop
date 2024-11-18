@@ -12,8 +12,9 @@ class createXML:
     This class builds the actual XML file
     """
 
-    def __init__(self, age: int, stemCells: int = 3, delta: float = 0.2, eta: float = 0.7, kappa: float = 50, mu: float = 0.1, gamma: float = 0.1, Lambda: float = 1, normalize=False) -> None:
+    def __init__(self, age: float, stemCells: int = 3, delta: float = 0.2, eta: float = 0.7, kappa: float = 50, mu: float = 0.1, gamma: float = 0.1, Lambda: float = 1, normalize=False) -> None:
         self.age = age
+        self.lucaBranch = 1 if age > 1 else age * 0.1
         self.stemCells = stemCells
         self.delta = delta
         self.eta = eta
@@ -138,7 +139,7 @@ class createXML:
                 with self.tag("cenancestorHeight"):
                     self.doc.stag("parameter", id="luca_height", value=f"{self.age}")
                 with self.tag("cenancestorBranch"):
-                    self.doc.stag("parameter", id="luca_branch", value="1", upper=f"{self.age}", lower="0.0")
+                    self.doc.stag("parameter", id="luca_branch", value=f"{self.lucaBranch}", upper=f"{self.age}", lower="0.0")
                 self.doc.stag("strictClockCenancestorBranchRates", idref="branchRates")
 
             self.newSection("Set the operators")
