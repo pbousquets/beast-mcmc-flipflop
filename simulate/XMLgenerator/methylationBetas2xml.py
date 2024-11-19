@@ -42,9 +42,9 @@ class CustomCommand(click.Command):
 @click.option("--delta", cls=CustomOption, default=0.2, help="Prior for the delta parameter", type=float, help_group="Priors")
 @click.option("--eta", cls=CustomOption, default=0.7, help="Prior for the eta parameter", type=float, help_group="Priors")
 @click.option("--kappa", cls=CustomOption, default=50, help="Prior for the kappa parameter", type=float, help_group="Priors")
-@click.option("--mu", cls=CustomOption, default=0.1, help="Prior for the delta parameter", type=float, help_group="Priors")
-@click.option("--gamma", cls=CustomOption, default=0.1, help="Prior for the eta parameter", type=float, help_group="Priors")
-@click.option("--lambda", "Lambda", cls=CustomOption, default=1, help="Prior for the kappa parameter", type=float, help_group="Priors")
+@click.option("--mu", cls=CustomOption, default=0.1, help="Prior for the mu parameter", type=float, help_group="Priors")
+@click.option("--gamma", cls=CustomOption, default=0.1, help="Prior for the gamma parameter", type=float, help_group="Priors")
+@click.option("--lambda", "Lambda", cls=CustomOption, default=1, help="Prior for the lambda parameter", type=float, help_group="Priors")
 @click.option("--mle", cls=CustomOption, default=False, help="Whether MLE estimation is used", is_flag=True, help_group="MLE estimation module")
 @click.option("--mle-steps", "mle_steps", cls=CustomOption, default=100, help="Number of power posteriors to use for MLE", type=click.INT, help_group="MLE estimation module")
 @click.option(
