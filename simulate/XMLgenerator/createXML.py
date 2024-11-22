@@ -12,7 +12,7 @@ class createXML:
     This class builds the actual XML file
     """
 
-    def __init__(self, age: float, stemCells: int = 3, delta: float = 0.2, eta: float = 0.7, kappa: float = 50, mu: float = 0.1, gamma: float = 0.1, Lambda: float = 1, normalize=False) -> None:
+    def __init__(self, age: float, stemCells: int = 3, delta: float = 0.2, eta: float = 0.7, kappa: float = 50, mu: float = 0.1, gamma: float = 0.1, Lambda: float = 1, popSize = 1, normalize=False) -> None:
         self.age = age
         self.lucaBranch = 1 if age > 1 else age * 0.1
         self.stemCells = stemCells
@@ -22,6 +22,7 @@ class createXML:
         self.mu = mu
         self.gamma = gamma
         self.Lambda = Lambda
+        self.popSize = popSize
         self.normalize = "true" if normalize else "false"
         self.doc, self.tag, self.text, self.line = Doc().ttl()
         self.doc.asis('<?xml version="1.0" standalone="yes"?>')
@@ -77,7 +78,7 @@ class createXML:
             self.newSection("throughout the time spanned by the genealogy", addNewline=False)
             with self.tag("constantSize", id="constant", units="years"):
                 with self.tag("populationSize"):
-                    self.doc.stag("parameter", id="constant.popSize", value="1", lower="0.0")
+                    self.doc.stag("parameter", id="constant.popSize", value=f"{self.popSize}", lower="0.0")
 
             self.newSection("Generate a random starting tree under the coalescent process")
             with self.tag("coalescentSimulator", id="startingTree"):
